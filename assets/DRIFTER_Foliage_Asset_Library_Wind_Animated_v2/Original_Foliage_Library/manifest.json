@@ -1,0 +1,320 @@
+{
+  "library": "DRIFTER Foliage Asset Library",
+  "version": "1.0",
+  "source_image": "a_clean_transparent_background_sprite_sheet_game.png",
+  "source_dimensions": [
+    1536,
+    1024
+  ],
+  "asset_count": 20,
+  "format": "Lossless RGBA PNG",
+  "transparency": "Checkerboard background removed via border-connected neutral-color segmentation.",
+  "notes": [
+    "Individual sprites were extracted without scaling or resampling.",
+    "Transparent padding is retained around each object.",
+    "These are individual decorative sprites, not a terrain autotile sheet.",
+    "Use tree trunk/base position as the gameplay anchor; foliage can visually overhang its collision footprint."
+  ],
+  "assets": [
+    {
+      "id": "banyan_tree",
+      "name": "Banyan Tree",
+      "category": "tree",
+      "description": "Large spreading roadside tree",
+      "filename": "banyan_tree.png",
+      "width": 329,
+      "height": 308,
+      "bytes": 223099,
+      "sha256": "383157d658edc92d3a22d13f6adb984c203288259a0c4152664b3847a00be301",
+      "source_cell": {
+        "row": 1,
+        "column": 1
+      }
+    },
+    {
+      "id": "round_canopy_tree",
+      "name": "Round Canopy Tree",
+      "category": "tree",
+      "description": "Dense round canopy tree",
+      "filename": "round_canopy_tree.png",
+      "width": 282,
+      "height": 303,
+      "bytes": 183401,
+      "sha256": "0112dab1a364598a382578dbfd8009392c73083df0ac788a73535cfc75a69796",
+      "source_cell": {
+        "row": 1,
+        "column": 2
+      }
+    },
+    {
+      "id": "slim_canopy_tree",
+      "name": "Slim Canopy Tree",
+      "category": "tree",
+      "description": "Narrow upright tree",
+      "filename": "slim_canopy_tree.png",
+      "width": 201,
+      "height": 319,
+      "bytes": 139127,
+      "sha256": "110268b1daf2843532ece83f11aee6af4004158d99034320c5cd5838237e446d",
+      "source_cell": {
+        "row": 1,
+        "column": 3
+      }
+    },
+    {
+      "id": "wide_branching_tree",
+      "name": "Wide Branching Tree",
+      "category": "tree",
+      "description": "Wide branching tree",
+      "filename": "wide_branching_tree.png",
+      "width": 327,
+      "height": 301,
+      "bytes": 208478,
+      "sha256": "4fbc9265a6406c3bbbf58d553f29209d0fe33c95fbce047213f2d872d04e546a",
+      "source_cell": {
+        "row": 1,
+        "column": 4
+      }
+    },
+    {
+      "id": "young_tree",
+      "name": "Young Tree",
+      "category": "tree",
+      "description": "Young roadside tree",
+      "filename": "young_tree.png",
+      "width": 207,
+      "height": 253,
+      "bytes": 108448,
+      "sha256": "d6db8fc79405ad882070cc206dbbeee2086f7b86ed84205cbfc49dd74139be87",
+      "source_cell": {
+        "row": 1,
+        "column": 5
+      }
+    },
+    {
+      "id": "dense_bush",
+      "name": "Dense Bush",
+      "category": "bush",
+      "description": "Dense leafy bush",
+      "filename": "dense_bush.png",
+      "width": 245,
+      "height": 190,
+      "bytes": 103760,
+      "sha256": "e19763bd0a9d12f04a203a9ca94da3f969d496f5a3a558594a851970817a3bd8",
+      "source_cell": {
+        "row": 2,
+        "column": 1
+      }
+    },
+    {
+      "id": "low_wide_bush",
+      "name": "Low Wide Bush",
+      "category": "bush",
+      "description": "Low wide shrub",
+      "filename": "low_wide_bush.png",
+      "width": 320,
+      "height": 190,
+      "bytes": 130499,
+      "sha256": "f45cceef548e0ffee78f0709274081a62e7453d1aa057a0cba24d6e10b2ca427",
+      "source_cell": {
+        "row": 2,
+        "column": 2
+      }
+    },
+    {
+      "id": "thorny_shrub",
+      "name": "Thorny Shrub",
+      "category": "bush",
+      "description": "Sparse thorny shrub",
+      "filename": "thorny_shrub.png",
+      "width": 285,
+      "height": 187,
+      "bytes": 125141,
+      "sha256": "0f1ee3ea92cb2c95aa37194be935c52fb7eaaa6179ff7fc1bd99fa735f186e27",
+      "source_cell": {
+        "row": 2,
+        "column": 3
+      }
+    },
+    {
+      "id": "flowering_bush",
+      "name": "Flowering Bush",
+      "category": "bush",
+      "description": "White flowering bush",
+      "filename": "flowering_bush.png",
+      "width": 272,
+      "height": 203,
+      "bytes": 126157,
+      "sha256": "c8b5243463af6aa148f04fbfa3008f1ced35d2ca059931afac3176bf7ac8e7af",
+      "source_cell": {
+        "row": 2,
+        "column": 4
+      }
+    },
+    {
+      "id": "tropical_banana_plant",
+      "name": "Tropical Banana Plant",
+      "category": "bush",
+      "description": "Broad tropical foliage",
+      "filename": "tropical_banana_plant.png",
+      "width": 252,
+      "height": 192,
+      "bytes": 100091,
+      "sha256": "606135e2ae22708ac6d597d6d806ec4907081415c24380662dfef5e29c83f45a",
+      "source_cell": {
+        "row": 2,
+        "column": 5
+      }
+    },
+    {
+      "id": "fern_clump",
+      "name": "Fern Clump",
+      "category": "plant",
+      "description": "Fern clump",
+      "filename": "fern_clump.png",
+      "width": 263,
+      "height": 198,
+      "bytes": 115541,
+      "sha256": "f3a19bbfdeb81b86ffbc9e9f5a94ef47864a2d50ad53ae496387422db2de8a97",
+      "source_cell": {
+        "row": 3,
+        "column": 1
+      }
+    },
+    {
+      "id": "tall_wild_grass",
+      "name": "Tall Wild Grass",
+      "category": "plant",
+      "description": "Tall wild grass",
+      "filename": "tall_wild_grass.png",
+      "width": 273,
+      "height": 198,
+      "bytes": 124808,
+      "sha256": "716f069d5d6b0b41276fb470211bbb8e4143f7450999c1e5ab5171b69576264e",
+      "source_cell": {
+        "row": 3,
+        "column": 2
+      }
+    },
+    {
+      "id": "yellow_flower_patch",
+      "name": "Yellow Flower Patch",
+      "category": "plant",
+      "description": "Yellow wildflower patch",
+      "filename": "yellow_flower_patch.png",
+      "width": 261,
+      "height": 147,
+      "bytes": 89338,
+      "sha256": "beda858658d7f29fee9d72ebb929447857e4700ec56c1d11d077815f8cbdc22f",
+      "source_cell": {
+        "row": 3,
+        "column": 3
+      }
+    },
+    {
+      "id": "broadleaf_plant",
+      "name": "Broadleaf Plant",
+      "category": "plant",
+      "description": "Broadleaf plant",
+      "filename": "broadleaf_plant.png",
+      "width": 266,
+      "height": 191,
+      "bytes": 105865,
+      "sha256": "fb68400f383f4b184b79121b3f7deb4cb3f132f0f0433e48ec791752cbee8636",
+      "source_cell": {
+        "row": 3,
+        "column": 4
+      }
+    },
+    {
+      "id": "white_wildflower_patch",
+      "name": "White Wildflower Patch",
+      "category": "plant",
+      "description": "White wildflower patch",
+      "filename": "white_wildflower_patch.png",
+      "width": 267,
+      "height": 167,
+      "bytes": 103057,
+      "sha256": "7459004f7afdbcdb32bc83d00f9611823ce9b22fd06081f7ae1bfa66b4d80595",
+      "source_cell": {
+        "row": 3,
+        "column": 5
+      }
+    },
+    {
+      "id": "marsh_reeds",
+      "name": "Marsh Reeds",
+      "category": "plant",
+      "description": "Marsh reeds",
+      "filename": "marsh_reeds.png",
+      "width": 273,
+      "height": 252,
+      "bytes": 158811,
+      "sha256": "5d757473619b9bf8442a10a4334dc26f99a1d7ea5433274d2b1f2802cc2e95a2",
+      "source_cell": {
+        "row": 4,
+        "column": 1
+      }
+    },
+    {
+      "id": "cattails",
+      "name": "Cattails",
+      "category": "plant",
+      "description": "Cattails",
+      "filename": "cattails.png",
+      "width": 263,
+      "height": 246,
+      "bytes": 142251,
+      "sha256": "3f33ac548a4a496c33bc176f66f9c23aa9d0c6b1bbf71b3796893c7159b47cfb",
+      "source_cell": {
+        "row": 4,
+        "column": 2
+      }
+    },
+    {
+      "id": "sapling",
+      "name": "Sapling",
+      "category": "plant",
+      "description": "Small sapling",
+      "filename": "sapling.png",
+      "width": 203,
+      "height": 247,
+      "bytes": 103393,
+      "sha256": "241b2770438384377c2691a026ce401a85867250fb1c82d63acd6bb56179eff6",
+      "source_cell": {
+        "row": 4,
+        "column": 3
+      }
+    },
+    {
+      "id": "creeping_groundcover",
+      "name": "Creeping Groundcover",
+      "category": "plant",
+      "description": "Creeping groundcover",
+      "filename": "creeping_groundcover.png",
+      "width": 313,
+      "height": 206,
+      "bytes": 142074,
+      "sha256": "cd3abaaae9a3802ac1616a8e3a90428347178d1b2931a9376d911dce471b32ea",
+      "source_cell": {
+        "row": 4,
+        "column": 4
+      }
+    },
+    {
+      "id": "fallen_leafy_branch",
+      "name": "Fallen Leafy Branch",
+      "category": "prop",
+      "description": "Fallen leafy branch",
+      "filename": "fallen_leafy_branch.png",
+      "width": 269,
+      "height": 160,
+      "bytes": 97284,
+      "sha256": "822b50af8865a950b1c810e2b88983b73847409e823d09a568802f90f45e1c26",
+      "source_cell": {
+        "row": 4,
+        "column": 5
+      }
+    }
+  ]
+}

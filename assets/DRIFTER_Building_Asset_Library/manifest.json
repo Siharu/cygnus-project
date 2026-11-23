@@ -1,0 +1,294 @@
+{
+  "library": "DRIFTER Building Asset Library",
+  "style_reference": "User-provided DRIFTER Relay Station 7 concept board: gritty HD-2D pixel-art diorama, three-quarter/isometric perspective, dark weathered materials, cool night shadows, warm practical lights.",
+  "source_image": "a_clean_transparent_background_sprite_atlas_conc.png",
+  "source_dimensions_px": [
+    1536,
+    1024
+  ],
+  "asset_count": 14,
+  "format": "RGBA PNG with original alpha preserved; no resizing or resampling",
+  "extraction": "14 main connected silhouettes identified from the source alpha channel; 14px crop padding retained.",
+  "assets": [
+    {
+      "id": 1,
+      "filename": "01_residential_cottage.png",
+      "name": "residential_cottage",
+      "category": "Residential",
+      "description": "Weathered cottage with corrugated roof and warm windows",
+      "dimensions_px": [
+        357,
+        261
+      ],
+      "source_bounds_xywh": [
+        37,
+        21,
+        329,
+        233
+      ],
+      "padding_px": 14,
+      "sha256": "ce7855980e57d5f04f7de99f3e41f280046aa5559ed492d195c0da7130f207e6",
+      "bytes": 197084
+    },
+    {
+      "id": 2,
+      "filename": "02_two_story_apartment.png",
+      "name": "two_story_apartment",
+      "category": "Residential",
+      "description": "Two-storey apartment block with balcony and rooftop tank",
+      "dimensions_px": [
+        352,
+        270
+      ],
+      "source_bounds_xywh": [
+        426,
+        11,
+        324,
+        245
+      ],
+      "padding_px": 14,
+      "sha256": "9cd6af0cb84d03d1a31242cd60acd6512dbd75ed258f4b9f88fd133a9ff9f80f",
+      "bytes": 195432
+    },
+    {
+      "id": 3,
+      "filename": "03_roadside_shop.png",
+      "name": "roadside_shop",
+      "category": "Commercial",
+      "description": "Small roadside shop with striped awning and lit counter",
+      "dimensions_px": [
+        330,
+        258
+      ],
+      "source_bounds_xywh": [
+        814,
+        27,
+        302,
+        230
+      ],
+      "padding_px": 14,
+      "sha256": "d0604c4fefecd8f7a623721268fb894bf4597d29209266b16ca34ba210b8e5e0",
+      "bytes": 171004
+    },
+    {
+      "id": 4,
+      "filename": "04_workshop_garage.png",
+      "name": "workshop_garage",
+      "category": "Industrial",
+      "description": "Large corrugated workshop with roll-up doors",
+      "dimensions_px": [
+        357,
+        270
+      ],
+      "source_bounds_xywh": [
+        1178,
+        17,
+        329,
+        242
+      ],
+      "padding_px": 14,
+      "sha256": "6032f0baef1db0f99863d4b3b89140902cfba6000dce0e883df5b8e6e9c15ddf",
+      "bytes": 202781
+    },
+    {
+      "id": 5,
+      "filename": "05_warehouse_shed.png",
+      "name": "warehouse_shed",
+      "category": "Industrial",
+      "description": "Timber-and-metal warehouse with broad roof",
+      "dimensions_px": [
+        388,
+        265
+      ],
+      "source_bounds_xywh": [
+        23,
+        262,
+        360,
+        237
+      ],
+      "padding_px": 14,
+      "sha256": "8d0bff121ebdbdf131f6a0d3180d1450866ec413393d9c88f1aebd82c53cf1ac",
+      "bytes": 214102
+    },
+    {
+      "id": 6,
+      "filename": "06_rural_clinic.png",
+      "name": "rural_clinic",
+      "category": "Civic",
+      "description": "Small clinic with red cross and rooftop equipment",
+      "dimensions_px": [
+        372,
+        274
+      ],
+      "source_bounds_xywh": [
+        421,
+        270,
+        344,
+        246
+      ],
+      "padding_px": 14,
+      "sha256": "8c22b1f9e0721fbe220a1d0f7dca6c7097df6f7cfc15c190e2c3eef349ad729f",
+      "bytes": 202041
+    },
+    {
+      "id": 7,
+      "filename": "07_fuel_station.png",
+      "name": "fuel_station",
+      "category": "Commercial",
+      "description": "Compact fuel station forecourt and canopy",
+      "dimensions_px": [
+        373,
+        249
+      ],
+      "source_bounds_xywh": [
+        799,
+        284,
+        345,
+        221
+      ],
+      "padding_px": 14,
+      "sha256": "e78c7f1ed47d32a3f2624e2e26a29bb624dffa386629c8b48b8aa8fb251c77b3",
+      "bytes": 177817
+    },
+    {
+      "id": 8,
+      "filename": "08_checkpoint_booth.png",
+      "name": "checkpoint_booth",
+      "category": "Security",
+      "description": "Security checkpoint with barrier gate and concrete blocks",
+      "dimensions_px": [
+        361,
+        261
+      ],
+      "source_bounds_xywh": [
+        1188,
+        273,
+        333,
+        233
+      ],
+      "padding_px": 14,
+      "sha256": "d2d6695a3c838e409ee905fa93d0bf25dae93cebbfa28dd3aaf5e3d410175cb5",
+      "bytes": 167120
+    },
+    {
+      "id": 9,
+      "filename": "09_watchtower.png",
+      "name": "watchtower",
+      "category": "Security",
+      "description": "Elevated timber-and-steel watchtower",
+      "dimensions_px": [
+        223,
+        299
+      ],
+      "source_bounds_xywh": [
+        113,
+        514,
+        195,
+        271
+      ],
+      "padding_px": 14,
+      "sha256": "963cdfb6ee66a8e54ac1f99b40fa01e3bd8bd940d91d149714a4434d5f694dc7",
+      "bytes": 119758
+    },
+    {
+      "id": 10,
+      "filename": "10_relay_station.png",
+      "name": "relay_station",
+      "category": "Communications",
+      "description": "Relay facility with red antenna mast and satellite dish",
+      "dimensions_px": [
+        329,
+        309
+      ],
+      "source_bounds_xywh": [
+        432,
+        523,
+        301,
+        281
+      ],
+      "padding_px": 14,
+      "sha256": "9a45399bb055a5b7c0ce384bdbd296a4116ee5150dadfc162bcda8c7fa5aa984",
+      "bytes": 172059
+    },
+    {
+      "id": 11,
+      "filename": "11_ruined_building.png",
+      "name": "ruined_building",
+      "category": "Ruins",
+      "description": "Collapsed concrete building overtaken by vegetation",
+      "dimensions_px": [
+        399,
+        284
+      ],
+      "source_bounds_xywh": [
+        790,
+        540,
+        371,
+        256
+      ],
+      "padding_px": 14,
+      "sha256": "1822625f4b06c9611363a77b55075c215a9471d3c9a95d145dc3d5c054442a87",
+      "bytes": 219159
+    },
+    {
+      "id": 12,
+      "filename": "12_water_tower.png",
+      "name": "water_tower",
+      "category": "Infrastructure",
+      "description": "Elevated cylindrical water tank on steel supports",
+      "dimensions_px": [
+        237,
+        357
+      ],
+      "source_bounds_xywh": [
+        1248,
+        517,
+        209,
+        329
+      ],
+      "padding_px": 14,
+      "sha256": "d7f493aa36c00cb121c5f9e33b665c9fde791658968be895097cab9dd3730908",
+      "bytes": 148153
+    },
+    {
+      "id": 13,
+      "filename": "13_utility_shed.png",
+      "name": "utility_shed",
+      "category": "Infrastructure",
+      "description": "Small utility hut with barrels and exterior equipment",
+      "dimensions_px": [
+        303,
+        226
+      ],
+      "source_bounds_xywh": [
+        77,
+        812,
+        275,
+        201
+      ],
+      "padding_px": 14,
+      "sha256": "f7575b3ab11c8f8fb1dbc1322d3f81660b33da56da370e62fa416b182f91454e",
+      "bytes": 130973
+    },
+    {
+      "id": 14,
+      "filename": "14_maintenance_depot.png",
+      "name": "maintenance_depot",
+      "category": "Industrial",
+      "description": "Long maintenance depot with twin shutter doors",
+      "dimensions_px": [
+        418,
+        234
+      ],
+      "source_bounds_xywh": [
+        436,
+        804,
+        390,
+        207
+      ],
+      "padding_px": 14,
+      "sha256": "ba03bbc7b9d860b26146f4a3aa58731110316b6b139311a1113eb5bd3f8c7ca1",
+      "bytes": 203197
+    }
+  ]
+}

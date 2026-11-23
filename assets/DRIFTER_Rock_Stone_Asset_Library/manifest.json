@@ -1,0 +1,815 @@
+{
+  "library": "DRIFTER Rock & Stone Asset Library",
+  "source": "a_clean_transparent_background_sprite_sheet_tile.png",
+  "source_dimensions": [
+    1536,
+    1024
+  ],
+  "asset_count": 47,
+  "notes": [
+    "Individual PNGs retain source pixel resolution; no upscaling or resizing was applied to exported assets.",
+    "Transparency is extracted from the generated checkerboard background using edge-connected neutral pixel detection.",
+    "Sprites are standalone decorative rocks and stone clusters; collision footprints should be defined separately in the game."
+  ],
+  "assets": [
+    {
+      "id": "rock_01",
+      "filename": "rock_01.png",
+      "category": "large-boulders-and-outcrops",
+      "path": "large-boulders-and-outcrops/rock_01.png",
+      "width": 192,
+      "height": 174,
+      "source_bbox": [
+        14,
+        42,
+        192,
+        174
+      ],
+      "pixel_count": 18807,
+      "sha256": "88392d469d12588baafbfb8071930bce7f6a87004224e22330c07f49c8a449de",
+      "bytes": 73863
+    },
+    {
+      "id": "rock_02",
+      "filename": "rock_02.png",
+      "category": "large-boulders-and-outcrops",
+      "path": "large-boulders-and-outcrops/rock_02.png",
+      "width": 257,
+      "height": 216,
+      "source_bbox": [
+        208,
+        10,
+        257,
+        216
+      ],
+      "pixel_count": 32403,
+      "sha256": "cadff8ba925ceedae528cc54005b8bfd8dd2786f63343fbe925a01bfe77cbfd5",
+      "bytes": 124763
+    },
+    {
+      "id": "rock_03",
+      "filename": "rock_03.png",
+      "category": "large-boulders-and-outcrops",
+      "path": "large-boulders-and-outcrops/rock_03.png",
+      "width": 198,
+      "height": 200,
+      "source_bbox": [
+        466,
+        26,
+        198,
+        200
+      ],
+      "pixel_count": 21702,
+      "sha256": "1f71bf42798d25a5cf54d2068e2b7ea137e023993e0ae0ce42a0baa318639489",
+      "bytes": 88080
+    },
+    {
+      "id": "rock_04",
+      "filename": "rock_04.png",
+      "category": "large-boulders-and-outcrops",
+      "path": "large-boulders-and-outcrops/rock_04.png",
+      "width": 231,
+      "height": 220,
+      "source_bbox": [
+        669,
+        6,
+        231,
+        220
+      ],
+      "pixel_count": 28757,
+      "sha256": "61fd8189a96d7730dbcd67a09e7139a66ed4557afd6062379744945c397b469e",
+      "bytes": 111274
+    },
+    {
+      "id": "rock_05",
+      "filename": "rock_05.png",
+      "category": "large-boulders-and-outcrops",
+      "path": "large-boulders-and-outcrops/rock_05.png",
+      "width": 215,
+      "height": 190,
+      "source_bbox": [
+        907,
+        37,
+        215,
+        190
+      ],
+      "pixel_count": 23688,
+      "sha256": "ca56c61bc356549d6bfe62aea0a5ee3b1f1972b322945eafd1893ee349ccca0b",
+      "bytes": 86676
+    },
+    {
+      "id": "rock_06",
+      "filename": "rock_06.png",
+      "category": "large-boulders-and-outcrops",
+      "path": "large-boulders-and-outcrops/rock_06.png",
+      "width": 183,
+      "height": 161,
+      "source_bbox": [
+        1131,
+        58,
+        183,
+        161
+      ],
+      "pixel_count": 15547,
+      "sha256": "d5b8727cc89061a1d53d81b25f9c3f1ad98ce8f1dd336f8e8c3931abecce9332",
+      "bytes": 64694
+    },
+    {
+      "id": "rock_07",
+      "filename": "rock_07.png",
+      "category": "large-boulders-and-outcrops",
+      "path": "large-boulders-and-outcrops/rock_07.png",
+      "width": 217,
+      "height": 201,
+      "source_bbox": [
+        1313,
+        26,
+        217,
+        201
+      ],
+      "pixel_count": 23999,
+      "sha256": "939b88dd76fdd7e34e70be47f6d27a7a7b4a8a2ec7bbc1f85f810dbc35d31355",
+      "bytes": 100153
+    },
+    {
+      "id": "rock_08",
+      "filename": "rock_08.png",
+      "category": "rock-clusters",
+      "path": "rock-clusters/rock_08.png",
+      "width": 192,
+      "height": 150,
+      "source_bbox": [
+        5,
+        230,
+        192,
+        150
+      ],
+      "pixel_count": 15068,
+      "sha256": "19f665480acd8a0fdfe00b16f70c9a32082f44c197af22106f61bbc83df58937",
+      "bytes": 64506
+    },
+    {
+      "id": "rock_09",
+      "filename": "rock_09.png",
+      "category": "rock-clusters",
+      "path": "rock-clusters/rock_09.png",
+      "width": 134,
+      "height": 126,
+      "source_bbox": [
+        196,
+        244,
+        134,
+        126
+      ],
+      "pixel_count": 7781,
+      "sha256": "02570f7560db8e19032bca32267e001030cab348323908ec60c6537b4d3719b0",
+      "bytes": 36924
+    },
+    {
+      "id": "rock_10",
+      "filename": "rock_10.png",
+      "category": "rock-clusters",
+      "path": "rock-clusters/rock_10.png",
+      "width": 175,
+      "height": 150,
+      "source_bbox": [
+        329,
+        230,
+        175,
+        150
+      ],
+      "pixel_count": 14007,
+      "sha256": "b5720c4610149b040e5d1fa3a88e7983f4542340ce5b8047ebbfef09e0c58366",
+      "bytes": 58735
+    },
+    {
+      "id": "rock_11",
+      "filename": "rock_11.png",
+      "category": "rock-clusters",
+      "path": "rock-clusters/rock_11.png",
+      "width": 143,
+      "height": 124,
+      "source_bbox": [
+        507,
+        246,
+        143,
+        124
+      ],
+      "pixel_count": 8825,
+      "sha256": "08523d6727ef8e54f0a1e00a869e707ea7c8b9aa5f5bbda60465a6502f1864be",
+      "bytes": 40598
+    },
+    {
+      "id": "rock_12",
+      "filename": "rock_12.png",
+      "category": "rock-clusters",
+      "path": "rock-clusters/rock_12.png",
+      "width": 135,
+      "height": 123,
+      "source_bbox": [
+        658,
+        247,
+        135,
+        123
+      ],
+      "pixel_count": 7663,
+      "sha256": "51eb3876fc5900c244de2fd66fd1008e2f1a1e3969353ee6e2b5cbde62e5b71f",
+      "bytes": 37014
+    },
+    {
+      "id": "rock_13",
+      "filename": "rock_13.png",
+      "category": "rock-clusters",
+      "path": "rock-clusters/rock_13.png",
+      "width": 112,
+      "height": 120,
+      "source_bbox": [
+        794,
+        250,
+        112,
+        120
+      ],
+      "pixel_count": 5872,
+      "sha256": "84963047099674c4f65bd5258ed5089597cb2445d6ba834e47d22670461f868b",
+      "bytes": 28666
+    },
+    {
+      "id": "rock_14",
+      "filename": "rock_14.png",
+      "category": "rock-clusters",
+      "path": "rock-clusters/rock_14.png",
+      "width": 208,
+      "height": 150,
+      "source_bbox": [
+        912,
+        230,
+        208,
+        150
+      ],
+      "pixel_count": 16447,
+      "sha256": "2ffc82400f7216105e924c08b67550a76b2abb428b6288628b0ca6ab1cfc09ec",
+      "bytes": 70294
+    },
+    {
+      "id": "rock_15",
+      "filename": "rock_15.png",
+      "category": "rock-clusters",
+      "path": "rock-clusters/rock_15.png",
+      "width": 100,
+      "height": 81,
+      "source_bbox": [
+        1120,
+        254,
+        100,
+        81
+      ],
+      "pixel_count": 2615,
+      "sha256": "5312dc87d0b38f04fc2280aca76791c962cbf34498acc0f88a32b4b5f840ec94",
+      "bytes": 18694
+    },
+    {
+      "id": "rock_16",
+      "filename": "rock_16.png",
+      "category": "rock-clusters",
+      "path": "rock-clusters/rock_16.png",
+      "width": 172,
+      "height": 126,
+      "source_bbox": [
+        1143,
+        246,
+        172,
+        126
+      ],
+      "pixel_count": 8814,
+      "sha256": "64cd5662dc3ec7168f84cbe909caefaa28cc38076e59728fab3efcf930790e80",
+      "bytes": 49877
+    },
+    {
+      "id": "rock_17",
+      "filename": "rock_17.png",
+      "category": "rock-clusters",
+      "path": "rock-clusters/rock_17.png",
+      "width": 135,
+      "height": 120,
+      "source_bbox": [
+        1335,
+        250,
+        135,
+        120
+      ],
+      "pixel_count": 6686,
+      "sha256": "d6e780b621eb2e1e8189e1a8a0c51389b51d6993f1ee8d85780fbd3bee4a83e5",
+      "bytes": 35919
+    },
+    {
+      "id": "rock_18",
+      "filename": "rock_18.png",
+      "category": "loose-stone-clusters",
+      "path": "loose-stone-clusters/rock_18.png",
+      "width": 148,
+      "height": 104,
+      "source_bbox": [
+        10,
+        386,
+        148,
+        104
+      ],
+      "pixel_count": 6086,
+      "sha256": "abb478067e6ffd93ee1b07b729c6b190499687d743cc6c1de812d597c17ab0be",
+      "bytes": 34025
+    },
+    {
+      "id": "rock_19",
+      "filename": "rock_19.png",
+      "category": "loose-stone-clusters",
+      "path": "loose-stone-clusters/rock_19.png",
+      "width": 116,
+      "height": 94,
+      "source_bbox": [
+        163,
+        394,
+        116,
+        94
+      ],
+      "pixel_count": 4674,
+      "sha256": "da6183d00dbf2a5e52874d088d5677fa9068a85835f49dd86a431ae9234fafea",
+      "bytes": 25963
+    },
+    {
+      "id": "rock_20",
+      "filename": "rock_20.png",
+      "category": "loose-stone-clusters",
+      "path": "loose-stone-clusters/rock_20.png",
+      "width": 194,
+      "height": 110,
+      "source_bbox": [
+        313,
+        385,
+        194,
+        110
+      ],
+      "pixel_count": 11290,
+      "sha256": "ca5f1c9a446c2dd6a27235d46ee6a374edbbb6a2ff9304a5e825b997a53091e7",
+      "bytes": 51057
+    },
+    {
+      "id": "rock_21",
+      "filename": "rock_21.png",
+      "category": "loose-stone-clusters",
+      "path": "loose-stone-clusters/rock_21.png",
+      "width": 124,
+      "height": 101,
+      "source_bbox": [
+        507,
+        389,
+        124,
+        101
+      ],
+      "pixel_count": 4875,
+      "sha256": "2bb8cddaf9d744c43ea2f6fce9521ccaf35bffc4e3aa964c99c948cccba6412a",
+      "bytes": 28756
+    },
+    {
+      "id": "rock_22",
+      "filename": "rock_22.png",
+      "category": "loose-stone-clusters",
+      "path": "loose-stone-clusters/rock_22.png",
+      "width": 141,
+      "height": 105,
+      "source_bbox": [
+        1375,
+        390,
+        141,
+        105
+      ],
+      "pixel_count": 5693,
+      "sha256": "726496f711cfcd027c1a41b176985df5e229c4c9ff0db294c01b8b2ee7719582",
+      "bytes": 34088
+    },
+    {
+      "id": "rock_23",
+      "filename": "rock_23.png",
+      "category": "flat-rocks-and-slabs",
+      "path": "flat-rocks-and-slabs/rock_23.png",
+      "width": 157,
+      "height": 194,
+      "source_bbox": [
+        5,
+        510,
+        157,
+        194
+      ],
+      "pixel_count": 15476,
+      "sha256": "92e78fbb245b0d2886b3c538d441205ff611c8bea18205294240456cd8b05037",
+      "bytes": 68104
+    },
+    {
+      "id": "rock_24",
+      "filename": "rock_24.png",
+      "category": "flat-rocks-and-slabs",
+      "path": "flat-rocks-and-slabs/rock_24.png",
+      "width": 267,
+      "height": 206,
+      "source_bbox": [
+        163,
+        500,
+        267,
+        206
+      ],
+      "pixel_count": 29200,
+      "sha256": "b7c52d3ea03e8ba520d37b5bc0c8e34829d935b089153d79944c4d7da54aa57d",
+      "bytes": 121275
+    },
+    {
+      "id": "rock_25",
+      "filename": "rock_25.png",
+      "category": "flat-rocks-and-slabs",
+      "path": "flat-rocks-and-slabs/rock_25.png",
+      "width": 180,
+      "height": 174,
+      "source_bbox": [
+        428,
+        529,
+        180,
+        174
+      ],
+      "pixel_count": 15940,
+      "sha256": "c424bcd737beb79f6699940ff72c9929d3be1a284a9b5e459a08fca036a9b0c3",
+      "bytes": 71604
+    },
+    {
+      "id": "rock_26",
+      "filename": "rock_26.png",
+      "category": "flat-rocks-and-slabs",
+      "path": "flat-rocks-and-slabs/rock_26.png",
+      "width": 261,
+      "height": 209,
+      "source_bbox": [
+        609,
+        499,
+        261,
+        209
+      ],
+      "pixel_count": 27806,
+      "sha256": "846a17c3ec96b5f6ae6108f6185d88e16a97ac5bf10677d4aec05fb86d01f74c",
+      "bytes": 120731
+    },
+    {
+      "id": "rock_27",
+      "filename": "rock_27.png",
+      "category": "flat-rocks-and-slabs",
+      "path": "flat-rocks-and-slabs/rock_27.png",
+      "width": 146,
+      "height": 149,
+      "source_bbox": [
+        957,
+        554,
+        146,
+        149
+      ],
+      "pixel_count": 11591,
+      "sha256": "e6760328c286c4f46f489e3620bddfef71f6f52cc7cfa0eee58bd62f78fd99ef",
+      "bytes": 52556
+    },
+    {
+      "id": "rock_28",
+      "filename": "rock_28.png",
+      "category": "flat-rocks-and-slabs",
+      "path": "flat-rocks-and-slabs/rock_28.png",
+      "width": 303,
+      "height": 198,
+      "source_bbox": [
+        1229,
+        511,
+        303,
+        198
+      ],
+      "pixel_count": 39243,
+      "sha256": "a493a445226cdd010b8ebb0a1943efe18de781e429c1408f9ae6cad0baa68741",
+      "bytes": 136875
+    },
+    {
+      "id": "rock_29",
+      "filename": "rock_29.png",
+      "category": "flat-rocks-and-slabs",
+      "path": "flat-rocks-and-slabs/rock_29.png",
+      "width": 88,
+      "height": 89,
+      "source_bbox": [
+        1093,
+        593,
+        88,
+        89
+      ],
+      "pixel_count": 3419,
+      "sha256": "bf5dc231983503d56702c47869058d4e958df09602de6a7f907570809650940c",
+      "bytes": 18771
+    },
+    {
+      "id": "rock_30",
+      "filename": "rock_30.png",
+      "category": "rubble-and-pebble-groups",
+      "path": "rubble-and-pebble-groups/rock_30.png",
+      "width": 200,
+      "height": 127,
+      "source_bbox": [
+        5,
+        714,
+        200,
+        127
+      ],
+      "pixel_count": 14535,
+      "sha256": "24715bb20df11daa1a0f6d36276c5ada3efb1f7e3d4b770c762e78deec756557",
+      "bytes": 57285
+    },
+    {
+      "id": "rock_31",
+      "filename": "rock_31.png",
+      "category": "rubble-and-pebble-groups",
+      "path": "rubble-and-pebble-groups/rock_31.png",
+      "width": 190,
+      "height": 130,
+      "source_bbox": [
+        204,
+        713,
+        190,
+        130
+      ],
+      "pixel_count": 13127,
+      "sha256": "6b0cfbf1b517f1bee23cef9c19723cb5021d0b1b77ff49667f59c7abad62f18b",
+      "bytes": 55594
+    },
+    {
+      "id": "rock_32",
+      "filename": "rock_32.png",
+      "category": "rubble-and-pebble-groups",
+      "path": "rubble-and-pebble-groups/rock_32.png",
+      "width": 143,
+      "height": 88,
+      "source_bbox": [
+        376,
+        710,
+        143,
+        88
+      ],
+      "pixel_count": 5579,
+      "sha256": "48375cc0bea437bc76ed437268c515172e024cadca054b2bbbdd2eaf84c94249",
+      "bytes": 29063
+    },
+    {
+      "id": "rock_33",
+      "filename": "rock_33.png",
+      "category": "rubble-and-pebble-groups",
+      "path": "rubble-and-pebble-groups/rock_33.png",
+      "width": 194,
+      "height": 124,
+      "source_bbox": [
+        552,
+        713,
+        194,
+        124
+      ],
+      "pixel_count": 11976,
+      "sha256": "9725f371dc38be7ff3abef4922cdf6e0ea3efeedde0c7fecd021e3538e1c6b98",
+      "bytes": 53730
+    },
+    {
+      "id": "rock_34",
+      "filename": "rock_34.png",
+      "category": "rubble-and-pebble-groups",
+      "path": "rubble-and-pebble-groups/rock_34.png",
+      "width": 162,
+      "height": 120,
+      "source_bbox": [
+        745,
+        718,
+        162,
+        120
+      ],
+      "pixel_count": 10938,
+      "sha256": "50e273c118a9bfeb13eb719144a566cb0e670c72c5941c88be32053f0aa42106",
+      "bytes": 44802
+    },
+    {
+      "id": "rock_35",
+      "filename": "rock_35.png",
+      "category": "rubble-and-pebble-groups",
+      "path": "rubble-and-pebble-groups/rock_35.png",
+      "width": 108,
+      "height": 93,
+      "source_bbox": [
+        895,
+        736,
+        108,
+        93
+      ],
+      "pixel_count": 4303,
+      "sha256": "3f9a81198eea865184133c9c2e24abd6a4f81dd2a98e542bb51429e4f7ccbbd7",
+      "bytes": 22733
+    },
+    {
+      "id": "rock_36",
+      "filename": "rock_36.png",
+      "category": "rubble-and-pebble-groups",
+      "path": "rubble-and-pebble-groups/rock_36.png",
+      "width": 114,
+      "height": 92,
+      "source_bbox": [
+        996,
+        726,
+        114,
+        92
+      ],
+      "pixel_count": 4475,
+      "sha256": "8f632b3d2144c98ed5eb04273f6b18cb39e61f2588e0e7ce36e1242e144c957c",
+      "bytes": 23231
+    },
+    {
+      "id": "rock_37",
+      "filename": "rock_37.png",
+      "category": "rubble-and-pebble-groups",
+      "path": "rubble-and-pebble-groups/rock_37.png",
+      "width": 91,
+      "height": 75,
+      "source_bbox": [
+        1170,
+        735,
+        91,
+        75
+      ],
+      "pixel_count": 2693,
+      "sha256": "a7efdb558c485aa85b97ab3e23736cf3a8c777f671b0485fc35dbbfe80cf8614",
+      "bytes": 14935
+    },
+    {
+      "id": "rock_38",
+      "filename": "rock_38.png",
+      "category": "small-stones-and-debris",
+      "path": "small-stones-and-debris/rock_38.png",
+      "width": 140,
+      "height": 178,
+      "source_bbox": [
+        1218,
+        820,
+        140,
+        178
+      ],
+      "pixel_count": 12053,
+      "sha256": "f682eca3a0359ac4072e135a44204b38dece6d86b883cb81cf2d3435e5ea1a13",
+      "bytes": 55166
+    },
+    {
+      "id": "rock_39",
+      "filename": "rock_39.png",
+      "category": "rubble-and-pebble-groups",
+      "path": "rubble-and-pebble-groups/rock_39.png",
+      "width": 105,
+      "height": 78,
+      "source_bbox": [
+        1260,
+        738,
+        105,
+        78
+      ],
+      "pixel_count": 3450,
+      "sha256": "32e19dffb787c4e4b7ce7761e395e6d88cf59dedef4fe81f2bc59155bb7b1309",
+      "bytes": 17620
+    },
+    {
+      "id": "rock_40",
+      "filename": "rock_40.png",
+      "category": "small-stones-and-debris",
+      "path": "small-stones-and-debris/rock_40.png",
+      "width": 199,
+      "height": 163,
+      "source_bbox": [
+        9,
+        847,
+        199,
+        163
+      ],
+      "pixel_count": 16513,
+      "sha256": "3a63db4c3f74bcc275dbeb5f07aa55fd778b5e8cc0cd3fcc41f4cc73b4f07f3f",
+      "bytes": 72627
+    },
+    {
+      "id": "rock_41",
+      "filename": "rock_41.png",
+      "category": "small-stones-and-debris",
+      "path": "small-stones-and-debris/rock_41.png",
+      "width": 186,
+      "height": 144,
+      "source_bbox": [
+        209,
+        866,
+        186,
+        144
+      ],
+      "pixel_count": 14053,
+      "sha256": "d87e72b967fee718ad4343ef36364f0779c0e38a2c24261306dd83f10962f0a5",
+      "bytes": 60470
+    },
+    {
+      "id": "rock_42",
+      "filename": "rock_42.png",
+      "category": "small-stones-and-debris",
+      "path": "small-stones-and-debris/rock_42.png",
+      "width": 188,
+      "height": 144,
+      "source_bbox": [
+        402,
+        862,
+        188,
+        144
+      ],
+      "pixel_count": 13698,
+      "sha256": "589e423f5727ea68f6b4b303fd958aa678f9ad8d273980f911d0001830365a4a",
+      "bytes": 61452
+    },
+    {
+      "id": "rock_43",
+      "filename": "rock_43.png",
+      "category": "small-stones-and-debris",
+      "path": "small-stones-and-debris/rock_43.png",
+      "width": 192,
+      "height": 157,
+      "source_bbox": [
+        586,
+        846,
+        192,
+        157
+      ],
+      "pixel_count": 15852,
+      "sha256": "cb6777c7b6879cd6bc2204012fa31fa74d80ca688a7c5b89fb1c957852cfddd2",
+      "bytes": 67749
+    },
+    {
+      "id": "rock_44",
+      "filename": "rock_44.png",
+      "category": "small-stones-and-debris",
+      "path": "small-stones-and-debris/rock_44.png",
+      "width": 154,
+      "height": 127,
+      "source_bbox": [
+        780,
+        866,
+        154,
+        127
+      ],
+      "pixel_count": 8990,
+      "sha256": "fb91cbba006546cf8a217ee62e69189d53bea849c03ce0cf8801eaf989965c32",
+      "bytes": 44203
+    },
+    {
+      "id": "rock_45",
+      "filename": "rock_45.png",
+      "category": "small-stones-and-debris",
+      "path": "small-stones-and-debris/rock_45.png",
+      "width": 97,
+      "height": 91,
+      "source_bbox": [
+        996,
+        899,
+        97,
+        91
+      ],
+      "pixel_count": 2993,
+      "sha256": "53d5a27682426a9105febc603e6bfa666c341a0e579be11f1a032cfdbe1c873e",
+      "bytes": 20204
+    },
+    {
+      "id": "rock_46",
+      "filename": "rock_46.png",
+      "category": "small-stones-and-debris",
+      "path": "small-stones-and-debris/rock_46.png",
+      "width": 119,
+      "height": 108,
+      "source_bbox": [
+        1093,
+        882,
+        119,
+        108
+      ],
+      "pixel_count": 5215,
+      "sha256": "e7c48ea6804e1627590146829724553eb6932b5ef2a63a7d9ff2536bffbdb892",
+      "bytes": 28469
+    },
+    {
+      "id": "rock_47",
+      "filename": "rock_47.png",
+      "category": "small-stones-and-debris",
+      "path": "small-stones-and-debris/rock_47.png",
+      "width": 117,
+      "height": 88,
+      "source_bbox": [
+        1392,
+        876,
+        117,
+        88
+      ],
+      "pixel_count": 4453,
+      "sha256": "00876a112dc2bb0d95b85ee9bfcb926d86665520c99f03ac66b53eae9d1d616c",
+      "bytes": 24168
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "asset": "drifter_player",
+  "frame_size": [
+    64,
+    96
+  ],
+  "directions": [
+    "N",
+    "NE",
+    "E",
+    "SE",
+    "S",
+    "SW",
+    "W",
+    "NW"
+  ],
+  "animations": {
+    "idle": {
+      "frames": 6,
+      "files": "idle/{direction}_{frame:02d}.png"
+    },
+    "swing": {
+      "frames": 6,
+      "files": "swing/{direction}_{frame:02d}.png",
+      "type": "unarmed articulated arm/hand swing"
+    },
+    "dodge_roll": {
+      "frames": 8,
+      "directions": [
+        "N",
+        "NE",
+        "E",
+        "SE",
+        "S",
+        "SW",
+        "W",
+        "NW"
+      ],
+      "files": "dodge_roll/{direction}_{frame:02d}.png",
+      "atlas": "drifter_player_dodge_roll_8d.png",
+      "atlas_layout": "8 columns (frames) \u00d7 8 rows (directions)",
+      "notes": "8-frame somersault/dodge roll. Frames use transformed original directional walking sprites; no weapons or props."
+    }
+  },
+  "walking_source": "walk/",
+  "atlas_layout": "6 columns (frames) \u00d7 8 rows (directions)",
+  "swing_notes": [
+    "No weapon, tool, projectile, or accessory is present.",
+    "Arm and fist poses are sourced from the original four-frame walking sprite set.",
+    "Only changed pixels inside direction-specific arm/hand regions are composited over the neutral directional frame.",
+    "The head, backpack, torso center, and legs remain anchored to the original neutral pose.",
+    "Pose order: neutral, wind-up/guard, mid-extension, full extension, recoil, neutral."
+  ]
+}
