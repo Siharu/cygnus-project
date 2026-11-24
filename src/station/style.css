@@ -19,3 +19,11 @@ canvas{display:block;position:fixed;inset:0}
 .ov{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(#0a0e16cc,#05070bf5);text-align:center;padding:24px;cursor:pointer}
 .ov h1{font-weight:400;font-size:clamp(40px,8vw,84px);margin:0;letter-spacing:.08em;color:#e8dcc0}
 .ov p{max-width:560px;color:var(--dim);margin:6px 0;font-size:23px;line-height:1.2}.ov b{font-weight:400;color:#e8a24a}
+
+#ld{position:fixed;inset:0;z-index:9;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(#0a1612,#020504);opacity:0;pointer-events:none;transition:opacity .5s}
+#ld.on{opacity:1;pointer-events:auto}
+#ld h2{font-weight:400;font-size:clamp(38px,7vw,76px);letter-spacing:.16em;margin:4px 0 0;color:#d8e4c4;text-shadow:0 2px 0 #000}
+#ld small{color:var(--dim);font-size:24px;letter-spacing:.14em}
+#ld .bar{width:min(440px,72vw);height:16px;border:2px solid var(--brass);padding:2px;margin:26px 0 12px;box-shadow:0 0 0 2px #000}
+#ld .bar i{display:block;height:100%;width:0;background:#6fae5a;transition:width .12s}
+#ld p{margin:0;min-height:26px;color:var(--dim);font-size:22px;letter-spacing:.06em}
