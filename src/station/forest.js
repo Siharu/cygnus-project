@@ -1,4 +1,4 @@
-// ===== DRIFTER — THE GREENWAY (forest section) =====
+// ===== DRIFTER — SILVAN (forest section) =====
 // A separate map, built lazily behind the loading screen the first time the player enters it.
 // Everything is made from the existing game assets: foliage / rock sprites (assets/game/fol_*, rok_*)
 // and the grass + soil ground tiles, plus a long animated three.js river and a few 3D wooden bridges.

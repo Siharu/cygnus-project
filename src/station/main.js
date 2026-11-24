@@ -325,7 +325,7 @@ const LD=(()=>{const d=document.createElement('div');d.id='ld';d.innerHTML='<sma
 const AMB0=AMB.slice(),FOGD0=sc.fog.density;
 async function travel(to){
  if(busy||st!=1)return;busy=true;closeP();const f=to==1;
- LD.show(f?'THE GREENWAY':'RELAY CLEARING',f?'Section 02':'Section 01 · WNCORE Station');LD.set(.01,'Loading section…');
+ LD.show(f?'SILVAN':'RELAY CLEARING',f?'Section 02':'Section 01 · WNCORE Station');LD.set(.01,'Loading section…');
  await sleep(550);
  try{
   if(f&&!FST){const mod=await import('./forest.js');FST=await mod.buildForest({T,sc,IM,META,spr,glow,LT,circ,SHAFT,shaftTex,ren},(p,m)=>LD.set(p,m));FOB=FST.objects}
@@ -335,7 +335,7 @@ async function travel(to){
   else{FST&&FST.setVisible(false);P.x=TH.x;P.z=TH.z-3.8;for(let i=0;i<3;i++)AMB[i]=AMB0[i];sc.background.set(FOG);sc.fog.color.set(FOG);sc.fog.density=FOGD0}
   cp.x=P.x-BIAS;cp.z=P.z-BIAS;
   await sleep(450);LD.hide();await sleep(500);
-  const t=$('ttl');t.innerHTML=f?'THE GREENWAY<small>no signal · follow the river</small>':'RELAY CLEARING<small>WNCORE Station 01</small>';t.style.opacity=1;setTimeout(()=>t.style.opacity=0,4200);
+  const t=$('ttl');t.innerHTML=f?'SILVAN<small>no signal · follow the river</small>':'RELAY CLEARING<small>WNCORE Station 01</small>';t.style.opacity=1;setTimeout(()=>t.style.opacity=0,4200);
  }catch(e){console.error(e);LD.set(0,'Failed to load: '+e.message);await sleep(2500);LD.hide()}
  busy=false}
 window.__travel=travel;
