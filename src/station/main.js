@@ -191,7 +191,7 @@ rock('rok_28',BLD.wtower.x-1,BLD.wtower.z+4.5,.02,{r:META.rok_28.w*.02*.3});rock
 // ---------- 5. PLAYER (drifter_player walk atlas: 8 directions N,NE,E,SE,S,SW,W,NW x 4 frames, 64x96) ----------
 const P={x:-6.5,z:13.5,vx:0,vz:0,dr:1,resting:false,swingStart:-99,swingUntil:-99},K={};
 const blank=document.createElement('canvas');blank.width=blank.height=1;const bt0=new T.CanvasTexture(blank);bt0.magFilter=bt0.minFilter=T.NearestFilter;
-const pmat=new T.MeshLambertMaterial({map:bt0,color:0xe1e8f0,emissive:0x080d14,emissiveIntensity:.28,alphaTest:.5,transparent:false,depthWrite:true,side:T.DoubleSide,fog:true});
+const pmat=new T.MeshLambertMaterial({map:bt0,color:0xffffff,emissive:0x1c1814,emissiveIntensity:.55,alphaTest:.5,transparent:false,depthWrite:true,side:T.DoubleSide,fog:false}); // fog:false + neutral fill: the scene's teal fog/blue lights were washing the character cyan
 const PH=2.215,PW=PH*64/96;
 const ps=new T.Mesh(new T.PlaneGeometry(PW,PH),pmat);ps.frustumCulled=false;ps.renderOrder=2;
 const psc=document.createElement('canvas');psc.width=psc.height=64;{const g=psc.getContext('2d'),gr=g.createRadialGradient(32,32,2,32,32,32);gr.addColorStop(0,'rgba(1,3,7,.52)');gr.addColorStop(.38,'rgba(1,3,7,.34)');gr.addColorStop(.72,'rgba(1,3,7,.12)');gr.addColorStop(1,'rgba(1,3,7,0)');g.fillStyle=gr;g.fillRect(0,0,64,64)}
@@ -308,7 +308,7 @@ const fd=document.createElement('div');fd.style.cssText='position:fixed;inset:0;
 const INT=createInterior(T,sc,IX,IZ,sol); // sprite-kit rooms (src/station/interior.js + interior_layout.js)
 const iL=PL(IX,4,IZ,0x7fa8ff,0,22);
 function go(to){if(busy)return;busy=true;fd.style.opacity=1;setTimeout(()=>{
- const from=IN,out=to<0;IN=to;ZM=out?1:.62;rs();pmat.emissive.setHex(out?0x080d14:0x2c3850);pmat.emissiveIntensity=out?.28:.6;pmat.color.setHex(0xe1e8f0);
+ const from=IN,out=to<0;IN=to;ZM=out?1:.62;rs();pmat.emissive.setHex(out?0x1c1814:0x28221c);pmat.emissiveIntensity=out?.55:.6;pmat.color.setHex(0xffffff);
  if(out){INT.hide();iL.intensity=0;P.x=EX.x;P.z=EX.z;cp.x=P.x-BIAS;cp.z=P.z-BIAS;toast('Outside again. The beacon is still pulsing.')}
  else{const r=ROOMS[to];INT.show(to);iL.intensity=.35;
   IOB=IO[to].map(q=>Object.assign({x:IX+q.dx,z:IZ+q.dz},q));
@@ -330,7 +330,7 @@ async function travel(to){
  try{
   if(f&&!FST){const mod=await import('./forest.js');FST=await mod.buildForest({T,sc,IM,META,spr,glow,LT,circ,SHAFT,shaftTex,ren},(p,m)=>LD.set(p,m));FOB=FST.objects}
   else{for(let i=1;i<=10;i++){LD.set(i/10,f?'Entering the trees…':'Back to the road…');await sleep(70)}}
-  MAP=f?1:0;P.vx=P.vz=0;pmat.emissive.setHex(f?0x1c2a24:0x080d14);pmat.emissiveIntensity=f?.75:.28;
+  MAP=f?1:0;P.vx=P.vz=0;pmat.emissive.setHex(f?0x1c2018:0x1c1814);pmat.emissiveIntensity=.6;
   if(f){FST.setVisible(true);P.x=FST.spawn.x;P.z=FST.spawn.z;FST.reset(P.x,P.z);for(let i=0;i<3;i++)AMB[i]=FST.amb[i];sc.background.set(FST.fog);sc.fog.color.set(FST.fog);sc.fog.density=FST.fogD}
   else{FST&&FST.setVisible(false);P.x=TH.x;P.z=TH.z-3.8;for(let i=0;i<3;i++)AMB[i]=AMB0[i];sc.background.set(FOG);sc.fog.color.set(FOG);sc.fog.density=FOGD0}
   cp.x=P.x-BIAS;cp.z=P.z-BIAS;
