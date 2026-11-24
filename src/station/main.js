@@ -1,5 +1,6 @@
 import { A } from './assets.js';
 import { META } from './meta.js';
+import { createInterior } from './interior.js';
 // THREE comes from the <script> tag in index.html (global).
 /* ===== DRIFTER — WNCORE STATION 01 (HD-2D field build) =====
    Sections: 0 config/layout · 1 core · 2 assets · 3 ground bake · 4 world · 5 player · 6 fx · 7 ui · 8 loop
@@ -70,8 +71,8 @@ float ca=(.0002+wrong*.004)*(.4+length(u-.5)*2.);c.r=mix(c.r,texture2D(t,uv+vec2
 c*=.4+.6*(1.-smoothstep(.35,.95,length(u-.5)*1.25));
 float lu=dot(c,vec3(.3,.59,.11));c=mix(vec3(lu),c,.92-wrong*.4);c+=vec3(-.012,.014,.026)*(1.-lu)*2.;c+=vec3(.03,.012,-.01)*smoothstep(.45,1.,lu);c=c*.93+vec3(.028,.042,.052);
 c+=(h1(u*vec2(1731.,911.)+time)-.5)*kn;c+=wrong*.04*h1(vec2(ln,time));gl_FragColor=vec4(c,1.);}`})));
-let VH=15;
-function rs(){const w=innerWidth,h=innerHeight,v=VH=h<560?11:15,a=w/h;cam.left=-v*a;cam.right=v*a;cam.top=v;cam.bottom=-v;cam.updateProjectionMatrix();ren.setSize(w,h);const q=ren.getPixelRatio();rt.setSize(w*q,h*q);pu.px.value.set(1/(w*q),1/(h*q))}
+let VH=15,ZM=1; // ZM: view zoom (tighter inside the tower)
+function rs(){const w=innerWidth,h=innerHeight,v=VH=(h<560?11:15)*ZM,a=w/h;cam.left=-v*a;cam.right=v*a;cam.top=v;cam.bottom=-v;cam.updateProjectionMatrix();ren.setSize(w,h);const q=ren.getPixelRatio();rt.setSize(w*q,h*q);pu.px.value.set(1/(w*q),1/(h*q))}
 addEventListener('resize',rs);rs();
 sc.add(new T.HemisphereLight(0x5a78a0,0x0c1014,.5));
 const dl=new T.DirectionalLight(0x7090c0,.4);dl.position.set(-14,24,10);sc.add(dl);
@@ -288,7 +289,7 @@ $('ov').addEventListener('click',start);
 $('ovs').innerHTML='<b>Click to begin</b>';
 // ---------- 7b. INTERIOR: cutaway rooms inside the relay tower ----------
 const IX=300,IZ=300,RW=22;
-const ROOMS=[{k:'int_ctrl',c:0.295,n:'Control room'},{k:'int_rack',c:0.278,n:'Equipment room'},{k:'int_brief',c:0.272,n:'Briefing office'}];
+const ROOMS=[{n:'Control room'},{n:'Equipment room'},{n:'Briefing office'}];
 const IO=[
  [{dx:-1.5,dz:-5.2,n:'Radio terminal',t:'r'},{dx:-5.5,dz:0,n:'Control desk',t:'n',note:'The logbook is open to today. The last line is a frequency, underlined twice.'},{dx:6,dz:-6,n:'Climb the stairs',t:'g',to:1},{dx:5.8,dz:5.8,n:'Leave the station',t:'g',to:-1}],
  [{dx:-1,dz:-5.2,n:'Server racks',t:'n',note:'Every rack is warm. The drive lights blink in a pattern that is almost words.'},{dx:6,dz:-6,n:'Climb the stairs',t:'g',to:2},{dx:5.8,dz:5.8,n:'Go downstairs',t:'g',to:0}],
@@ -296,12 +297,12 @@ const IO=[
 let IN=-1,busy=false,IOB=[];
 const EX={x:bs.x+3.03,z:bs.z+-1.07};
 const fd=document.createElement('div');fd.style.cssText='position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .35s;z-index:5';document.body.appendChild(fd);
-const rm=new T.Sprite(new T.SpriteMaterial({map:stex('int_ctrl'),color:0xd0d6e4,transparent:false,alphaTest:.1,depthTest:false,depthWrite:false,fog:false}));rm.renderOrder=-50;rm.visible=false;rm.frustumCulled=false;rm.position.set(IX,0,IZ);sc.add(rm);
+const INT=createInterior(T,sc,IX,IZ,sol); // 3D PSX placeholder rooms (src/station/interior.js)
 const iL=PL(IX,4,IZ,0x7fa8ff,0,22);
 function go(to){if(busy)return;busy=true;fd.style.opacity=1;setTimeout(()=>{
- const from=IN,out=to<0;IN=to;pmat.emissive.setHex(out?0x080d14:0x2c3850);pmat.emissiveIntensity=out?.28:.6;pmat.color.setHex(0xe1e8f0);
- if(out){rm.visible=false;iL.intensity=0;P.x=EX.x;P.z=EX.z;cp.x=P.x-BIAS;cp.z=P.z-BIAS;toast('Outside again. The beacon is still pulsing.')}
- else{const r=ROOMS[to],im=IM[r.k];rm.material.map=stex(r.k);rm.scale.set(RW,RW*im.height/im.width,1);rm.center.set(.5,r.c);rm.visible=true;iL.intensity=.7;
+ const from=IN,out=to<0;IN=to;ZM=out?1:.62;rs();pmat.emissive.setHex(out?0x080d14:0x2c3850);pmat.emissiveIntensity=out?.28:.6;pmat.color.setHex(0xe1e8f0);
+ if(out){INT.hide();iL.intensity=0;P.x=EX.x;P.z=EX.z;cp.x=P.x-BIAS;cp.z=P.z-BIAS;toast('Outside again. The beacon is still pulsing.')}
+ else{const r=ROOMS[to];INT.show(to);iL.intensity=.35;
   IOB=IO[to].map(q=>Object.assign({x:IX+q.dx,z:IZ+q.dz},q));
   const up=from<0||from<to,sp=up?3.4:-3.4;const ex=to==0&&from<0;P.x=IX+(ex?5.2:sp);P.z=IZ+(ex?2.4:sp);cp.x=IX-3.7;cp.z=IZ-3.7;toast(r.n)}
  P.vx=P.vz=0;sc.background.set(out?FOG:0x05070a);sc.fog.color.set(out?FOG:0x05070a);
@@ -323,6 +324,7 @@ function upd(dt){clock+=dt;let ix=0,iz=0;
  $('st').innerHTML='WNCORE-01<br>88.7 FM'}
 const dsq=Math.hypot;
 function anim(dt,t){
+ INT.update(t);
  // signal bursts + proximity to the mast
  const dm=IN>=0?6:dsq(P.x-bs.x,P.z-bs.z);let base=.0+.1*sm(16,5,dm);burstT-=dt;if(burstT<0){burstU=.5;burstT=22+Math.random()*30}burstU=Math.max(0,burstU-dt);
  wrong+=((base+(burstU>0?.8*Math.min(1,burstU*3):0))-wrong)*Math.min(1,dt*8);pu.wrong.value=wrong;pu.time.value=t;
