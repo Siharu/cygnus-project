@@ -1,6 +1,7 @@
 import { A } from './assets.js';
 import { META } from './meta.js';
 import { createInterior } from './interior.js';
+import { LAYOUT } from './interior_layout.js';
 // THREE comes from the <script> tag in index.html (global).
 /* ===== DRIFTER — WNCORE STATION 01 (HD-2D field build) =====
    Sections: 0 config/layout · 1 core · 2 assets · 3 ground bake · 4 world · 5 player · 6 fx · 7 ui · 8 loop
@@ -300,21 +301,18 @@ $('ovs').innerHTML='<b>Click to begin</b>';
 // ---------- 7b. INTERIOR: cutaway rooms inside the relay tower ----------
 const IX=300,IZ=300,RW=22;
 const ROOMS=[{n:'Control room'},{n:'Equipment room'},{n:'Briefing office'}];
-const IO=[
- [{dx:-1.5,dz:-5.2,n:'Radio terminal',t:'r'},{dx:-5.5,dz:0,n:'Control desk',t:'n',note:'The logbook is open to today. The last line is a frequency, underlined twice.'},{dx:6,dz:-6,n:'Climb the stairs',t:'g',to:1},{dx:5.8,dz:5.8,n:'Leave the station',t:'g',to:-1}],
- [{dx:-1,dz:-5.2,n:'Server racks',t:'n',note:'Every rack is warm. The drive lights blink in a pattern that is almost words.'},{dx:6,dz:-6,n:'Climb the stairs',t:'g',to:2},{dx:5.8,dz:5.8,n:'Go downstairs',t:'g',to:0}],
- [{dx:0,dz:-1.5,n:'Briefing table',t:'n',note:'Maps of the road, both ends marked with the same red X. Someone wrote: wait for the signal.'},{dx:5.8,dz:5.8,n:'Go downstairs',t:'g',to:1}]];
+const IO=LAYOUT.ROOMS.map(r=>r.io); // interaction points live in interior_layout.js next to the props they belong to
 let IN=-1,busy=false,IOB=[];
 const EX={x:bs.x+3.03,z:bs.z+-1.07};
 const fd=document.createElement('div');fd.style.cssText='position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .35s;z-index:5';document.body.appendChild(fd);
-const INT=createInterior(T,sc,IX,IZ,sol); // 3D PSX placeholder rooms (src/station/interior.js)
+const INT=createInterior(T,sc,IX,IZ,sol); // sprite-kit rooms (src/station/interior.js + interior_layout.js)
 const iL=PL(IX,4,IZ,0x7fa8ff,0,22);
 function go(to){if(busy)return;busy=true;fd.style.opacity=1;setTimeout(()=>{
  const from=IN,out=to<0;IN=to;ZM=out?1:.62;rs();pmat.emissive.setHex(out?0x080d14:0x2c3850);pmat.emissiveIntensity=out?.28:.6;pmat.color.setHex(0xe1e8f0);
  if(out){INT.hide();iL.intensity=0;P.x=EX.x;P.z=EX.z;cp.x=P.x-BIAS;cp.z=P.z-BIAS;toast('Outside again. The beacon is still pulsing.')}
  else{const r=ROOMS[to];INT.show(to);iL.intensity=.35;
   IOB=IO[to].map(q=>Object.assign({x:IX+q.dx,z:IZ+q.dz},q));
-  const up=from<0||from<to,sp=up?3.4:-3.4;const ex=to==0&&from<0;P.x=IX+(ex?5.2:sp);P.z=IZ+(ex?2.4:sp);cp.x=IX-3.7;cp.z=IZ-3.7;toast(r.n)}
+  const up=from<0||from<to,ex=to==0&&from<0;P.x=IX+(ex?5.2:up?2.2:5.5);P.z=IZ+(ex?2.4:up?3.2:-1.6);cp.x=IX-3.7;cp.z=IZ-3.7;toast(r.n)}
  P.vx=P.vz=0;sc.background.set(out?FOG:0x05070a);sc.fog.color.set(out?FOG:0x05070a);
  ff.visible=out;for(const m of MIST)m.s.visible=out;for(const q of SHAFT)q.s.visible=out;
  fd.style.opacity=0;setTimeout(()=>busy=false,350)},380)}
