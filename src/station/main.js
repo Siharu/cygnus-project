@@ -266,8 +266,16 @@ function bc(){open='b';bt=0;const msg=BTXT[bIdx%BTXT.length];bIdx++;const h='WNC
 function lg(tab){open='l';const p=$('pn');p.classList.remove('hide');const T2=['DISCOVERIES','BROADCASTS','NOTES'],L=[found.map(f=>f.n+' — '+f.note),bcs,['Station 01 still answers.','Both ends of the road are sealed.','Someone is keeping the lights on. Find out who.']][tab];
  p.innerHTML='<div class="hd"><span>LOGBOOK</span><span>STATION 01</span></div><div class="lg"><nav>'+T2.map((n,i)=>'<b class="'+(i==tab?'on':'')+'" onclick="__lg('+i+')">'+(i==tab?'▸ ':'')+n+'</b>').join('')+'</nav><div>'+(L.length?L.map(x=>'<p>'+x+'</p>').join(''):'<p>Nothing recorded yet.</p>')+'</div></div>'}
 window.__lg=lg;
+// ---- vitals: food & water drain slowly; supplies in the station restore them (one use each)
+const VIT={food:.85,water:.8,warn:{}};
+function eat(q){const p=q.p;INT.take(p.id);IOB.splice(IOB.indexOf(q),1);near=null;
+ VIT.food=Math.min(1,VIT.food+(p.food||0));VIT.water=Math.min(1,VIT.water+(p.water||0));VIT.warn={};
+ toast((p.water&&!p.food?'You drink the ':'You eat the ')+p.n+'. '+p.msg)}
+function vitTick(dt){VIT.food=Math.max(0,VIT.food-dt/420);VIT.water=Math.max(0,VIT.water-dt/300);
+ for(const k of['food','water']){if(VIT[k]<.2&&!VIT.warn[k]){VIT.warn[k]=1;toast(k=='food'?'Your stomach is empty. There was food in the station.':'Your mouth is dry. There were drinks in the station.')}}}
+const vbar=v=>'▮'.repeat(Math.ceil(v*5))+'▯'.repeat(5-Math.ceil(v*5));
 function act(){if(st!=1||busy)return;if(open){closeP();return}if(!near)return;if(near.t=='r'){bc();return}
- if(near.t=='f'){travel(near.to);return}if(near.t=='d'){go(0);return}if(near.t=='g'){go(near.to);return}if(near.t=='n'){toast(near.note);return}if(!found.includes(near))found.push(near);toast(near.note)}
+ if(near.t=='f'){travel(near.to);return}if(near.t=='d'){go(0);return}if(near.t=='g'){go(near.to);return}if(near.t=='n'){toast(near.note);return}if(near.t=='c'){eat(near);return}if(!found.includes(near))found.push(near);toast(near.note)}
 addEventListener('keydown',e=>{K[e.code]=1;if(e.code=='KeyE')act();if(e.code=='KeyM'){muted=!muted;if(aud.mg)aud.mg.gain.value=muted?0:.9}
  if(e.code=='Space'){e.preventDefault();if(st==1&&!open&&!e.repeat){P.swingStart=clock;P.swingUntil=clock+.62;P.resting=false}}
  if(e.code=='KeyR'&&st==1&&!open&&!e.repeat){P.resting=!P.resting;P.vx=0;P.vz=0}
@@ -311,7 +319,7 @@ function go(to){if(busy)return;busy=true;fd.style.opacity=1;setTimeout(()=>{
  const from=IN,out=to<0;IN=to;ZM=out?1:.62;rs();pmat.emissive.setHex(out?0x1c1814:0x28221c);pmat.emissiveIntensity=out?.55:.6;pmat.color.setHex(0xffffff);
  if(out){INT.hide();iL.intensity=0;P.x=EX.x;P.z=EX.z;cp.x=P.x-BIAS;cp.z=P.z-BIAS;toast('Outside again. The beacon is still pulsing.')}
  else{const r=ROOMS[to];INT.show(to);iL.intensity=.35;
-  IOB=IO[to].map(q=>Object.assign({x:IX+q.dx,z:IZ+q.dz},q));
+  IOB=IO[to].map(q=>Object.assign({x:IX+q.dx,z:IZ+q.dz},q)).concat(INT.left(to).map(p=>({x:IX+p.x,z:IZ+p.z,n:p.n,t:'c',p,room:to})));
   const up=from<0||from<to,ex=to==0&&from<0;P.x=IX+(ex?5.2:up?2.2:5.5);P.z=IZ+(ex?2.4:up?3.2:-1.6);cp.x=IX-3.7;cp.z=IZ-3.7;toast(r.n)}
  P.vx=P.vz=0;sc.background.set(out?FOG:0x05070a);sc.fog.color.set(out?FOG:0x05070a);
  ff.visible=out;for(const m of MIST)m.s.visible=out;for(const q of SHAFT)q.s.visible=out;
@@ -347,10 +355,10 @@ function upd(dt){clock+=dt;let ix=0,iz=0;
  const il=Math.hypot(ix,iz);if(il){ix/=il;iz/=il;const sx=ix-iz,sy=-(ix+iz)*.577;P.dr=(Math.round(Math.atan2(sx,sy)/(Math.PI/4))+8)%8;P.resting=false}
  const sp=(K.ShiftLeft||K.ShiftRight)?7.2:4.6,k=Math.min(1,dt*12);P.vx+=(ix*sp-P.vx)*k;P.vz+=(iz*sp-P.vz)*k;P.x+=P.vx*dt;P.z+=P.vz*dt;col(P,.4);
  if(IN>=0){P.x=Math.max(IX-6.9,Math.min(IX+6.9,P.x));P.z=Math.max(IZ-6.9,Math.min(IZ+6.9,P.z))}else if(MAP==1){const B=FST.bounds;P.x=Math.max(B.x0,Math.min(B.x1,P.x));P.z=Math.max(B.z0,Math.min(B.z1,P.z))}else{P.x=Math.max(-BOUND,Math.min(BOUND,P.x));P.z=Math.max(-BOUND,Math.min(BOUND,P.z))}
- near=null;let bd=3;for(const q of (IN>=0?IOB:MAP==1?FOB:OB)){const d=Math.hypot(q.x-P.x,q.z-P.z);if(d<bd){bd=d;near=q}}
- $('pr').textContent=(near&&!open&&!busy)?'[E] '+(near.t=='r'?'Tune the radio':(near.t=='d'||near.t=='g'||near.t=='f')?near.n:'Examine '+near.n.toLowerCase()):'';
+ vitTick(dt);near=null;let bd=3;for(const q of (IN>=0?IOB:MAP==1?FOB:OB)){const d=Math.hypot(q.x-P.x,q.z-P.z);if(d<bd){bd=d;near=q}}
+ $('pr').textContent=(near&&!open&&!busy)?'[E] '+(near.t=='r'?'Tune the radio':(near.t=='d'||near.t=='g'||near.t=='f')?near.n:near.t=='c'?(near.p.water&&!near.p.food?'Drink ':'Eat ')+near.n:'Examine '+near.n.toLowerCase()):'';
  if(open=='b'){bt+=dt*26;const m=window.__bmsg;$('tx').textContent=m.slice(0,bt|0);const c=$('wv'),g=c.getContext('2d');g.clearRect(0,0,300,44);g.strokeStyle='#6fae5a';g.beginPath();for(let x=0;x<300;x+=3){const a=Math.abs(Math.sin(x*.05+clock*6))*Math.min(1,bt/20)*18*Math.random();g.moveTo(x,22-a);g.lineTo(x,22+a)}g.stroke()}
- $('dc').innerHTML='DISCOVERIES '+found.length+'/'+(OB.filter(q=>!q.t).length+FOB.filter(q=>!q.t).length)+'<br><span style="font-size:18px;color:#b7aa8d">SHIFT RUN · SPACE SWING · R REST · M MUTE</span>';
+ $('dc').innerHTML='DISCOVERIES '+found.length+'/'+(OB.filter(q=>!q.t).length+FOB.filter(q=>!q.t).length)+'<br><span style="font-size:18px;color:'+(VIT.food<.2?'#d9695a':'#b7aa8d')+'">FOOD '+vbar(VIT.food)+'</span> <span style="font-size:18px;color:'+(VIT.water<.2?'#d9695a':'#b7aa8d')+'">WATER '+vbar(VIT.water)+'</span><br><span style="font-size:18px;color:#b7aa8d">SHIFT RUN · SPACE SWING · R REST · M MUTE</span>';
  $('st').innerHTML=MAP==1?'NO SIGNAL<br>— — —':'WNCORE-01<br>88.7 FM'}
 const dsq=Math.hypot;
 function anim(dt,t){

@@ -8,6 +8,8 @@
 //   INT.show(i)  INT.hide()  INT.update(t)      i = 0 control room, 1 equipment room, 2 briefing office
 
 import { LAYOUT } from './interior_layout.js';
+import { PROPS, PROP_SIZE } from './props.js';
+const purl = k => new URL('../../assets/game/props/' + k + '.png', import.meta.url).href;
 
 const url = k => new URL('../../assets/game/interior/' + k + '.png', import.meta.url).href;
 
@@ -64,7 +66,19 @@ export function createInterior(T, sc, IX, IZ, sol) {
     const s = new T.Sprite(m); s.scale.set(size, size, 1); s.position.set(x, y, z); s.frustumCulled = false; R.add(s);
     return { s, m, kind, op, ph: Math.random() * 9 };
   };
+  // ---------- supply props (one-use pickups) ----------
+  const gone = new Set(), PS = [[], [], []];
+  const mkProp = (R, p) => {
+    const t = loader.load(purl(p.id)); t.magFilter = T.NearestFilter; t.minFilter = T.LinearFilter; t.generateMipmaps = false;
+    const m = new T.SpriteMaterial({ map: t, alphaTest: .4, transparent: false, fog: false });
+    const s = new T.Sprite(m); s.scale.set(PROP_SIZE, PROP_SIZE, 1); s.center.set(.5, .045);
+    s.position.set(p.x, p.y, p.z); s.frustumCulled = false; R.add(s);
+    const gm = new T.SpriteMaterial({ map: glowTex, color: 0xfff0b0, blending: T.AdditiveBlending, transparent: true, depthWrite: false, opacity: .5, fog: false });
+    const g = new T.Sprite(gm); g.scale.set(1.1, 1.1, 1); g.position.set(p.x, p.y + .45, p.z); g.frustumCulled = false; R.add(g);
+    return { p, s, g, gm, ph: Math.random() * 9 };
+  };
   const build = i => {
+    for (const p of PROPS[i]) PS[i].push(mkProp(rooms[i], p));
     built[i] = true; const r = ROOMS[i], R = rooms[i];
     for (const it of r.items) { mkSprite(R, it, r.tint); if (it.solid) solid(i, it.x, it.z, it.solid[0], it.solid[1]); }
     for (const g of r.glows || []) FX[i].push(mkGlow(R, g));
@@ -84,10 +98,13 @@ export function createInterior(T, sc, IX, IZ, sol) {
   };
 
   return {
+    take(id) { gone.add(id); for (const e of PS.flat()) if (e.p.id == id) e.s.visible = e.g.visible = false; },
+    left(i) { return PROPS[i].filter(p => !gone.has(p.id)); },
     show(i) { cur = i; if (!built[i]) build(i); rooms.forEach((g, k) => g.visible = k == i); lightFor(i); setSolids(i); },
     hide() { cur = -1; rooms.forEach(g => g.visible = false); key.intensity = acc.intensity = 0; setSolids(-1); },
     update(t) {
       if (cur < 0) return;
+      for (const e of PS[cur]) if (!gone.has(e.p.id)) e.gm.opacity = .35 + .25 * Math.sin(t * 3 + e.ph);
       for (const f of FX[cur]) {
         const k = f.kind;
         f.m.opacity = f.op * (k == 'lantern' ? .82 + .18 * Math.sin(t * 9 + f.ph) * Math.sin(t * 3.7 + f.ph)
