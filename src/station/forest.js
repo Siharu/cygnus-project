@@ -102,7 +102,9 @@ export async function buildForest(ctx, progress) {
   const dens = (x, z) => fbm(x * .022 + 13, z * .026 + 5);
 
   // fixed spots: arrival cairn (west end) and spawn just up the trail from it
-  const T0 = trailAtX(-112), CAIRN = { x: T0[0], z: T0[1] }, T1 = trailAtX(-106), SPAWN = { x: T1[0], z: T1[1] };
+  let ci = 0; trail.forEach((p, i) => { if (Math.abs(p[0] + 112) < Math.abs(trail[ci][0] + 112)) ci = i; });
+  const CAIRN = { x: trail[ci][0], z: trail[ci][1] }, nx_ = trail[ci + 1], dl_ = Math.hypot(nx_[0] - CAIRN.x, nx_[1] - CAIRN.z);
+  const SPAWN = { x: CAIRN.x + (nx_[0] - CAIRN.x) / dl_ * 3.8, z: CAIRN.z + (nx_[1] - CAIRN.z) / dl_ * 3.8 };   // just up the trail from the cairn
   addPlaced(CAIRN.x, CAIRN.z, 5);
 
   // trees (dense woods, thinner glades, tight wall outside the walk bounds)
