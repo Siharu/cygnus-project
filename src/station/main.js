@@ -73,8 +73,8 @@ float ca=(.0002+wrong*.004)*(.4+length(u-.5)*2.);c.r=mix(c.r,texture2D(t,uv+vec2
 c*=.4+.6*(1.-smoothstep(.35,.95,length(u-.5)*1.25));
 float lu=dot(c,vec3(.3,.59,.11));c=mix(vec3(lu),c,.92-wrong*.4);c+=vec3(-.012,.014,.026)*(1.-lu)*2.;c+=vec3(.03,.012,-.01)*smoothstep(.45,1.,lu);c=c*.93+vec3(.028,.042,.052);
 c+=(h1(u*vec2(1731.,911.)+time)-.5)*kn;c+=wrong*.04*h1(vec2(ln,time));gl_FragColor=vec4(c,1.);}`})));
-let VH=15,ZM=1; // ZM: view zoom (tighter inside the tower)
-function rs(){const w=innerWidth,h=innerHeight,v=VH=(h<560?11:15)*ZM,a=w/h;cam.left=-v*a;cam.right=v*a;cam.top=v;cam.bottom=-v;cam.updateProjectionMatrix();ren.setSize(w,h);const q=ren.getPixelRatio();rt.setSize(w*q,h*q);pu.px.value.set(1/(w*q),1/(h*q))}
+let VH=15,ZM=1; // ZM: view zoom (tighter inside the tower). rs() also zooms in on phones (landscape and portrait)
+function rs(){const w=innerWidth,h=innerHeight,v=VH=((h<560||(w<h&&ZM==1))?11:15)*ZM,a=w/h;cam.left=-v*a;cam.right=v*a;cam.top=v;cam.bottom=-v;cam.updateProjectionMatrix();ren.setSize(w,h);const q=ren.getPixelRatio();rt.setSize(w*q,h*q);pu.px.value.set(1/(w*q),1/(h*q))}
 addEventListener('resize',rs);rs();
 sc.add(new T.HemisphereLight(0x5a78a0,0x0c1014,.5));
 const dl=new T.DirectionalLight(0x7090c0,.4);dl.position.set(-14,24,10);sc.add(dl);
