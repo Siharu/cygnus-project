@@ -1,0 +1,2843 @@
+{
+  "library": "DRIFTER_POI_Asset_Library_v2",
+  "version": "2.0",
+  "style_reference": "Uploaded Relay Station 7 image (styling only)",
+  "poi_catalogue": [
+    {
+      "poi_id": "POI-01",
+      "location": "Hospital",
+      "status": "awaiting_poi_reference",
+      "available_assets": [],
+      "note": "No matching POI-specific building reference in the supplied source pack; folder intentionally contains no invented replacement."
+    },
+    {
+      "poi_id": "POI-02",
+      "location": "Superstore",
+      "status": "awaiting_poi_reference",
+      "available_assets": [],
+      "note": "No matching POI-specific building reference in the supplied source pack; folder intentionally contains no invented replacement."
+    },
+    {
+      "poi_id": "POI-03",
+      "location": "Police Station",
+      "status": "awaiting_poi_reference",
+      "available_assets": [],
+      "note": "No matching POI-specific building reference in the supplied source pack; folder intentionally contains no invented replacement."
+    },
+    {
+      "poi_id": "POI-04",
+      "location": "Fire Station",
+      "status": "awaiting_poi_reference",
+      "available_assets": [],
+      "note": "No matching POI-specific building reference in the supplied source pack; folder intentionally contains no invented replacement."
+    },
+    {
+      "poi_id": "POI-05",
+      "location": "School",
+      "status": "awaiting_poi_reference",
+      "available_assets": [],
+      "note": "No matching POI-specific building reference in the supplied source pack; folder intentionally contains no invented replacement."
+    },
+    {
+      "poi_id": "POI-06",
+      "location": "Shopping Mall",
+      "status": "awaiting_poi_reference",
+      "available_assets": [],
+      "note": "No matching POI-specific building reference in the supplied source pack; folder intentionally contains no invented replacement."
+    },
+    {
+      "poi_id": "POI-07",
+      "location": "Warehouse",
+      "status": "generic_candidates_only",
+      "available_assets": [
+        "SRC-020",
+        "SRC-021"
+      ],
+      "note": "Only generic industrial building candidates are available from the source pack; no POI-specific design was supplied."
+    },
+    {
+      "poi_id": "POI-08",
+      "location": "Radio Tower",
+      "status": "awaiting_poi_reference",
+      "available_assets": [],
+      "note": "No matching POI-specific building reference in the supplied source pack; folder intentionally contains no invented replacement."
+    },
+    {
+      "poi_id": "POI-09",
+      "location": "Bank",
+      "status": "awaiting_poi_reference",
+      "available_assets": [],
+      "note": "No matching POI-specific building reference in the supplied source pack; folder intentionally contains no invented replacement."
+    },
+    {
+      "poi_id": "POI-10",
+      "location": "Library",
+      "status": "awaiting_poi_reference",
+      "available_assets": [],
+      "note": "No matching POI-specific building reference in the supplied source pack; folder intentionally contains no invented replacement."
+    },
+    {
+      "poi_id": "POI-11",
+      "location": "Museum",
+      "status": "awaiting_poi_reference",
+      "available_assets": [],
+      "note": "No matching POI-specific building reference in the supplied source pack; folder intentionally contains no invented replacement."
+    },
+    {
+      "poi_id": "POI-12",
+      "location": "Factory",
+      "status": "generic_candidates_only",
+      "available_assets": [
+        "SRC-019",
+        "SRC-022"
+      ],
+      "note": "Only generic industrial building candidates are available from the source pack; no POI-specific design was supplied."
+    },
+    {
+      "poi_id": "POI-13",
+      "location": "Power Plant",
+      "status": "awaiting_poi_reference",
+      "available_assets": [],
+      "note": "No matching POI-specific building reference in the supplied source pack; folder intentionally contains no invented replacement."
+    },
+    {
+      "poi_id": "POI-14",
+      "location": "Electrical Substation",
+      "status": "awaiting_poi_reference",
+      "available_assets": [],
+      "note": "No matching POI-specific building reference in the supplied source pack; folder intentionally contains no invented replacement."
+    },
+    {
+      "poi_id": "POI-15",
+      "location": "Prison",
+      "status": "awaiting_poi_reference",
+      "available_assets": [],
+      "note": "No matching POI-specific building reference in the supplied source pack; folder intentionally contains no invented replacement."
+    },
+    {
+      "poi_id": "POI-16",
+      "location": "Military Base",
+      "status": "awaiting_poi_reference",
+      "available_assets": [],
+      "note": "No matching POI-specific building reference in the supplied source pack; folder intentionally contains no invented replacement."
+    }
+  ],
+  "source_asset_count": 78,
+  "atlas_count": 3,
+  "assets": [
+    {
+      "sprite_id": "SRC-001",
+      "category": "Residential building",
+      "file": "Individual_PNGs/SRC-001_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        431,
+        15,
+        191,
+        191
+      ],
+      "image_size_px": [
+        203,
+        203
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          0,
+          0,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          42,
+          42,
+          203,
+          203
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-002",
+      "category": "Residential building",
+      "file": "Individual_PNGs/SRC-002_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        646,
+        15,
+        182,
+        192
+      ],
+      "image_size_px": [
+        194,
+        204
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          288,
+          0,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          335,
+          42,
+          194,
+          204
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-003",
+      "category": "Residential building",
+      "file": "Individual_PNGs/SRC-003_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1377,
+        15,
+        142,
+        177
+      ],
+      "image_size_px": [
+        154,
+        189
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          576,
+          0,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          643,
+          49,
+          154,
+          189
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-004",
+      "category": "Residential building",
+      "file": "Individual_PNGs/SRC-004_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        18,
+        16,
+        188,
+        179
+      ],
+      "image_size_px": [
+        200,
+        191
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          864,
+          0,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          908,
+          48,
+          200,
+          191
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-005",
+      "category": "Residential building",
+      "file": "Individual_PNGs/SRC-005_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        226,
+        16,
+        179,
+        185
+      ],
+      "image_size_px": [
+        191,
+        197
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          0,
+          288,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          48,
+          333,
+          191,
+          197
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-006",
+      "category": "Residential building",
+      "file": "Individual_PNGs/SRC-006_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        856,
+        16,
+        162,
+        186
+      ],
+      "image_size_px": [
+        174,
+        198
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          288,
+          288,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          345,
+          333,
+          174,
+          198
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-007",
+      "category": "Residential building",
+      "file": "Individual_PNGs/SRC-007_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1219,
+        16,
+        134,
+        180
+      ],
+      "image_size_px": [
+        146,
+        192
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          576,
+          288,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          647,
+          336,
+          146,
+          192
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-008",
+      "category": "Residential building",
+      "file": "Individual_PNGs/SRC-008_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1048,
+        25,
+        152,
+        171
+      ],
+      "image_size_px": [
+        164,
+        183
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          864,
+          288,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          926,
+          340,
+          164,
+          183
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-009",
+      "category": "Commercial building",
+      "file": "Individual_PNGs/SRC-009_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1302,
+        202,
+        219,
+        180
+      ],
+      "image_size_px": [
+        231,
+        192
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          0,
+          576,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          28,
+          624,
+          231,
+          192
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-010",
+      "category": "Commercial building",
+      "file": "Individual_PNGs/SRC-010_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1030,
+        206,
+        256,
+        182
+      ],
+      "image_size_px": [
+        268,
+        194
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          288,
+          576,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          300,
+          624,
+          264,
+          191
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-011",
+      "category": "Commercial building",
+      "file": "Individual_PNGs/SRC-011_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        14,
+        209,
+        163,
+        160
+      ],
+      "image_size_px": [
+        175,
+        172
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          576,
+          576,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          632,
+          634,
+          175,
+          172
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-012",
+      "category": "Commercial building",
+      "file": "Individual_PNGs/SRC-012_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        621,
+        213,
+        114,
+        140
+      ],
+      "image_size_px": [
+        126,
+        152
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          864,
+          576,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          945,
+          644,
+          126,
+          152
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-013",
+      "category": "Commercial building",
+      "file": "Individual_PNGs/SRC-013_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        750,
+        215,
+        114,
+        147
+      ],
+      "image_size_px": [
+        126,
+        159
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          0,
+          864,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          81,
+          928,
+          126,
+          159
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-014",
+      "category": "Commercial building",
+      "file": "Individual_PNGs/SRC-014_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        880,
+        216,
+        129,
+        148
+      ],
+      "image_size_px": [
+        141,
+        160
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          288,
+          864,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          361,
+          928,
+          141,
+          160
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-015",
+      "category": "Commercial building",
+      "file": "Individual_PNGs/SRC-015_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        321,
+        218,
+        118,
+        136
+      ],
+      "image_size_px": [
+        130,
+        148
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          576,
+          864,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          655,
+          934,
+          130,
+          148
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-016",
+      "category": "Commercial building",
+      "file": "Individual_PNGs/SRC-016_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        461,
+        218,
+        144,
+        147
+      ],
+      "image_size_px": [
+        156,
+        159
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          864,
+          864,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          930,
+          928,
+          156,
+          159
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-017",
+      "category": "Commercial building",
+      "file": "Individual_PNGs/SRC-017_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        190,
+        221,
+        117,
+        132
+      ],
+      "image_size_px": [
+        129,
+        144
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          0,
+          1152,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          79,
+          1224,
+          129,
+          144
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-018",
+      "category": "Commercial building",
+      "file": "Individual_PNGs/SRC-018_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        952,
+        359,
+        198,
+        205
+      ],
+      "image_size_px": [
+        210,
+        217
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          288,
+          1152,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          327,
+          1187,
+          210,
+          217
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-019",
+      "category": "Industrial building or structure",
+      "file": "Individual_PNGs/SRC-019_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        438,
+        366,
+        239,
+        188
+      ],
+      "image_size_px": [
+        251,
+        200
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [
+        {
+          "poi_id": "POI-12",
+          "location": "Factory",
+          "status": "generic industrial candidate"
+        }
+      ],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          576,
+          1152,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          594,
+          1196,
+          251,
+          200
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-020",
+      "category": "Industrial building or structure",
+      "file": "Individual_PNGs/SRC-020_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        240,
+        372,
+        184,
+        168
+      ],
+      "image_size_px": [
+        196,
+        180
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [
+        {
+          "poi_id": "POI-07",
+          "location": "Warehouse",
+          "status": "generic industrial candidate"
+        }
+      ],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          864,
+          1152,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          910,
+          1206,
+          196,
+          180
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-021",
+      "category": "Industrial building or structure",
+      "file": "Individual_PNGs/SRC-021_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        11,
+        375,
+        214,
+        164
+      ],
+      "image_size_px": [
+        226,
+        176
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [
+        {
+          "poi_id": "POI-07",
+          "location": "Warehouse",
+          "status": "generic industrial candidate"
+        }
+      ],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          0,
+          1440,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          31,
+          1496,
+          226,
+          176
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-022",
+      "category": "Industrial building or structure",
+      "file": "Individual_PNGs/SRC-022_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        699,
+        376,
+        228,
+        185
+      ],
+      "image_size_px": [
+        240,
+        197
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [
+        {
+          "poi_id": "POI-12",
+          "location": "Factory",
+          "status": "generic industrial candidate"
+        }
+      ],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          288,
+          1440,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          312,
+          1485,
+          240,
+          197
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-023",
+      "category": "Industrial building or structure",
+      "file": "Individual_PNGs/SRC-023_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1372,
+        378,
+        148,
+        177
+      ],
+      "image_size_px": [
+        160,
+        189
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          576,
+          1440,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          640,
+          1489,
+          160,
+          189
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-024",
+      "category": "Industrial building or structure",
+      "file": "Individual_PNGs/SRC-024_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1175,
+        390,
+        181,
+        174
+      ],
+      "image_size_px": [
+        193,
+        186
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          864,
+          1440,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          911,
+          1491,
+          193,
+          186
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-025",
+      "category": "Modular wall or gate",
+      "file": "Individual_PNGs/SRC-025_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        16,
+        550,
+        134,
+        123
+      ],
+      "image_size_px": [
+        146,
+        135
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          0,
+          1728,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          71,
+          1804,
+          146,
+          135
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-026",
+      "category": "Modular wall or gate",
+      "file": "Individual_PNGs/SRC-026_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        290,
+        556,
+        159,
+        122
+      ],
+      "image_size_px": [
+        171,
+        134
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          288,
+          1728,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          346,
+          1805,
+          171,
+          134
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-027",
+      "category": "Modular wall or gate",
+      "file": "Individual_PNGs/SRC-027_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        711,
+        560,
+        118,
+        116
+      ],
+      "image_size_px": [
+        130,
+        128
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          576,
+          1728,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          655,
+          1808,
+          130,
+          128
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-028",
+      "category": "Modular wall or gate",
+      "file": "Individual_PNGs/SRC-028_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        954,
+        560,
+        92,
+        118
+      ],
+      "image_size_px": [
+        104,
+        130
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          864,
+          1728,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          956,
+          1807,
+          104,
+          130
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-029",
+      "category": "Modular wall or gate",
+      "file": "Individual_PNGs/SRC-029_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        176,
+        564,
+        96,
+        109
+      ],
+      "image_size_px": [
+        108,
+        121
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          0,
+          2016,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          90,
+          2099,
+          108,
+          121
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-030",
+      "category": "Modular wall or gate",
+      "file": "Individual_PNGs/SRC-030_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        854,
+        564,
+        77,
+        108
+      ],
+      "image_size_px": [
+        89,
+        120
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          288,
+          2016,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          387,
+          2100,
+          89,
+          120
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-031",
+      "category": "Modular wall or gate",
+      "file": "Individual_PNGs/SRC-031_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        607,
+        565,
+        93,
+        109
+      ],
+      "image_size_px": [
+        105,
+        121
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          576,
+          2016,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          667,
+          2099,
+          105,
+          121
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-032",
+      "category": "Modular wall or gate",
+      "file": "Individual_PNGs/SRC-032_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        466,
+        569,
+        123,
+        106
+      ],
+      "image_size_px": [
+        135,
+        118
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+        "cell_xywh": [
+          864,
+          2016,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          940,
+          2101,
+          135,
+          118
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-033",
+      "category": "Modular wall or gate",
+      "file": "Individual_PNGs/SRC-033_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1405,
+        570,
+        100,
+        123
+      ],
+      "image_size_px": [
+        112,
+        135
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          0,
+          0,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          88,
+          76,
+          112,
+          135
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-034",
+      "category": "Modular wall or gate",
+      "file": "Individual_PNGs/SRC-034_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1068,
+        578,
+        85,
+        103
+      ],
+      "image_size_px": [
+        97,
+        115
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          288,
+          0,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          383,
+          86,
+          97,
+          115
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-035",
+      "category": "Modular wall or gate",
+      "file": "Individual_PNGs/SRC-035_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1178,
+        580,
+        99,
+        93
+      ],
+      "image_size_px": [
+        111,
+        105
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          576,
+          0,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          664,
+          91,
+          111,
+          105
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-036",
+      "category": "Modular wall or gate",
+      "file": "Individual_PNGs/SRC-036_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1297,
+        596,
+        89,
+        71
+      ],
+      "image_size_px": [
+        101,
+        83
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          864,
+          0,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          957,
+          102,
+          101,
+          83
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-037",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-037_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        171,
+        684,
+        105,
+        130
+      ],
+      "image_size_px": [
+        117,
+        142
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          0,
+          288,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          85,
+          361,
+          117,
+          142
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-038",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-038_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        625,
+        686,
+        98,
+        107
+      ],
+      "image_size_px": [
+        110,
+        119
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          288,
+          288,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          377,
+          372,
+          110,
+          119
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-039",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-039_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        12,
+        688,
+        135,
+        94
+      ],
+      "image_size_px": [
+        147,
+        106
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          576,
+          288,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          646,
+          379,
+          147,
+          106
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-040",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-040_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        902,
+        689,
+        134,
+        109
+      ],
+      "image_size_px": [
+        146,
+        121
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          864,
+          288,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          935,
+          371,
+          146,
+          121
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-041",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-041_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        467,
+        690,
+        138,
+        122
+      ],
+      "image_size_px": [
+        150,
+        134
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          0,
+          576,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          69,
+          653,
+          150,
+          134
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-042",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-042_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        731,
+        690,
+        153,
+        127
+      ],
+      "image_size_px": [
+        165,
+        139
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          288,
+          576,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          349,
+          650,
+          165,
+          139
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-043",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-043_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1196,
+        692,
+        158,
+        123
+      ],
+      "image_size_px": [
+        170,
+        135
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          576,
+          576,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          635,
+          652,
+          170,
+          135
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-044",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-044_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        294,
+        693,
+        156,
+        108
+      ],
+      "image_size_px": [
+        168,
+        120
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          864,
+          576,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          924,
+          660,
+          168,
+          120
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-045",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-045_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1360,
+        707,
+        158,
+        129
+      ],
+      "image_size_px": [
+        170,
+        141
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          0,
+          864,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          59,
+          937,
+          170,
+          141
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-046",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-046_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1054,
+        715,
+        121,
+        92
+      ],
+      "image_size_px": [
+        133,
+        104
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          288,
+          864,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          365,
+          956,
+          133,
+          104
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-047",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-047_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        10,
+        784,
+        155,
+        84
+      ],
+      "image_size_px": [
+        167,
+        96
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          576,
+          864,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          636,
+          960,
+          167,
+          96
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-048",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-048_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        296,
+        803,
+        103,
+        83
+      ],
+      "image_size_px": [
+        115,
+        95
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          864,
+          864,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          950,
+          960,
+          115,
+          95
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-049",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-049_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1022,
+        808,
+        79,
+        82
+      ],
+      "image_size_px": [
+        91,
+        94
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          0,
+          1152,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          98,
+          1249,
+          91,
+          94
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-050",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-050_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        791,
+        809,
+        119,
+        82
+      ],
+      "image_size_px": [
+        131,
+        94
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          288,
+          1152,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          366,
+          1249,
+          131,
+          94
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-051",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-051_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        421,
+        812,
+        103,
+        75
+      ],
+      "image_size_px": [
+        115,
+        87
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          576,
+          1152,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          662,
+          1252,
+          115,
+          87
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-052",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-052_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        931,
+        812,
+        68,
+        57
+      ],
+      "image_size_px": [
+        80,
+        69
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          864,
+          1152,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          968,
+          1261,
+          80,
+          69
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-053",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-053_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        544,
+        817,
+        89,
+        69
+      ],
+      "image_size_px": [
+        101,
+        81
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          0,
+          1440,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          93,
+          1543,
+          101,
+          81
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-054",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-054_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1134,
+        820,
+        104,
+        77
+      ],
+      "image_size_px": [
+        116,
+        89
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          288,
+          1440,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          374,
+          1539,
+          116,
+          89
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-055",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-055_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        165,
+        824,
+        114,
+        74
+      ],
+      "image_size_px": [
+        126,
+        86
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          576,
+          1440,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          657,
+          1541,
+          126,
+          86
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-056",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-056_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        651,
+        824,
+        115,
+        66
+      ],
+      "image_size_px": [
+        127,
+        78
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          864,
+          1440,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          944,
+          1545,
+          127,
+          78
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-057",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-057_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1423,
+        828,
+        99,
+        151
+      ],
+      "image_size_px": [
+        111,
+        163
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          0,
+          1728,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          88,
+          1790,
+          111,
+          163
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-058",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-058_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1256,
+        835,
+        104,
+        65
+      ],
+      "image_size_px": [
+        116,
+        77
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          288,
+          1728,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          374,
+          1833,
+          116,
+          77
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-059",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-059_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        956,
+        883,
+        57,
+        123
+      ],
+      "image_size_px": [
+        69,
+        135
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          576,
+          1728,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          685,
+          1804,
+          69,
+          135
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-060",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-060_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        11,
+        893,
+        119,
+        104
+      ],
+      "image_size_px": [
+        131,
+        116
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          864,
+          1728,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          942,
+          1814,
+          131,
+          116
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-061",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-061_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1024,
+        896,
+        46,
+        112
+      ],
+      "image_size_px": [
+        58,
+        124
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          0,
+          2016,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          115,
+          2098,
+          58,
+          124
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-062",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-062_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        492,
+        900,
+        41,
+        81
+      ],
+      "image_size_px": [
+        53,
+        93
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          288,
+          2016,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          405,
+          2113,
+          53,
+          93
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-063",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-063_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        828,
+        900,
+        86,
+        102
+      ],
+      "image_size_px": [
+        98,
+        114
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          576,
+          2016,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          671,
+          2103,
+          98,
+          114
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-064",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-064_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        283,
+        905,
+        87,
+        92
+      ],
+      "image_size_px": [
+        99,
+        104
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+        "cell_xywh": [
+          864,
+          2016,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          958,
+          2108,
+          99,
+          104
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-065",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-065_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        382,
+        905,
+        34,
+        70
+      ],
+      "image_size_px": [
+        46,
+        82
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_03.png",
+        "cell_xywh": [
+          0,
+          0,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          121,
+          103,
+          46,
+          82
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-066",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-066_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        728,
+        905,
+        88,
+        87
+      ],
+      "image_size_px": [
+        100,
+        99
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_03.png",
+        "cell_xywh": [
+          288,
+          0,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          382,
+          94,
+          100,
+          99
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-067",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-067_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1090,
+        905,
+        56,
+        96
+      ],
+      "image_size_px": [
+        68,
+        108
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_03.png",
+        "cell_xywh": [
+          576,
+          0,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          686,
+          90,
+          68,
+          108
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-068",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-068_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        924,
+        906,
+        44,
+        95
+      ],
+      "image_size_px": [
+        56,
+        107
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_03.png",
+        "cell_xywh": [
+          864,
+          0,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          980,
+          90,
+          56,
+          107
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-069",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-069_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        546,
+        909,
+        76,
+        77
+      ],
+      "image_size_px": [
+        88,
+        89
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_03.png",
+        "cell_xywh": [
+          0,
+          288,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          100,
+          387,
+          88,
+          89
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-070",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-070_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1178,
+        909,
+        30,
+        100
+      ],
+      "image_size_px": [
+        42,
+        112
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_03.png",
+        "cell_xywh": [
+          288,
+          288,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          411,
+          376,
+          42,
+          112
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-071",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-071_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        637,
+        910,
+        77,
+        77
+      ],
+      "image_size_px": [
+        89,
+        89
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_03.png",
+        "cell_xywh": [
+          576,
+          288,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          675,
+          387,
+          89,
+          89
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-072",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-072_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        435,
+        912,
+        39,
+        71
+      ],
+      "image_size_px": [
+        51,
+        83
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_03.png",
+        "cell_xywh": [
+          864,
+          288,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          982,
+          390,
+          51,
+          83
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-073",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-073_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        140,
+        913,
+        135,
+        80
+      ],
+      "image_size_px": [
+        147,
+        92
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_03.png",
+        "cell_xywh": [
+          0,
+          576,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          70,
+          674,
+          147,
+          92
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-074",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-074_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1308,
+        914,
+        42,
+        65
+      ],
+      "image_size_px": [
+        54,
+        77
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_03.png",
+        "cell_xywh": [
+          288,
+          576,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          405,
+          681,
+          54,
+          77
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-075",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-075_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1369,
+        914,
+        58,
+        59
+      ],
+      "image_size_px": [
+        70,
+        71
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_03.png",
+        "cell_xywh": [
+          576,
+          576,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          685,
+          684,
+          70,
+          71
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-076",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-076_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1219,
+        915,
+        76,
+        73
+      ],
+      "image_size_px": [
+        88,
+        85
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_03.png",
+        "cell_xywh": [
+          864,
+          576,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          964,
+          677,
+          88,
+          85
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-077",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-077_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1347,
+        978,
+        45,
+        28
+      ],
+      "image_size_px": [
+        57,
+        40
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_03.png",
+        "cell_xywh": [
+          0,
+          864,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          115,
+          988,
+          57,
+          40
+        ]
+      }
+    },
+    {
+      "sprite_id": "SRC-078",
+      "category": "Street prop, clutter or vegetation",
+      "file": "Individual_PNGs/SRC-078_MasterSheetA_Extract.png",
+      "source_sheet": "Ruined_City_Master_Sheet_A.png",
+      "source_component_bbox_xywh": [
+        1418,
+        979,
+        43,
+        29
+      ],
+      "image_size_px": [
+        55,
+        41
+      ],
+      "alpha": "Isolated from source RGBA alpha; transparent background",
+      "poi_assignments": [],
+      "atlas": {
+        "file": "Combined_Atlases/POI_Source_Atlas_03.png",
+        "cell_xywh": [
+          288,
+          864,
+          288,
+          288
+        ],
+        "sprite_xywh": [
+          404,
+          987,
+          55,
+          41
+        ]
+      }
+    }
+  ],
+  "atlases": [
+    {
+      "file": "Combined_Atlases/POI_Source_Atlas_01.png",
+      "columns": 4,
+      "rows": 8,
+      "cell_size_px": [
+        288,
+        288
+      ],
+      "transparent_padding_px": 12,
+      "sprite_ids": [
+        "SRC-001",
+        "SRC-002",
+        "SRC-003",
+        "SRC-004",
+        "SRC-005",
+        "SRC-006",
+        "SRC-007",
+        "SRC-008",
+        "SRC-009",
+        "SRC-010",
+        "SRC-011",
+        "SRC-012",
+        "SRC-013",
+        "SRC-014",
+        "SRC-015",
+        "SRC-016",
+        "SRC-017",
+        "SRC-018",
+        "SRC-019",
+        "SRC-020",
+        "SRC-021",
+        "SRC-022",
+        "SRC-023",
+        "SRC-024",
+        "SRC-025",
+        "SRC-026",
+        "SRC-027",
+        "SRC-028",
+        "SRC-029",
+        "SRC-030",
+        "SRC-031",
+        "SRC-032"
+      ]
+    },
+    {
+      "file": "Combined_Atlases/POI_Source_Atlas_02.png",
+      "columns": 4,
+      "rows": 8,
+      "cell_size_px": [
+        288,
+        288
+      ],
+      "transparent_padding_px": 12,
+      "sprite_ids": [
+        "SRC-033",
+        "SRC-034",
+        "SRC-035",
+        "SRC-036",
+        "SRC-037",
+        "SRC-038",
+        "SRC-039",
+        "SRC-040",
+        "SRC-041",
+        "SRC-042",
+        "SRC-043",
+        "SRC-044",
+        "SRC-045",
+        "SRC-046",
+        "SRC-047",
+        "SRC-048",
+        "SRC-049",
+        "SRC-050",
+        "SRC-051",
+        "SRC-052",
+        "SRC-053",
+        "SRC-054",
+        "SRC-055",
+        "SRC-056",
+        "SRC-057",
+        "SRC-058",
+        "SRC-059",
+        "SRC-060",
+        "SRC-061",
+        "SRC-062",
+        "SRC-063",
+        "SRC-064"
+      ]
+    },
+    {
+      "file": "Combined_Atlases/POI_Source_Atlas_03.png",
+      "columns": 4,
+      "rows": 8,
+      "cell_size_px": [
+        288,
+        288
+      ],
+      "transparent_padding_px": 12,
+      "sprite_ids": [
+        "SRC-065",
+        "SRC-066",
+        "SRC-067",
+        "SRC-068",
+        "SRC-069",
+        "SRC-070",
+        "SRC-071",
+        "SRC-072",
+        "SRC-073",
+        "SRC-074",
+        "SRC-075",
+        "SRC-076",
+        "SRC-077",
+        "SRC-078"
+      ]
+    }
+  ]
+}

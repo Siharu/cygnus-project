@@ -1,0 +1,9 @@
+VALIDATION PASSED
+Frames checked: 64 (8 directions × 8 frames)
+Every frame: 64×96 RGBA with transparent background.
+Atlas: 512×768 (8 columns × 8 rows).
+No weapons or extra props added.
+All nontransparent pixels use colors sampled from the original walking frames.
+No transformed sprite silhouette touches or clips the 64x96 frame border.
+Source: original directional walking PNG frames.
+Note: roll poses are produced by nearest-neighbour pivot transforms; this preserves source pixel colors but is not hand-redrawn articulation.

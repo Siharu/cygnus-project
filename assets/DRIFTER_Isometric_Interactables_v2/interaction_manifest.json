@@ -1,0 +1,205 @@
+{
+  "project": "DRIFTER",
+  "pack": "Isometric Interactable Props v2",
+  "source": "Rebuilt from isometric asset atlas",
+  "projection": "Consistent 3/4 isometric view; visible top/front/side surfaces",
+  "lighting": "Upper-left key light; grounded contact shadows",
+  "cell_size_px": [
+    192,
+    192
+  ],
+  "assets": [
+    {
+      "id": "soda_can",
+      "name": "Soda can",
+      "category": "drink",
+      "file": "Individual_PNGs/soda_can.png",
+      "interaction": "drink",
+      "suggested_action": "consume",
+      "cell": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "energy_drink",
+      "name": "Energy drink",
+      "category": "drink",
+      "file": "Individual_PNGs/energy_drink.png",
+      "interaction": "drink",
+      "suggested_action": "consume",
+      "cell": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "juice_carton",
+      "name": "Juice carton",
+      "category": "drink",
+      "file": "Individual_PNGs/juice_carton.png",
+      "interaction": "drink",
+      "suggested_action": "consume",
+      "cell": [
+        0,
+        2
+      ]
+    },
+    {
+      "id": "water_bottle",
+      "name": "Water bottle",
+      "category": "drink",
+      "file": "Individual_PNGs/water_bottle.png",
+      "interaction": "drink",
+      "suggested_action": "consume",
+      "cell": [
+        0,
+        3
+      ]
+    },
+    {
+      "id": "instant_noodles",
+      "name": "Instant noodles",
+      "category": "food",
+      "file": "Individual_PNGs/instant_noodles.png",
+      "interaction": "food",
+      "suggested_action": "consume",
+      "cell": [
+        1,
+        0
+      ]
+    },
+    {
+      "id": "chips_packet",
+      "name": "Chips packet",
+      "category": "food",
+      "file": "Individual_PNGs/chips_packet.png",
+      "interaction": "food",
+      "suggested_action": "consume",
+      "cell": [
+        1,
+        1
+      ]
+    },
+    {
+      "id": "sandwich",
+      "name": "Packaged sandwich",
+      "category": "food",
+      "file": "Individual_PNGs/sandwich.png",
+      "interaction": "food",
+      "suggested_action": "consume",
+      "cell": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "milk_carton",
+      "name": "Milk carton",
+      "category": "food",
+      "file": "Individual_PNGs/milk_carton.png",
+      "interaction": "food",
+      "suggested_action": "consume",
+      "cell": [
+        1,
+        3
+      ]
+    },
+    {
+      "id": "tinned_food",
+      "name": "Tinned food",
+      "category": "food",
+      "file": "Individual_PNGs/tinned_food.png",
+      "interaction": "food",
+      "suggested_action": "consume",
+      "cell": [
+        2,
+        0
+      ]
+    },
+    {
+      "id": "snack_bar",
+      "name": "Snack bar",
+      "category": "food",
+      "file": "Individual_PNGs/snack_bar.png",
+      "interaction": "food",
+      "suggested_action": "consume",
+      "cell": [
+        2,
+        1
+      ]
+    },
+    {
+      "id": "medicine_bottle",
+      "name": "Medicine bottle",
+      "category": "medical",
+      "file": "Individual_PNGs/medicine_bottle.png",
+      "interaction": "medical",
+      "suggested_action": "use",
+      "cell": [
+        2,
+        2
+      ]
+    },
+    {
+      "id": "first_aid_kit",
+      "name": "First-aid kit",
+      "category": "medical",
+      "file": "Individual_PNGs/first_aid_kit.png",
+      "interaction": "medical",
+      "suggested_action": "use",
+      "cell": [
+        2,
+        3
+      ]
+    },
+    {
+      "id": "battery_pack",
+      "name": "Battery pack",
+      "category": "tool",
+      "file": "Individual_PNGs/battery_pack.png",
+      "interaction": "tool",
+      "suggested_action": "use",
+      "cell": [
+        3,
+        0
+      ]
+    },
+    {
+      "id": "flashlight",
+      "name": "Flashlight",
+      "category": "tool",
+      "file": "Individual_PNGs/flashlight.png",
+      "interaction": "tool",
+      "suggested_action": "use",
+      "cell": [
+        3,
+        1
+      ]
+    },
+    {
+      "id": "handheld_radio",
+      "name": "Handheld radio",
+      "category": "equipment",
+      "file": "Individual_PNGs/handheld_radio.png",
+      "interaction": "equipment",
+      "suggested_action": "inspect",
+      "cell": [
+        3,
+        2
+      ]
+    },
+    {
+      "id": "fire_extinguisher",
+      "name": "Fire extinguisher",
+      "category": "safety",
+      "file": "Individual_PNGs/fire_extinguisher.png",
+      "interaction": "safety",
+      "suggested_action": "use",
+      "cell": [
+        3,
+        3
+      ]
+    }
+  ]
+}

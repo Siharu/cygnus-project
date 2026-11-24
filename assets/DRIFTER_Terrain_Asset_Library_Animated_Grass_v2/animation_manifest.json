@@ -1,0 +1,74 @@
+{
+  "project": "DRIFTER",
+  "asset_pack": "Terrain Library - Wind Animated Grass Add-on",
+  "animation": {
+    "frames_per_animation": 4,
+    "loop": true,
+    "suggested_frame_duration_ms": 180,
+    "suggested_fps": 5.56,
+    "anchor": "bottom-center (root/base)",
+    "note": "Frame cells are equal-sized. Keep the root/base fixed; animate only foliage silhouette."
+  },
+  "species": [
+    {
+      "id": "grass_tuft",
+      "name": "Low grass tuft",
+      "frames": [
+        "grass_tuft/grass_tuft_frame_01.png",
+        "grass_tuft/grass_tuft_frame_02.png",
+        "grass_tuft/grass_tuft_frame_03.png",
+        "grass_tuft/grass_tuft_frame_04.png"
+      ],
+      "atlas": "grass_tuft/grass_tuft_4frame_atlas.png",
+      "frame_size_px": [
+        384,
+        256
+      ]
+    },
+    {
+      "id": "tall_reeds",
+      "name": "Tall grass / reeds",
+      "frames": [
+        "tall_reeds/tall_reeds_frame_01.png",
+        "tall_reeds/tall_reeds_frame_02.png",
+        "tall_reeds/tall_reeds_frame_03.png",
+        "tall_reeds/tall_reeds_frame_04.png"
+      ],
+      "atlas": "tall_reeds/tall_reeds_4frame_atlas.png",
+      "frame_size_px": [
+        384,
+        256
+      ]
+    },
+    {
+      "id": "broadleaf_clump",
+      "name": "Broadleaf clump",
+      "frames": [
+        "broadleaf_clump/broadleaf_clump_frame_01.png",
+        "broadleaf_clump/broadleaf_clump_frame_02.png",
+        "broadleaf_clump/broadleaf_clump_frame_03.png",
+        "broadleaf_clump/broadleaf_clump_frame_04.png"
+      ],
+      "atlas": "broadleaf_clump/broadleaf_clump_4frame_atlas.png",
+      "frame_size_px": [
+        384,
+        256
+      ]
+    },
+    {
+      "id": "flowering_grass",
+      "name": "Flowering grass",
+      "frames": [
+        "flowering_grass/flowering_grass_frame_01.png",
+        "flowering_grass/flowering_grass_frame_02.png",
+        "flowering_grass/flowering_grass_frame_03.png",
+        "flowering_grass/flowering_grass_frame_04.png"
+      ],
+      "atlas": "flowering_grass/flowering_grass_4frame_atlas.png",
+      "frame_size_px": [
+        384,
+        256
+      ]
+    }
+  ]
+}

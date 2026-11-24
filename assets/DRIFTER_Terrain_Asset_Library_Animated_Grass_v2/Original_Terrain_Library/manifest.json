@@ -1,0 +1,211 @@
+{
+  "name": "DRIFTER Terrain Variations",
+  "style": "dark atmospheric pixel-art terrain for Relay Station 7",
+  "atlas": "DRIFTER_Terrain_Variants_4x4_300px.png",
+  "atlas_dimensions_px": [
+    1200,
+    1200
+  ],
+  "tile_dimensions_px": [
+    300,
+    300
+  ],
+  "grid": "4 columns x 4 rows; rows: grass, soil, asphalt, city pavement; 4 variants per material",
+  "individual_files": [
+    "grass_01_300px.png",
+    "grass_02_300px.png",
+    "grass_03_300px.png",
+    "grass_04_300px.png",
+    "soil_01_300px.png",
+    "soil_02_300px.png",
+    "soil_03_300px.png",
+    "soil_04_300px.png",
+    "asphalt_01_300px.png",
+    "asphalt_02_300px.png",
+    "asphalt_03_300px.png",
+    "asphalt_04_300px.png",
+    "pavement_01_300px.png",
+    "pavement_02_300px.png",
+    "pavement_03_300px.png",
+    "pavement_04_300px.png"
+  ],
+  "source_dimensions_px": [
+    1254,
+    1254
+  ],
+  "master_tiles": "300x300 native-resolution crops; no upscaling or resampling",
+  "edge_processing": "20px opposite-edge wrap blend applied; first and last border pixels match exactly for each row/column",
+  "edge_metrics": {
+    "grass_01_300px.png": {
+      "left_right_max_abs_diff": 0,
+      "top_bottom_max_abs_diff": 0,
+      "dimensions_px": [
+        300,
+        300
+      ]
+    },
+    "grass_02_300px.png": {
+      "left_right_max_abs_diff": 0,
+      "top_bottom_max_abs_diff": 0,
+      "dimensions_px": [
+        300,
+        300
+      ]
+    },
+    "grass_03_300px.png": {
+      "left_right_max_abs_diff": 0,
+      "top_bottom_max_abs_diff": 0,
+      "dimensions_px": [
+        300,
+        300
+      ]
+    },
+    "grass_04_300px.png": {
+      "left_right_max_abs_diff": 0,
+      "top_bottom_max_abs_diff": 0,
+      "dimensions_px": [
+        300,
+        300
+      ]
+    },
+    "soil_01_300px.png": {
+      "left_right_max_abs_diff": 0,
+      "top_bottom_max_abs_diff": 0,
+      "dimensions_px": [
+        300,
+        300
+      ]
+    },
+    "soil_02_300px.png": {
+      "left_right_max_abs_diff": 0,
+      "top_bottom_max_abs_diff": 0,
+      "dimensions_px": [
+        300,
+        300
+      ]
+    },
+    "soil_03_300px.png": {
+      "left_right_max_abs_diff": 0,
+      "top_bottom_max_abs_diff": 0,
+      "dimensions_px": [
+        300,
+        300
+      ]
+    },
+    "soil_04_300px.png": {
+      "left_right_max_abs_diff": 0,
+      "top_bottom_max_abs_diff": 0,
+      "dimensions_px": [
+        300,
+        300
+      ]
+    },
+    "asphalt_01_300px.png": {
+      "left_right_max_abs_diff": 0,
+      "top_bottom_max_abs_diff": 0,
+      "dimensions_px": [
+        300,
+        300
+      ]
+    },
+    "asphalt_02_300px.png": {
+      "left_right_max_abs_diff": 0,
+      "top_bottom_max_abs_diff": 0,
+      "dimensions_px": [
+        300,
+        300
+      ]
+    },
+    "asphalt_03_300px.png": {
+      "left_right_max_abs_diff": 0,
+      "top_bottom_max_abs_diff": 0,
+      "dimensions_px": [
+        300,
+        300
+      ]
+    },
+    "asphalt_04_300px.png": {
+      "left_right_max_abs_diff": 0,
+      "top_bottom_max_abs_diff": 0,
+      "dimensions_px": [
+        300,
+        300
+      ]
+    },
+    "pavement_01_300px.png": {
+      "left_right_max_abs_diff": 0,
+      "top_bottom_max_abs_diff": 0,
+      "dimensions_px": [
+        300,
+        300
+      ]
+    },
+    "pavement_02_300px.png": {
+      "left_right_max_abs_diff": 0,
+      "top_bottom_max_abs_diff": 0,
+      "dimensions_px": [
+        300,
+        300
+      ]
+    },
+    "pavement_03_300px.png": {
+      "left_right_max_abs_diff": 0,
+      "top_bottom_max_abs_diff": 0,
+      "dimensions_px": [
+        300,
+        300
+      ]
+    },
+    "pavement_04_300px.png": {
+      "left_right_max_abs_diff": 0,
+      "top_bottom_max_abs_diff": 0,
+      "dimensions_px": [
+        300,
+        300
+      ]
+    }
+  },
+  "usage_recommendation": "Use one of four variants per cell, avoid selecting the same variant adjacent horizontally or vertically, and scatter separate prop/decal details sparsely. Do not use a single variant for every cell.",
+  "asset_dump_version": "1.0",
+  "archive_contents": [
+    "grass_01_300px.png",
+    "grass_02_300px.png",
+    "grass_03_300px.png",
+    "grass_04_300px.png",
+    "soil_01_300px.png",
+    "soil_02_300px.png",
+    "soil_03_300px.png",
+    "soil_04_300px.png",
+    "asphalt_01_300px.png",
+    "asphalt_02_300px.png",
+    "asphalt_03_300px.png",
+    "asphalt_04_300px.png",
+    "pavement_01_300px.png",
+    "pavement_02_300px.png",
+    "pavement_03_300px.png",
+    "pavement_04_300px.png",
+    "DRIFTER_Terrain_Variants_4x4_300px.png",
+    "manifest.json",
+    "README.txt"
+  ],
+  "asset_hashes_sha256": {
+    "grass_01_300px.png": "95b467445bfac289782242edac841cb9e81165ce0905efcc177bf51d97aa3334",
+    "grass_02_300px.png": "ebfb023c17c2c6c42d3e509c14f81deb2a8d41540e17c97856189ef659863f1f",
+    "grass_03_300px.png": "ebeb79794d70b4c2b21152785dc30268a9becbbb645ca24a0e371ca880da8d2e",
+    "grass_04_300px.png": "ba1a477f7f9ce6e6b8c458efa44515466e9a2cc87f191f7bd140400d83f13170",
+    "soil_01_300px.png": "957563635f024396cdc2293ca4559c6ad321950548ac1ac72d4e057e73f5eeb7",
+    "soil_02_300px.png": "afe0b58ff2dd9b5200326fca94bf00b26c120ebd93a6afbfd07566600846a81e",
+    "soil_03_300px.png": "8e033ef3a702698a7dc031ed00f412a232b162a646627dafc2a701eaad3f0e69",
+    "soil_04_300px.png": "bc6e5805d0ad3e1a335a14c28147588cfc9180964dd2adfc28c786a69601e64c",
+    "asphalt_01_300px.png": "aad0a4f98faf8dfdd68457999641a0a032b83eb0f48d3e245309f464fc3cae07",
+    "asphalt_02_300px.png": "3d5707987a0aa382e7e5784830f3b194dc8ba883d81f82beee7830eb51fa2332",
+    "asphalt_03_300px.png": "2afbc1a8d72f75aeca2239cf2f283ddd071dec5491a9ceec771f0f837b676b98",
+    "asphalt_04_300px.png": "64256ffca6ef7aba1a576f912544ce4213eefcca16082623a18668bcf3c579ed",
+    "pavement_01_300px.png": "7f98b4c58e2c9e297c3a50913bc4e5f7739d8369c149d15a4884f6b6bc319e97",
+    "pavement_02_300px.png": "f90ec2dd46e698995abfecda8833735dd50111898b37a719c5ddd19a1f275a1e",
+    "pavement_03_300px.png": "c240c0f7ec2554802d776c7237aa5627c6b1427a07483b2d55619dcab1d71333",
+    "pavement_04_300px.png": "50a649de3d5da01b2088df30372287675b72b92e70ff5a0e3ef7055d7ed3bf68",
+    "DRIFTER_Terrain_Variants_4x4_300px.png": "03d719450928d0dc1a5abca33b8e2b202a33b548a89c44125fc731308c8f8dcf"
+  },
+  "purpose": "Reusable DRIFTER terrain asset library. The accompanying HTML is a self-contained visual testbench and extraction tool."
+}
