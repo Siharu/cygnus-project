@@ -2,6 +2,7 @@ import { A } from './assets.js';
 import { META } from './meta.js';
 import { createInterior } from './interior.js';
 import { LAYOUT } from './interior_layout.js';
+import { createCheckpoint } from './checkpoint.js';
 // THREE comes from the <script> tag in index.html (global).
 /* ===== DRIFTER — WNCORE STATION 01 (HD-2D field build) =====
    Sections: 0 config/layout · 1 core · 2 assets · 3 ground bake · 4 world · 5 player · 6 fx · 7 ui · 8 loop
@@ -29,7 +30,6 @@ const BLD={ // k=sprite, x/z=footprint centre, rx/rz=footprint half size, h=worl
 const ZONES=[
  {m:'s',r:[-49,11,49,22.2],soft:1.8,n:1.6},
  {m:'a',r:[-49,13.4,49,19.8],soft:.8,n:.5},
- {m:'a',r:[-8.2,4,-2.8,13.6],soft:.6,n:.4},
  {m:'s',r:[-14,-22,9,-8],soft:2.4,n:2},
  {m:'s',r:[-41,-15,-24,2],soft:2.4,n:2},
  {m:'s',c:[-27,6,5],soft:2,n:2},
@@ -147,7 +147,10 @@ function bakeShadows(G){const g=G.g,px=G.px;
   g.fillStyle=gr;g.fillRect(-1,-1,2,2);g.restore()}
  if(DEBUG){g.lineWidth=3;g.strokeStyle='#f0f';for(const s of sol)g.strokeRect(px(s.x-s.rx),px(s.z-s.rz),s.rx*2*GPX,s.rz*2*GPX);g.strokeStyle='#0ff';for(const c of circ){g.beginPath();g.arc(px(c.x),px(c.z),c.r*GPX,0,7);g.stroke()}}}
 // ---------- 4b. build the world ----------
-for(const id in BLD)building(id);
+for(const id in BLD){if(id!='booth')building(id)}
+// checkpoint (booth + road apron + up/down barrier) is built from assets/HUB/03_Checkpoint_Gate; falls back to the old booth sprite if it can't load
+let CHK=null;try{CHK=await createCheckpoint({T,IM,META,spr,viewPt,sol,circ,FP,LT,toast,x:BLD.booth.x,z:BLD.booth.z})}catch(e){console.warn('checkpoint fallback',e)}
+if(!CHK)building('booth');
 const bs=BLD.station;
 const RE={x:-12,z:-12}; // soft spawn clear
 function free(x,z,r,pad){
@@ -217,9 +220,10 @@ const ground=new T.Mesh(gGeo,new T.MeshStandardMaterial({map:gtex,roughness:1,de
 const glowTex=(()=>{const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d'),gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.25,'rgba(255,255,255,.45)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(0,0,64,64);return new T.CanvasTexture(c)})();
 const GL=[];
 function glow(pos,size,color,I,ph){const m=new T.SpriteMaterial({map:glowTex,color,blending:T.AdditiveBlending,transparent:true,depthWrite:false,opacity:I,fog:false});const s=new T.Sprite(m);s.position.copy(pos);s.scale.set(size,size,1);s.frustumCulled=false;sc.add(s);GL.push({s,I,ph:ph||0});return s}
-for(const id in BLD){const b=BLD[id],m=META['bld_'+b.k],s=b.s,u=s.userData,S=new T.Vector3(b.x,0,b.z),kx=u.w/m.w;
+for(const id in BLD){if(!BLD[id].s)continue;const b=BLD[id],m=META['bld_'+b.k],s=b.s,u=s.userData,S=new T.Vector3(b.x,0,b.z),kx=u.w/m.w;
  for(const q of m.glows||[]){if(q[6]<28)continue;const du=(q[0]-u.ax)*u.w,dv=(1-q[1]-u.c)*u.h;const sz=Math.max(1.3,q[2]*kx*5.2);glow(viewPt(S,du,dv,.6),sz,new T.Color(q[3],q[4]*.8,q[5]*.5),.5,Math.random()*9)}
  if(id=='station'){const du=(m.top[0]-u.ax)*u.w,dv=(1-m.top[1]-u.c)*u.h+.15;bs.beacon=glow(viewPt(S,du,dv,.8),2.6,0xff2a1a,1);bs.bpos=viewPt(S,du,dv,0)}}
+if(CHK)CHK.lights(glow);
 const beaconL=PL(bs.x,10,bs.z,0xff2a20,1.5,24);LT.push({x:bs.x,z:bs.z+1,c:0xff2a20,I:.8,dyn:1,R:20,cur:1});
 for(const l of LT){const c=new T.Color(l.c);l.cc=[c.r,c.g,c.b];l.R=l.R||13;PL(l.x,l.y||2.4,l.z,l.c,(l.I||1)*(l.dyn?0:1),l.R)}
 {const px=TH.x+1.6,pz=TH.z+.4;const post=new T.Mesh(new T.BoxGeometry(.16,2.2,.16),new T.MeshLambertMaterial({color:0x4a3a2c}));post.position.set(px,1.1,pz);sc.add(post);
@@ -250,7 +254,7 @@ const BTXT=['...this is WNCORE.\nThe signal reaches those who are still listenin
 const o=(id,dx,dz,n,note,t)=>OB.push({x:BLD[id].x+dx,z:BLD[id].z+dz,n,note,t});
 o('station',1.63,-1.47,'Enter the relay station','','d');
 o('station',-3.6,0,'Relay mast','The beacon pulses red, slow and even. Someone keeps the power alive.');
-o('booth',3.8,2.5,'Checkpoint booth','The barrier is raised. The log inside ends with today\'s date and no name.');
+if(CHK)OB.push(...CHK.objects);else o('booth',3.8,2.5,'Checkpoint booth','The barrier is raised. The log inside ends with today\'s date and no name.');
 o('shed',3,4.2,'Utility shed','A generator hums behind the door. The handle is warm.');
 o('depot',-1,5.2,'Maintenance depot','Two shutters. One is open a hand\'s width, and cold air breathes out.');
 o('wtch',0,3.4,'Watchtower','The ladder is wet. Whoever watched from here faced the tree line, not the road.');
@@ -275,7 +279,7 @@ function vitTick(dt){VIT.food=Math.max(0,VIT.food-dt/420);VIT.water=Math.max(0,V
  for(const k of['food','water']){if(VIT[k]<.2&&!VIT.warn[k]){VIT.warn[k]=1;toast(k=='food'?'Your stomach is empty. There was food in the station.':'Your mouth is dry. There were drinks in the station.')}}}
 const vbar=v=>'▮'.repeat(Math.ceil(v*5))+'▯'.repeat(5-Math.ceil(v*5));
 function act(){if(st!=1||busy)return;if(open){closeP();return}if(!near)return;if(near.t=='r'){bc();return}
- if(near.t=='f'){travel(near.to);return}if(near.t=='d'){go(0);return}if(near.t=='g'){go(near.to);return}if(near.t=='n'){toast(near.note);return}if(near.t=='c'){eat(near);return}if(!found.includes(near))found.push(near);toast(near.note)}
+ if(near.t=='x'){near.fn();return}if(near.t=='f'){travel(near.to);return}if(near.t=='d'){go(0);return}if(near.t=='g'){go(near.to);return}if(near.t=='n'){toast(near.note);return}if(near.t=='c'){eat(near);return}if(!found.includes(near))found.push(near);toast(near.note)}
 addEventListener('keydown',e=>{K[e.code]=1;if(e.code=='KeyE')act();if(e.code=='KeyM'){muted=!muted;if(aud.mg)aud.mg.gain.value=muted?0:.9}
  if(e.code=='Space'){e.preventDefault();if(st==1&&!open&&!e.repeat){P.swingStart=clock;P.swingUntil=clock+.62;P.resting=false}}
  if(e.code=='KeyR'&&st==1&&!open&&!e.repeat){P.resting=!P.resting;P.vx=0;P.vz=0}
@@ -356,7 +360,7 @@ function upd(dt){clock+=dt;let ix=0,iz=0;
  const sp=(K.ShiftLeft||K.ShiftRight)?7.2:4.6,k=Math.min(1,dt*12);P.vx+=(ix*sp-P.vx)*k;P.vz+=(iz*sp-P.vz)*k;P.x+=P.vx*dt;P.z+=P.vz*dt;col(P,.4);
  if(IN>=0){P.x=Math.max(IX-6.9,Math.min(IX+6.9,P.x));P.z=Math.max(IZ-6.9,Math.min(IZ+6.9,P.z))}else if(MAP==1){const B=FST.bounds;P.x=Math.max(B.x0,Math.min(B.x1,P.x));P.z=Math.max(B.z0,Math.min(B.z1,P.z))}else{P.x=Math.max(-BOUND,Math.min(BOUND,P.x));P.z=Math.max(-BOUND,Math.min(BOUND,P.z))}
  vitTick(dt);near=null;let bd=3;for(const q of (IN>=0?IOB:MAP==1?FOB:OB)){const d=Math.hypot(q.x-P.x,q.z-P.z);if(d<bd){bd=d;near=q}}
- $('pr').textContent=(near&&!open&&!busy)?'[E] '+(near.t=='r'?'Tune the radio':(near.t=='d'||near.t=='g'||near.t=='f')?near.n:near.t=='c'?(near.p.water&&!near.p.food?'Drink ':'Eat ')+near.n:'Examine '+near.n.toLowerCase()):'';
+ $('pr').textContent=(near&&!open&&!busy)?'[E] '+(near.t=='r'?'Tune the radio':(near.t=='d'||near.t=='g'||near.t=='f'||near.t=='x')?near.n:near.t=='c'?(near.p.water&&!near.p.food?'Drink ':'Eat ')+near.n:'Examine '+near.n.toLowerCase()):'';
  if(open=='b'){bt+=dt*26;const m=window.__bmsg;$('tx').textContent=m.slice(0,bt|0);const c=$('wv'),g=c.getContext('2d');g.clearRect(0,0,300,44);g.strokeStyle='#6fae5a';g.beginPath();for(let x=0;x<300;x+=3){const a=Math.abs(Math.sin(x*.05+clock*6))*Math.min(1,bt/20)*18*Math.random();g.moveTo(x,22-a);g.lineTo(x,22+a)}g.stroke()}
  $('dc').innerHTML='DISCOVERIES '+found.length+'/'+(OB.filter(q=>!q.t).length+FOB.filter(q=>!q.t).length)+'<br><span style="font-size:18px;color:'+(VIT.food<.2?'#d9695a':'#b7aa8d')+'">FOOD '+vbar(VIT.food)+'</span> <span style="font-size:18px;color:'+(VIT.water<.2?'#d9695a':'#b7aa8d')+'">WATER '+vbar(VIT.water)+'</span><br><span style="font-size:18px;color:#b7aa8d">SHIFT RUN · SPACE SWING · R REST · M MUTE</span>';
  $('st').innerHTML=MAP==1?'NO SIGNAL<br>— — —':'WNCORE-01<br>88.7 FM'}
@@ -383,10 +387,10 @@ function anim(dt,t){
  const asp=innerWidth/innerHeight,hw=VH*asp,hh=VH;
  const pSx=(P.x-cp.x-(P.z-cp.z))*.7071,pSy=-(P.x-cp.x+P.z-cp.z)*.4082+1.1,pD=P.x+P.z;
  for(const s of SPR){const u=s.userData,dx=u.x-cp.x,dz=u.z-cp.z,sx=(dx-dz)*.7071,sy=-(dx+dz)*.4082;
-  const v=Math.abs(sx)<hw+u.w*.6&&sy>-hh-4&&sy-u.c*u.h<hh+1;s.visible=v;if(!v)continue;
+  const v=!u.hide&&Math.abs(sx)<hw+u.w*.6&&sy>-hh-4&&sy-u.c*u.h<hh+1;s.visible=v;if(!v)continue;
   const fu=u.mat.userData.fu;if(fu){const tg=(u.x+u.z>pD+.4&&Math.abs(sx+(.5-u.ax)*u.w-pSx)<u.w*.36&&pSy>sy+.1&&pSy<sy+u.h*.95)?.26:1;u.f+=(tg-u.f)*Math.min(1,dt*9);fu.value=s.userData.f;}
   let r=AMB[0],g=AMB[1],b=AMB[2];
-  for(const L of LT){const d=Math.hypot(u.x-L.x,u.z-L.z),R=L.R;if(d<R){const f=1-d/R,k=f*f*L.I*(L.dyn?L.cur:1)*.6;r+=L.cc[0]*k;g+=L.cc[1]*k;b+=L.cc[2]*k}}
+  for(const L of (u.flat?[]:LT)){const d=Math.hypot(u.x-L.x,u.z-L.z),R=L.R;if(d<R){const f=1-d/R,k=f*f*L.I*(L.dyn?L.cur:1)*.6;r+=L.cc[0]*k;g+=L.cc[1]*k;b+=L.cc[2]*k}}
   const dep=sm(-30,24,-(dx+dz)*.5)*0+0;u.mat.color.setRGB(Math.min(1.5,r),Math.min(1.5,g),Math.min(1.5,b))}
  for(const q of SHAFT)q.s.material.opacity=q.b*(.65+.35*Math.sin(t*.5+q.ph));
  // fireflies, mist
