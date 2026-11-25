@@ -1,0 +1,71 @@
+{
+  "source_canvas": [
+    1536,
+    1024
+  ],
+  "background": "transparent RGBA",
+  "atlases": {
+    "DRIFTER_Watchtower_Shell_Atlas_4x1.png": {
+      "canvas": [
+        1536,
+        1024
+      ],
+      "grid": [
+        4,
+        1
+      ],
+      "cell": [
+        384,
+        1024
+      ],
+      "order": [
+        "shell_floor_panel",
+        "shell_left_wall_slit",
+        "shell_right_wall_window",
+        "shell_floor_ladder_hatch"
+      ]
+    },
+    "DRIFTER_Watchtower_Props_Atlas_3x2.png": {
+      "canvas": [
+        1536,
+        1024
+      ],
+      "grid": [
+        3,
+        2
+      ],
+      "cell": [
+        512,
+        512
+      ],
+      "order": [
+        "prop_watchers_stool",
+        "prop_tripod_binoculars",
+        "prop_pinned_map_board",
+        "prop_searchlight",
+        "prop_shelf_thermos_logbook_cup",
+        "prop_alarm_bell_pull_rope"
+      ]
+    },
+    "DRIFTER_Watchtower_Combined_Atlas.png": {
+      "canvas": [
+        1536,
+        2048
+      ],
+      "description": "Shell atlas on top, props atlas below"
+    }
+  },
+  "individual_assets": [
+    "shell_floor_panel",
+    "shell_left_wall_slit",
+    "shell_right_wall_window",
+    "shell_floor_ladder_hatch",
+    "prop_watchers_stool",
+    "prop_tripod_binoculars",
+    "prop_pinned_map_board",
+    "prop_searchlight",
+    "prop_shelf_thermos_logbook_cup",
+    "prop_alarm_bell_pull_rope"
+  ],
+  "notes": "Individual files are tightly cropped transparent PNG sprites with a 12 px transparent rim. Shell atlas uses one uniform 0.78 scale across its four cells; prop atlas preserves the generated source scale."
+}

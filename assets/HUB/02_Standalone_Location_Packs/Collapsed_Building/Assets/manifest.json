@@ -1,0 +1,261 @@
+{
+  "project": "DRIFTER \u2014 Collapsed Building",
+  "source_canvas": [
+    1536,
+    1024
+  ],
+  "atlases": {
+    "shell": {
+      "file": "DRIFTER_Collapsed_Building_Shell_Atlas_4x2.png",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "grid": [
+        4,
+        2
+      ],
+      "cell": [
+        384,
+        512
+      ]
+    },
+    "props": {
+      "file": "DRIFTER_Collapsed_Building_Props_Atlas_3x2.png",
+      "canvas": [
+        1536,
+        1024
+      ],
+      "grid": [
+        3,
+        2
+      ],
+      "cell": [
+        512,
+        512
+      ]
+    },
+    "combined": {
+      "file": "DRIFTER_Collapsed_Building_Combined_Atlas.png",
+      "canvas": [
+        1536,
+        2048
+      ],
+      "layout": "shell atlas above props atlas"
+    }
+  },
+  "assets": [
+    {
+      "file": "shell_floor_cracked_moss.png",
+      "group": "shell",
+      "description": "Cracked concrete floor slab with soil and moss",
+      "size_px": [
+        372,
+        242
+      ],
+      "pivot": "bottom-center",
+      "source_crop": [
+        48,
+        129,
+        405,
+        353
+      ]
+    },
+    {
+      "file": "shell_floor_collapsed_hole_rebar.png",
+      "group": "shell",
+      "description": "Partly collapsed floor slab with a jagged opening and exposed rebar",
+      "size_px": [
+        374,
+        250
+      ],
+      "pivot": "bottom-center",
+      "source_crop": [
+        418,
+        119,
+        778,
+        353
+      ]
+    },
+    {
+      "file": "shell_left_wall_broken_top.png",
+      "group": "shell",
+      "description": "Broken-top concrete and brick wall with exposed rebar, moss and ivy",
+      "size_px": [
+        327,
+        368
+      ],
+      "pivot": "bottom-center",
+      "source_crop": [
+        815,
+        15,
+        1128,
+        358
+      ]
+    },
+    {
+      "file": "shell_right_wall_wide_breach.png",
+      "group": "shell",
+      "description": "Broken wall with a wide breach to the outside",
+      "size_px": [
+        328,
+        379
+      ],
+      "pivot": "bottom-center",
+      "source_crop": [
+        1188,
+        8,
+        1502,
+        370
+      ]
+    },
+    {
+      "file": "shell_left_wall_empty_window_vines.png",
+      "group": "shell",
+      "description": "Wall with an empty window frame and climbing vines",
+      "size_px": [
+        298,
+        350
+      ],
+      "pivot": "bottom-center",
+      "source_crop": [
+        84,
+        347,
+        367,
+        682
+      ]
+    },
+    {
+      "file": "shell_left_wall_doorway_cracked_lintel.png",
+      "group": "shell",
+      "description": "Doorway wall with missing door and cracked lintel",
+      "size_px": [
+        308,
+        359
+      ],
+      "pivot": "bottom-center",
+      "source_crop": [
+        456,
+        345,
+        750,
+        687
+      ]
+    },
+    {
+      "file": "shell_corner_column_fractured_vines.png",
+      "group": "shell",
+      "description": "Fractured corner column wrapped in vines",
+      "size_px": [
+        186,
+        355
+      ],
+      "pivot": "bottom-center",
+      "source_crop": [
+        862,
+        347,
+        1032,
+        684
+      ]
+    },
+    {
+      "file": "shell_fallen_roof_beam.png",
+      "group": "shell",
+      "description": "Fallen roof beam with exposed rebar resting on rubble",
+      "size_px": [
+        361,
+        278
+      ],
+      "pivot": "bottom-center",
+      "source_crop": [
+        1165,
+        408,
+        1510,
+        671
+      ]
+    },
+    {
+      "file": "prop_rubble_pile_tilted_slab.png",
+      "group": "props",
+      "description": "Rubble pile of broken concrete and brick with a tilted slab",
+      "size_px": [
+        470,
+        338
+      ],
+      "pivot": "bottom-center",
+      "source_cell": [
+        0,
+        0
+      ]
+    },
+    {
+      "file": "prop_rusted_bed_frame_vine.png",
+      "group": "props",
+      "description": "Rusted bed frame with exposed springs and climbing vine",
+      "size_px": [
+        469,
+        379
+      ],
+      "pivot": "bottom-center",
+      "source_cell": [
+        1,
+        0
+      ]
+    },
+    {
+      "file": "prop_overturned_desk_spilled_drawers_papers.png",
+      "group": "props",
+      "description": "Overturned desk with spilled drawers and rotted papers",
+      "size_px": [
+        437,
+        354
+      ],
+      "pivot": "bottom-center",
+      "source_cell": [
+        2,
+        0
+      ]
+    },
+    {
+      "file": "prop_dead_tree_stump_vines_left.png",
+      "group": "props",
+      "description": "Dead tree stump growing through the floor with thick vines extending left",
+      "size_px": [
+        481,
+        412
+      ],
+      "pivot": "bottom-center",
+      "source_cell": [
+        0,
+        1
+      ]
+    },
+    {
+      "file": "prop_cracked_sink_pipe_wall_moss.png",
+      "group": "props",
+      "description": "Cracked sink and pipe with attached wall section and moss beneath the tap",
+      "size_px": [
+        346,
+        455
+      ],
+      "pivot": "bottom-center",
+      "source_cell": [
+        1,
+        1
+      ]
+    },
+    {
+      "file": "prop_hanging_vine_curtain_flowers_left.png",
+      "group": "props",
+      "description": "Hanging vine curtain with thick left-sweeping stems and pale flowers",
+      "size_px": [
+        359,
+        477
+      ],
+      "pivot": "top-center",
+      "source_cell": [
+        2,
+        1
+      ]
+    }
+  ]
+}

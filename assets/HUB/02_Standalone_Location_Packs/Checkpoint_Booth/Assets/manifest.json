@@ -1,0 +1,53 @@
+{
+  "project": "DRIFTER",
+  "set": "Checkpoint Booth",
+  "source": "a_clean_dark_background_concept_art_isometric_g.png",
+  "format": "RGBA PNG with transparent background",
+  "atlases": {
+    "DRIFTER_Checkpoint_Shell_Atlas_4x1.png": {
+      "canvas": "1536x1024",
+      "grid": "4x1",
+      "cell": "384x1024",
+      "order": [
+        "shell_floor_panel",
+        "shell_left_wall_service_window",
+        "shell_right_wall_bulletin_strip",
+        "shell_right_wall_ajar_door"
+      ]
+    },
+    "DRIFTER_Checkpoint_Props_Atlas_3x2.png": {
+      "canvas": "1536x1024",
+      "grid": "3x2",
+      "cell": "512x512",
+      "order": [
+        "prop_guard_desk_ledger_stamp_mug",
+        "prop_barrier_control_box",
+        "prop_swivel_stool",
+        "prop_wall_key_cabinet",
+        "prop_electric_heater",
+        "prop_shelf_lamp_field_telephone"
+      ]
+    },
+    "DRIFTER_Checkpoint_Combined_Atlas.png": {
+      "canvas": "1536x2048",
+      "layout": "shell atlas stacked above props atlas"
+    }
+  },
+  "individual_assets": [
+    "shell_floor_panel.png",
+    "shell_left_wall_service_window.png",
+    "shell_right_wall_bulletin_strip.png",
+    "shell_right_wall_ajar_door.png",
+    "prop_guard_desk_ledger_stamp_mug.png",
+    "prop_barrier_control_box.png",
+    "prop_swivel_stool.png",
+    "prop_wall_key_cabinet.png",
+    "prop_electric_heater.png",
+    "prop_shelf_lamp_field_telephone.png"
+  ],
+  "notes": [
+    "Individual PNGs retain native source pixel dimensions plus 20px transparent padding.",
+    "Shell atlas applies a uniform 0.82 scale to all four shell components to fit 384px-wide cells.",
+    "Props atlas preserves native scale where cell margins permit; items are laid out row-major."
+  ]
+}

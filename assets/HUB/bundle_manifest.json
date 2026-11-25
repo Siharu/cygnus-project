@@ -1,0 +1,352 @@
+{
+  "bundle_name": "DRIFTER_Complete_Asset_Bundle",
+  "file_count_excluding_manifest": 69,
+  "total_bytes_excluding_manifest": 74492391,
+  "contents": [
+    {
+      "path": "01_HUB_Archives/Drifter_HUB_assets_Original.zip",
+      "size_bytes": 6300143,
+      "sha256": "2ab30ba4f04043c75e5b561aa6721416cde61c959f42b4ce68dfe498d6f52373"
+    },
+    {
+      "path": "01_HUB_Archives/Drifter_HUB_assets_Updated.zip",
+      "size_bytes": 19392216,
+      "sha256": "cc92a4b3e6a0664da631128b3d0f2e26958e7ab0f0a6bf31ed5e7f27347bcad9"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Checkpoint_Booth/Assets/DRIFTER_Checkpoint_Combined_Atlas.png",
+      "size_bytes": 1011915,
+      "sha256": "50310f3eb6e655288ad1be2e3c167e4625af4850ff1dfad3dbbae0a88a832ac3"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Checkpoint_Booth/Assets/DRIFTER_Checkpoint_Props_Atlas_3x2.png",
+      "size_bytes": 548244,
+      "sha256": "0081c075fc7d517e1a56d774a86cc1287fe43352d7e2220ef0f443f6b8a9b25c"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Checkpoint_Booth/Assets/DRIFTER_Checkpoint_Shell_Atlas_4x1.png",
+      "size_bytes": 464149,
+      "sha256": "c916533c6d730a04afb84812840a02e37dd5d84e197a5acc523f3063c5e7abff"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Checkpoint_Booth/Assets/README.txt",
+      "size_bytes": 442,
+      "sha256": "17d49c754a83ed2ffb129a2e67ab87b3dd3758ce155ad1f53bdcf5ff296f169f"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Checkpoint_Booth/Assets/manifest.json",
+      "size_bytes": 1718,
+      "sha256": "e4bdaad04239da401ec3b9f0861231a28a60723d72e677fef85b81d317aa9992"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Checkpoint_Booth/Assets/prop_barrier_control_box.png",
+      "size_bytes": 72517,
+      "sha256": "e02fc3435d6fecc74fca6061afcfdb3708288026c990a5b49e9b7e2edf58e234"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Checkpoint_Booth/Assets/prop_electric_heater.png",
+      "size_bytes": 61457,
+      "sha256": "f3fb6bdca0963a8e16ebe316bf0f297788ec3cb6fd2fc750e3f144ff1e09427b"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Checkpoint_Booth/Assets/prop_guard_desk_ledger_stamp_mug.png",
+      "size_bytes": 132009,
+      "sha256": "5e7d65f6849e636872b270116649e64fee837ddcd0aed3e889c1ed636b015f21"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Checkpoint_Booth/Assets/prop_shelf_lamp_field_telephone.png",
+      "size_bytes": 115729,
+      "sha256": "832d08476f0fbb0d4ed1e955ccb7252472404f47ee4031fdc6465fb794445b70"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Checkpoint_Booth/Assets/prop_swivel_stool.png",
+      "size_bytes": 56843,
+      "sha256": "d3051f419d4aa803f127a8f17a2129584c9a1cbe733ea0b21db5a937a79a511e"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Checkpoint_Booth/Assets/prop_wall_key_cabinet.png",
+      "size_bytes": 78467,
+      "sha256": "ec582e15d05725e0b6a927aea17c5cc2f49ee9047cfc3f341f4a3d4d46406fdd"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Checkpoint_Booth/Assets/shell_floor_panel.png",
+      "size_bytes": 119082,
+      "sha256": "3f227902178ddcb943678ec8e4899cefb8d0cb31eb241e93aac47081fe338e5c"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Checkpoint_Booth/Assets/shell_left_wall_service_window.png",
+      "size_bytes": 174208,
+      "sha256": "23109e1a141022f097dff29f8e58b93ee066d8e726351e299772e709f81a94c2"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Checkpoint_Booth/Assets/shell_right_wall_ajar_door.png",
+      "size_bytes": 167423,
+      "sha256": "1dd191bc9dc86af7e91a9fd66d1169b9509e42fcc8f7d67247134685da9a9136"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Checkpoint_Booth/Assets/shell_right_wall_bulletin_strip.png",
+      "size_bytes": 176557,
+      "sha256": "1ab178b5c43d16feedd028e700581ceec42b336792f25d58868b50c36778fdca"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Checkpoint_Booth/DRIFTER_Checkpoint_Booth_Asset_Pack.zip",
+      "size_bytes": 3157822,
+      "sha256": "ac7328ab9a8d594062780aa4193f015329dcfe2bd197bacabc0e21fbf2333a65"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/DRIFTER_Collapsed_Building_Combined_Atlas.png",
+      "size_bytes": 2327122,
+      "sha256": "c26e571ca5b5d65e2b21e29ea9e183716fe13a000b952b0db4552f08b6433582"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/DRIFTER_Collapsed_Building_Props_Atlas_3x2.png",
+      "size_bytes": 1257005,
+      "sha256": "fa9eb2890d44dde9f4fdde00f3fb076d7959600e415d414890c4d3f54239b845"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/DRIFTER_Collapsed_Building_Props_Atlas_3x2_preview.jpg",
+      "size_bytes": 369378,
+      "sha256": "4dc80b630e99f80f138ea36c48b4872fb8c02d48d6fc234b819bd99b28613dcd"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/DRIFTER_Collapsed_Building_Shell_Atlas_4x2.png",
+      "size_bytes": 1070104,
+      "sha256": "7f65ac007f679cb155e5ee05ab968e45166b81336a96d807be517df146ed2f06"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/DRIFTER_Collapsed_Building_Shell_Atlas_4x2_preview.jpg",
+      "size_bytes": 254733,
+      "sha256": "8167dcc0271f54b161c9855c5e92be3a48843e4238faa7c99e34910371004604"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/README.txt",
+      "size_bytes": 614,
+      "sha256": "db00fbf6d0b830801ba5c799d2c822f33ed75cde1f44bc756d395c7d2ab1ff58"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/manifest.json",
+      "size_bytes": 5362,
+      "sha256": "fb0e0d0dd274925f5918e087233886f6d5f0ad42f6a3e3065f339f2d075a13f4"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/prop_cracked_sink_pipe_wall_moss.png",
+      "size_bytes": 224609,
+      "sha256": "6275728b4d7c2d8be01e1cb5eb2b9b0259c9daecc315001acaf6ee0d936e5e94"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/prop_dead_tree_stump_vines_left.png",
+      "size_bytes": 226762,
+      "sha256": "33f535a644ab5f16c09f3b3338db297a2a9739bd3f6ea63edb8ed69ad809912c"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/prop_hanging_vine_curtain_flowers_left.png",
+      "size_bytes": 182593,
+      "sha256": "75e8107eebba3698410a861cf266dda91d9b37c27207c89332e876cc459240bb"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/prop_overturned_desk_spilled_drawers_papers.png",
+      "size_bytes": 217852,
+      "sha256": "a51039d15063fc1676589d516b1b2629f62119d178f25e4fb52c3bc6979bd013"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/prop_rubble_pile_tilted_slab.png",
+      "size_bytes": 210901,
+      "sha256": "a599ee325b5474712bf832f85a8af1887610a522fc77a5ff557b33d6105c3aa1"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/prop_rusted_bed_frame_vine.png",
+      "size_bytes": 180806,
+      "sha256": "89b29d5c446e51b4b5d3c1978c6aaad7456f563c01414d83d5af08e4b66add81"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/shell_corner_column_fractured_vines.png",
+      "size_bytes": 77658,
+      "sha256": "fc7b7e10826cd0aebc2c70515441cd780d1fc3330d7165cf54aa91d4c0649961"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/shell_fallen_roof_beam.png",
+      "size_bytes": 112751,
+      "sha256": "34244e646a5ebd14bf8ddbaf56ce3df3b6c4d3beab6e85192e14887156284326"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/shell_floor_collapsed_hole_rebar.png",
+      "size_bytes": 118103,
+      "sha256": "6367da6d2c0a7f2495bd197193be5e2261dddd4c4bad2c348b4494017dba4819"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/shell_floor_cracked_moss.png",
+      "size_bytes": 114608,
+      "sha256": "79ae00f621338214a1130e5a505a5bf71961c0670e7b89eeeddd5e161e4827ab"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/shell_left_wall_broken_top.png",
+      "size_bytes": 160922,
+      "sha256": "23df3ed7f595b6bcf08704586ed536f7e81497904023cd024603def3bce333ce"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/shell_left_wall_doorway_cracked_lintel.png",
+      "size_bytes": 147246,
+      "sha256": "8b5edd876289799c3bb85405cf753fd00e581498490675a615059e29d2d3d1d4"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/shell_left_wall_empty_window_vines.png",
+      "size_bytes": 151238,
+      "sha256": "d018f3df0d81790cad78902c50342547e24949d4b567a512d8ddb81f172740c1"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/Assets/shell_right_wall_wide_breach.png",
+      "size_bytes": 181916,
+      "sha256": "db40e2fee47826af5c2d18a727a1364126d4134449a04c5c13596bc8ea73501f"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Collapsed_Building/DRIFTER_Collapsed_Building_Asset_Pack.zip",
+      "size_bytes": 6949598,
+      "sha256": "ce26ed36d8b22211fd66ec173325e251b110cbcca728cd408f5c6e939fcca82e"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Watchtower/Assets/DRIFTER_Watchtower_Combined_Atlas.png",
+      "size_bytes": 1017106,
+      "sha256": "95ad192c4b3f88125c07492a608b2c4c6ad8c29e1e213b29b3516973b094a5b5"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Watchtower/Assets/DRIFTER_Watchtower_Props_Atlas_3x2.png",
+      "size_bytes": 578906,
+      "sha256": "9dfd3442431225fde3c5905600ef3e05e7127975bafb02177b86832cb10974ca"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Watchtower/Assets/DRIFTER_Watchtower_Shell_Atlas_4x1.png",
+      "size_bytes": 438682,
+      "sha256": "455084d90cea7f2451e15d34c0238b4c4350a7f23f6ce553fddbc726649d7e9f"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Watchtower/Assets/README.txt",
+      "size_bytes": 736,
+      "sha256": "5af150a5f7dba3aa78f3eabbfa734e0c9057646f06cad22ad3a92e1572778016"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Watchtower/Assets/manifest.json",
+      "size_bytes": 1610,
+      "sha256": "1b1a3c8a10157e30647f449bba19d30527443909f55362e0a658fc9c8fe35843"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Watchtower/Assets/prop_alarm_bell_pull_rope.png",
+      "size_bytes": 42460,
+      "sha256": "ea6deb835d1ac1fed094400ffadbdc9ace1f2bbc90480a864a029b39bef3994e"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Watchtower/Assets/prop_pinned_map_board.png",
+      "size_bytes": 164804,
+      "sha256": "58bd3def66688b4889dd2917ca8db8323461ed53be53c63862cff27ee24ccbdb"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Watchtower/Assets/prop_searchlight.png",
+      "size_bytes": 84478,
+      "sha256": "0c0d9a41af063fa759bd0d15cd9bf462b1286b09479ee0b59ebcf8a3728650f9"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Watchtower/Assets/prop_shelf_thermos_logbook_cup.png",
+      "size_bytes": 95384,
+      "sha256": "4bfc6c89c90f3bbf58c9a487b46e2de34fec39d1828b5bf52816c692ed50d691"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Watchtower/Assets/prop_tripod_binoculars.png",
+      "size_bytes": 62414,
+      "sha256": "465566b84efcc7682a0e2ffd08ef594cd1253397be54e0f104a01ab5da74455a"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Watchtower/Assets/prop_watchers_stool.png",
+      "size_bytes": 103510,
+      "sha256": "0c34c6646156205f50cfe4f3e1709d4851b0b879210c7713178c64c1a5022f61"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Watchtower/Assets/shell_floor_ladder_hatch.png",
+      "size_bytes": 73164,
+      "sha256": "26c297767a093808d7662c70dcba37f203a2e5e7cc473c577904f3eebfa555f3"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Watchtower/Assets/shell_floor_panel.png",
+      "size_bytes": 83503,
+      "sha256": "88fc71177dc2be56d3c7e336cce4bc13a50f1d314fd092989af77ca80f14c890"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Watchtower/Assets/shell_left_wall_slit.png",
+      "size_bytes": 130792,
+      "sha256": "47a5943fa3808ac0d4b6aa5e5f65c7fb88dfec4664c96ebae208850f2996f13c"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Watchtower/Assets/shell_right_wall_window.png",
+      "size_bytes": 130182,
+      "sha256": "2f3edfa9d6617bcb3932a8b53355b2a185b6a09894ac642d4e42375a964b0a93"
+    },
+    {
+      "path": "02_Standalone_Location_Packs/Watchtower/DRIFTER_Watchtower_Asset_Pack.zip",
+      "size_bytes": 2983640,
+      "sha256": "aa1151ab5af4c802ae072f29cc98b258c7292912e26199e73788f747bed0ce6e"
+    },
+    {
+      "path": "03_Checkpoint_Gate/Corrected_Crosswise/DRIFTER_Checkpoint_Gate_Corrected_Pair.zip",
+      "size_bytes": 4078293,
+      "sha256": "683b36a28dc2d67e08eb629370a4912eb389e63c11fb2a239c64418b4e6d2892"
+    },
+    {
+      "path": "03_Checkpoint_Gate/Corrected_Crosswise/DRIFTER_Checkpoint_Gate_Lowered_Crosswise.png",
+      "size_bytes": 2042364,
+      "sha256": "0c897605347d00e617f8c9eea1b04b34b85288fafcdcc22f8c9408b3f2ed50f5"
+    },
+    {
+      "path": "03_Checkpoint_Gate/Corrected_Crosswise/DRIFTER_Checkpoint_Gate_Raised_Crosswise.png",
+      "size_bytes": 2033966,
+      "sha256": "7a56c2aaebe13856960f4f265714b9a47171089a28410c57b6179febcd76d8e0"
+    },
+    {
+      "path": "03_Checkpoint_Gate/Earlier_Iteration_Superseded/DRIFTER_Checkpoint_Gate_Lowered.png",
+      "size_bytes": 1932110,
+      "sha256": "60c233b05dd591cc697d0d0d133a33010cc2bb0f94ea2b21ed927844ae076465"
+    },
+    {
+      "path": "03_Checkpoint_Gate/Earlier_Iteration_Superseded/DRIFTER_Checkpoint_Gate_Pair.zip",
+      "size_bytes": 3981447,
+      "sha256": "29814702d5a824d122d07a049fba8772c84aebbfb16d52447815b7c12e508200"
+    },
+    {
+      "path": "03_Checkpoint_Gate/Earlier_Iteration_Superseded/DRIFTER_Checkpoint_Gate_Raised.png",
+      "size_bytes": 2157674,
+      "sha256": "8aee455b19b5414b90de0fba5af26e55d67311d0633c6be9aefa3708a1090194"
+    },
+    {
+      "path": "03_Checkpoint_Gate/Earlier_Iteration_Superseded/README.txt",
+      "size_bytes": 685,
+      "sha256": "bb50f10f8ad9a02d4683ccba5f94167f54d4ffa1e30efed04e3200cdbee4bcc0"
+    },
+    {
+      "path": "04_Fence_Sheets_Work_In_Progress/Fence_Sheet_Draft_01_Combined.png",
+      "size_bytes": 2328598,
+      "sha256": "67693ca60d919de1c6565bc4241f2752324aa8f1b2d765ad868c1c9c87f67a6d"
+    },
+    {
+      "path": "04_Fence_Sheets_Work_In_Progress/Fence_Sheet_Draft_02_Combined.png",
+      "size_bytes": 2326492,
+      "sha256": "640b28533ff2a1234676bd8436e7f9bc9d5479652d772947d0a970d465666b6e"
+    },
+    {
+      "path": "04_Fence_Sheets_Work_In_Progress/README.txt",
+      "size_bytes": 455,
+      "sha256": "c06c33cc386e0b842f9251b3cea5a2eb7557d589c80394e228055d8f3c5a047a"
+    },
+    {
+      "path": "05_Style_References/Operators_Cottage_Props.png",
+      "size_bytes": 631286,
+      "sha256": "3c31ca040b6a549c37729de4a7a04268ba53c45e3c43822971674642709fe3de"
+    },
+    {
+      "path": "05_Style_References/Operators_Cottage_Shell.png",
+      "size_bytes": 412871,
+      "sha256": "638fcb811acc858971c62c0a66083940aaf672b8845977321e88b07190b3098b"
+    },
+    {
+      "path": "README.txt",
+      "size_bytes": 1957,
+      "sha256": "776bfb222cca33d1ec0af9437b764f26883d2082a80b8567a9a4853f90ca1e10"
+    }
+  ]
+}
