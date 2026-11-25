@@ -3,6 +3,7 @@ import { META } from './meta.js';
 import { createInterior } from './interior.js';
 import { LAYOUT } from './interior_layout.js';
 import { createCheckpoint } from './checkpoint.js';
+import { createBuildingInterior } from './interiors_hub.js';
 // THREE comes from the <script> tag in index.html (global).
 /* ===== DRIFTER — WNCORE STATION 01 (HD-2D field build) =====
    Sections: 0 config/layout · 1 core · 2 assets · 3 ground bake · 4 world · 5 player · 6 fx · 7 ui · 8 loop
@@ -264,6 +265,9 @@ o('ruin',-2,6.4,'Collapsed building','Fallen long before the outbreak. The vines
 OB.push({x:-34,z:16.4,n:'Road blockade',note:'Rubble packed across the road, stone by stone. Not a landslide. Someone sealed this end.'});
 OB.push({x:34,z:16.4,n:'Road blockade',note:'The other end is sealed the same way. The only way out is through the signal.'});
 OB.push({x:TH.x,z:TH.z,n:'Forest trail',t:'f',to:1});
+// building interiors (install_interiors.py): each building's examine point becomes a door into its interior
+{const DR={'Utility shed':['shed','Enter the utility shed'],'Maintenance depot':['depot','Enter the maintenance depot'],'Watchtower':['wtch','Climb into the watchtower'],'Water tower':['wtower','Enter the pump room'],'Collapsed building':['ruin','Step into the collapsed building'],'Checkpoint booth':['booth','Enter the checkpoint booth']};
+ for(const q of OB){const d=DR[q.n];if(d){q.t='b';q.b=d[0];q.n=d[1]}}}
 function toast(t){const m=$('msg');m.textContent=t;m.style.opacity=1;clearTimeout(tt);tt=setTimeout(()=>m.style.opacity=0,4200)}
 function closeP(){open='';$('pn').classList.add('hide');if(aud.stat)aud.stat.gain.value=0}
 function bc(){open='b';bt=0;const msg=BTXT[bIdx%BTXT.length];bIdx++;const h='WNCORE — 88.7 FM: "'+msg.split('\n')[0].replace(/^\.\.\./,'')+'"';if(!bcs.includes(h))bcs.push(h);window.__bmsg=msg;const p=$('pn');p.classList.remove('hide');p.innerHTML='<div class="hd"><span>WNCORE BROADCAST</span><span>88.7 FM</span></div><canvas id="wv" width="300" height="44"></canvas><p id="tx"></p><div class="sg">SIGNAL STRENGTH <i></i><i></i><i></i><i></i><i class="off"></i><i class="off"></i></div>';if(aud.stat)aud.stat.gain.value=.05}
@@ -279,7 +283,7 @@ function vitTick(dt){VIT.food=Math.max(0,VIT.food-dt/420);VIT.water=Math.max(0,V
  for(const k of['food','water']){if(VIT[k]<.2&&!VIT.warn[k]){VIT.warn[k]=1;toast(k=='food'?'Your stomach is empty. There was food in the station.':'Your mouth is dry. There were drinks in the station.')}}}
 const vbar=v=>'▮'.repeat(Math.ceil(v*5))+'▯'.repeat(5-Math.ceil(v*5));
 function act(){if(st!=1||busy)return;if(open){closeP();return}if(!near)return;if(near.t=='r'){bc();return}
- if(near.t=='x'){near.fn();return}if(near.t=='f'){travel(near.to);return}if(near.t=='d'){go(0);return}if(near.t=='g'){go(near.to);return}if(near.t=='n'){toast(near.note);return}if(near.t=='c'){eat(near);return}if(!found.includes(near))found.push(near);toast(near.note)}
+ if(near.t=='x'){near.fn();return}if(near.t=='b'){BDOOR[near.b]={x:near.x+.8,z:near.z+.8};goB(near.b,near);return}if(near.t=='f'){travel(near.to);return}if(near.t=='d'){go(0);return}if(near.t=='g'){go(near.to);return}if(near.t=='n'){toast(near.note);return}if(near.t=='c'){eat(near);return}if(!found.includes(near))found.push(near);toast(near.note)}
 addEventListener('keydown',e=>{K[e.code]=1;if(e.code=='KeyE')act();if(e.code=='KeyM'){muted=!muted;if(aud.mg)aud.mg.gain.value=muted?0:.9}
  if(e.code=='Space'){e.preventDefault();if(st==1&&!open&&!e.repeat){P.swingStart=clock;P.swingUntil=clock+.62;P.resting=false}}
  if(e.code=='KeyR'&&st==1&&!open&&!e.repeat){P.resting=!P.resting;P.vx=0;P.vz=0}
@@ -314,10 +318,11 @@ $('ovs').innerHTML='<b>Click to begin</b>';
 const IX=300,IZ=300,RW=22;
 const ROOMS=[{n:'Control room'},{n:'Equipment room'},{n:'Briefing office'}];
 const IO=LAYOUT.ROOMS.map(r=>r.io); // interaction points live in interior_layout.js next to the props they belong to
-let IN=-1,busy=false,IOB=[];
+let IN=-1,busy=false,IOB=[],ICX=3.7,ICZ=3.7,IRX=6.9,IRZ=6.9,BQ=null;
 const EX={x:bs.x+3.03,z:bs.z+-1.07};
 const fd=document.createElement('div');fd.style.cssText='position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .35s;z-index:5';document.body.appendChild(fd);
-const INT=createInterior(T,sc,IX,IZ,sol); // sprite-kit rooms (src/station/interior.js + interior_layout.js)
+const INT=createInterior(T,sc,IX,IZ,sol);
+const BI=createBuildingInterior(T,sc,IX,IZ,sol); // src/station/interiors_hub.js // sprite-kit rooms (src/station/interior.js + interior_layout.js)
 const iL=PL(IX,4,IZ,0x7fa8ff,0,22);
 function go(to){if(busy)return;busy=true;fd.style.opacity=1;setTimeout(()=>{
  const from=IN,out=to<0;IN=to;ZM=out?1:.62;rs();pmat.emissive.setHex(out?0x1c1814:0x28221c);pmat.emissiveIntensity=out?.55:.6;pmat.color.setHex(0xffffff);
@@ -329,6 +334,25 @@ function go(to){if(busy)return;busy=true;fd.style.opacity=1;setTimeout(()=>{
  ff.visible=out;for(const m of MIST)m.s.visible=out;for(const q of SHAFT)q.s.visible=out;
  fd.style.opacity=0;setTimeout(()=>busy=false,350)},380)}
 window.__go=go;
+// ---- building interiors (install_interiors.py): shed / depot / water tower / watchtower / booth / ruin
+const BDOOR={},BSEEN={};
+async function goB(id,q){if(busy)return;busy=true;fd.style.opacity=1;
+ if(id)BI.preload(id);
+ await sleep(380);
+ if(id){const t0=performance.now();while(!BI.ready(id)&&performance.now()-t0<2500)await sleep(60)}
+ const out=!id;
+ if(out){const b0=BQ,bd=BDOOR[b0]||{x:BLD[b0].x,z:BLD[b0].z+BLD[b0].rz+1.6};
+  BI.hide();BQ=null;IN=-1;ICX=ICZ=3.7;IRX=IRZ=6.9;ZM=1;rs();pmat.emissive.setHex(0x1c1814);pmat.emissiveIntensity=.55;pmat.color.setHex(0xffffff);iL.intensity=0;
+  P.x=bd.x;P.z=bd.z;cp.x=P.x-BIAS;cp.z=P.z-BIAS;toast('Back outside.')}
+ else{const L=BI.layout(id);INT.hide();BI.show(id);BQ=id;IN=9;ICX=L.icx;ICZ=L.icz;IRX=L.irx;IRZ=L.irz;ZM=L.zm;rs();
+  pmat.emissive.setHex(0x28221c);pmat.emissiveIntensity=.6;pmat.color.setHex(0xffffff);iL.intensity=.35;
+  IOB=L.io.map(e=>Object.assign({x:IX+e.dx,z:IZ+e.dz},e)).concat([{x:IX+L.exit[0],z:IZ+L.exit[1],n:L.exitLabel,t:'x',fn:()=>goB(null)}]);
+  P.x=IX+L.spawn[0];P.z=IZ+L.spawn[1];cp.x=IX-ICX;cp.z=IZ-ICZ;
+  const first=!BSEEN[id];BSEEN[id]=1;toast(first&&q&&q.note?q.note:L.name)}
+ P.vx=P.vz=0;const inn=!out;sc.background.set(inn?0x05070a:FOG);sc.fog.color.set(inn?0x05070a:FOG);
+ ff.visible=!inn;for(const m of MIST)m.s.visible=!inn;for(const s of SHAFT)s.s.visible=!inn;
+ fd.style.opacity=0;setTimeout(()=>busy=false,350)}
+window.__goB=goB;
 // ---------- 7c. SECTION TRAVEL: station <-> forest behind a loading screen ----------
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const LD=(()=>{const d=document.createElement('div');d.id='ld';d.innerHTML='<small></small><h2></h2><div class="bar"><i></i></div><p></p>';document.body.appendChild(d);const q=s=>d.querySelector(s);
@@ -358,15 +382,15 @@ function upd(dt){clock+=dt;let ix=0,iz=0;
  if(!open&&!P.resting&&!busy){ix=(K.KeyD?1:0)+(K.KeyS?1:0)-(K.KeyW?1:0)-(K.KeyA?1:0);iz=(K.KeyS?1:0)+(K.KeyA?1:0)-(K.KeyW?1:0)-(K.KeyD?1:0)}
  const il=Math.hypot(ix,iz);if(il){ix/=il;iz/=il;const sx=ix-iz,sy=-(ix+iz)*.577;P.dr=(Math.round(Math.atan2(sx,sy)/(Math.PI/4))+8)%8;P.resting=false}
  const sp=(K.ShiftLeft||K.ShiftRight)?7.2:4.6,k=Math.min(1,dt*12);P.vx+=(ix*sp-P.vx)*k;P.vz+=(iz*sp-P.vz)*k;P.x+=P.vx*dt;P.z+=P.vz*dt;col(P,.4);
- if(IN>=0){P.x=Math.max(IX-6.9,Math.min(IX+6.9,P.x));P.z=Math.max(IZ-6.9,Math.min(IZ+6.9,P.z))}else if(MAP==1){const B=FST.bounds;P.x=Math.max(B.x0,Math.min(B.x1,P.x));P.z=Math.max(B.z0,Math.min(B.z1,P.z))}else{P.x=Math.max(-BOUND,Math.min(BOUND,P.x));P.z=Math.max(-BOUND,Math.min(BOUND,P.z))}
+ if(IN>=0){P.x=Math.max(IX-IRX,Math.min(IX+IRX,P.x));P.z=Math.max(IZ-IRZ,Math.min(IZ+IRZ,P.z))}else if(MAP==1){const B=FST.bounds;P.x=Math.max(B.x0,Math.min(B.x1,P.x));P.z=Math.max(B.z0,Math.min(B.z1,P.z))}else{P.x=Math.max(-BOUND,Math.min(BOUND,P.x));P.z=Math.max(-BOUND,Math.min(BOUND,P.z))}
  vitTick(dt);near=null;let bd=3;for(const q of (IN>=0?IOB:MAP==1?FOB:OB)){const d=Math.hypot(q.x-P.x,q.z-P.z);if(d<bd){bd=d;near=q}}
- $('pr').textContent=(near&&!open&&!busy)?'[E] '+(near.t=='r'?'Tune the radio':(near.t=='d'||near.t=='g'||near.t=='f'||near.t=='x')?near.n:near.t=='c'?(near.p.water&&!near.p.food?'Drink ':'Eat ')+near.n:'Examine '+near.n.toLowerCase()):'';
+ $('pr').textContent=(near&&!open&&!busy)?'[E] '+(near.t=='r'?'Tune the radio':(near.t=='d'||near.t=='g'||near.t=='f'||near.t=='x'||near.t=='b')?near.n:near.t=='c'?(near.p.water&&!near.p.food?'Drink ':'Eat ')+near.n:'Examine '+near.n.toLowerCase()):'';
  if(open=='b'){bt+=dt*26;const m=window.__bmsg;$('tx').textContent=m.slice(0,bt|0);const c=$('wv'),g=c.getContext('2d');g.clearRect(0,0,300,44);g.strokeStyle='#6fae5a';g.beginPath();for(let x=0;x<300;x+=3){const a=Math.abs(Math.sin(x*.05+clock*6))*Math.min(1,bt/20)*18*Math.random();g.moveTo(x,22-a);g.lineTo(x,22+a)}g.stroke()}
  $('dc').innerHTML='DISCOVERIES '+found.length+'/'+(OB.filter(q=>!q.t).length+FOB.filter(q=>!q.t).length)+'<br><span style="font-size:18px;color:'+(VIT.food<.2?'#d9695a':'#b7aa8d')+'">FOOD '+vbar(VIT.food)+'</span> <span style="font-size:18px;color:'+(VIT.water<.2?'#d9695a':'#b7aa8d')+'">WATER '+vbar(VIT.water)+'</span><br><span style="font-size:18px;color:#b7aa8d">SHIFT RUN · SPACE SWING · R REST · M MUTE</span>';
  $('st').innerHTML=MAP==1?'NO SIGNAL<br>— — —':'WNCORE-01<br>88.7 FM'}
 const dsq=Math.hypot;
 function anim(dt,t){
- INT.update(t);if(MAP==1&&FST)FST.update(t);
+ INT.update(t);BI.update(t);if(MAP==1&&FST)FST.update(t);
  if(aud.river)aud.river.gain.value=(muted||MAP!=1)?0:.02+.12*sm(20,2,FST.riverDist(P.x,P.z));
  // signal bursts + proximity to the mast
  const dm=IN>=0?6:dsq(P.x-bs.x,P.z-bs.z);let base=.0+.1*sm(16,5,dm);burstT-=dt;if(burstT<0){burstU=.5;burstT=22+Math.random()*30}burstU=Math.max(0,burstU-dt);
@@ -381,7 +405,7 @@ function anim(dt,t){
  const fa=FR[an][P.dr];const dtex=fa[fr%fa.length];if(dtex&&pmat.map!==dtex)pmat.map=dtex;
  const IS=IN>=0?1.4:1;ps.scale.setScalar(IS);const EL=MAP==1&&FST?FST.elev(P.x,P.z):0;ps.position.set(P.x,PH*IS/2+bob+EL,P.z);psh.position.set(P.x,.035+EL,P.z);psh.scale.set((1+Math.min(.18,mv*.025))*IS,IS,1);pL.position.set(P.x,2,P.z);
  // camera: follow + headroom, frame the mast near the station
- const fz=sm(24,10,dm)*3.2/.816+BIAS;const tx=IN>=0?IX-3.7:P.x-fz,tz=IN>=0?IZ-3.7:P.z-fz;cp.x+=(tx-cp.x)*Math.min(1,dt*4);cp.z+=(tz-cp.z)*Math.min(1,dt*4);
+ const fz=sm(24,10,dm)*3.2/.816+BIAS;const tx=IN>=0?IX-ICX:P.x-fz,tz=IN>=0?IZ-ICZ:P.z-fz;cp.x+=(tx-cp.x)*Math.min(1,dt*4);cp.z+=(tz-cp.z)*Math.min(1,dt*4);
  cam.position.set(cp.x+OFF.x,OFF.y,cp.z+OFF.z);cam.lookAt(cp.x,0,cp.z);ps.quaternion.copy(cam.quaternion);
  // cull + tint sprites
  const asp=innerWidth/innerHeight,hw=VH*asp,hh=VH;
