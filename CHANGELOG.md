@@ -42,7 +42,7 @@ Notable changes to the **Drifter's Tale** field build, newest first.
   - Added the remaining Drifter building and interior asset files under `assets/HUB`, including individual transparent sprites, reference atlases, and manifests.
 
 ### Fixed
-- **Interior alignment:** corrected wall orientation and pitch, adjusted prop sizing, and refined object placement within the additional building interiors.
+- **Checkpoint booth placement (second pass):** raised the telephone shelf and key cabinet, restored their original scale, tucked the heater closer to the left wall, moved the stool clear of the desk, and shifted the barrier control left while restoring its height.
 - **Repository documentation:** replaced the placeholder README with project information and removed the unused tower-interior drop-in archive.
 
 ## [2026-11-24] — Field build foundation
