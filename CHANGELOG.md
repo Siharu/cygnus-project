@@ -21,6 +21,10 @@ Notable changes to the **Drifter's Tale** field build, newest first.
 - **Grass motion:** slowed the four-frame animation to a more relaxed pace and added layered gust-driven sway across the field.
 - **Checkpoint scale and placement:** reduced the checkpoint art scale, adjusted its colliders and lighting, and repositioned it so the apron meets the main road.
 - **Checkpoint rendering:** separated the barrier-arm masks from the raised / lowered gate renders to prevent stray arm pixels from appearing in the ground layer.
+
+### Fixed
+- **Checkpoint booth prop placement:** tucked the stool closer to the guard desk, reduced and lowered the wall-mounted telephone shelf and key cabinet, moved the heater inward, and resized the barrier control for better doorway clearance.
+- **Interior generator:** added per-prop scale multipliers so these booth refinements remain intact when the layout is regenerated.
 - **Site entry point:** moved the playable page to the repository root at `/`; the former `/src/station` paths now redirect to the root.
 
 ## [2026-11-25] — Checkpoint and building interiors
