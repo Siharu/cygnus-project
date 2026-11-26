@@ -39,7 +39,7 @@ export function createGrass({ T, sc, IM, LT, AMB, OFF, rnd, noise, clear }) {
     add(r < .08 ? 'flower' : r < .16 ? 'broad' : 'tuft', x, z, .6 + rnd() * .35); n++;
   }
 
-  const time = { value: 0 }, walker = { value: new T.Vector2(1e4, 1e4) };
+  const time = { value: 0 }, windU = { value: 1 }, walker = { value: new T.Vector2(1e4, 1e4) };
   const face = new T.Quaternion().setFromRotationMatrix(new T.Matrix4().lookAt(OFF, new T.Vector3(), new T.Vector3(0, 1, 0)));
   const meshes = Object.keys(list).map(sp => {
     const { key, h } = SPECIES[sp], items = list[sp];
@@ -48,8 +48,8 @@ export function createGrass({ T, sc, IM, LT, AMB, OFF, rnd, noise, clear }) {
     const phase = new Float32Array(items.length), speed = new Float32Array(items.length), flipA = new Float32Array(items.length);
     const mat = new T.MeshBasicMaterial({ map: tex, alphaTest: .45, side: T.DoubleSide, fog: true });
     mat.onBeforeCompile = sh => {
-      sh.uniforms.uT = time; sh.uniforms.uP = walker; sh.uniforms.uH = { value: h };
-      sh.vertexShader = 'attribute float aPhase;\nattribute float aSpeed;\nattribute float aFlip;\nuniform float uT;\nuniform vec2 uP;\nuniform float uH;\n' + sh.vertexShader.replace('#include <uv_vertex>',
+      sh.uniforms.uT = time; sh.uniforms.uWd = windU; sh.uniforms.uP = walker; sh.uniforms.uH = { value: h };
+      sh.vertexShader = 'attribute float aPhase;\nattribute float aSpeed;\nattribute float aFlip;\nuniform float uT;\nuniform vec2 uP;\nuniform float uH;\nuniform float uWd;\n' + sh.vertexShader.replace('#include <uv_vertex>',
         `#include <uv_vertex>\n vUv.x = (vUv.x + mod(floor(uT * aSpeed / ${FRAME} + aPhase), 4.0)) * 0.25;`)
         // grass flattens around the player so the character stays readable
         .replace('#include <begin_vertex>', `#include <begin_vertex>
@@ -57,7 +57,7 @@ export function createGrass({ T, sc, IM, LT, AMB, OFF, rnd, noise, clear }) {
  float gust = 0.55 + 0.45 * sin(uT * 0.21 + dot(wp, vec2(0.045, 0.03)));
  float sway = sin(uT * 0.85 - dot(wp, vec2(0.16, 0.09))) * 0.6
             + sin(uT * 1.9 - dot(wp, vec2(0.31, 0.2)) + aPhase * 1.57) * 0.2;
- float lean = 0.35 + sway * gust;
+ float lean = (0.35 + sway * gust) * uWd;
  float bend = clamp(transformed.y / uH, 0.0, 1.0); bend *= bend;
  transformed.x += lean * 0.18 * uH * bend * aFlip;
  transformed.y *= mix(0.35, 1.0, smoothstep(0.6, 2.2, distance(instanceMatrix[3].xz - 0.3, uP)));`);
@@ -84,6 +84,9 @@ export function createGrass({ T, sc, IM, LT, AMB, OFF, rnd, noise, clear }) {
 
   return {
     count: meshes.reduce((n, m) => n + m.count, 0),
-    update(t, visible, P) { time.value = t; walker.value.set(P.x, P.z); for (const m of meshes) m.visible = visible; },
+    update(t, visible, P, wind = 1, tr = 1, tg = 1, tb = 1) {   // wind: 1 = the original sway; tr/tg/tb dim the grass with the weather
+      time.value = t; windU.value = Math.min(2.6, wind); walker.value.set(P.x, P.z);
+      for (const m of meshes) { m.visible = visible; m.material.color.setRGB(tr, tg, tb); }
+    },
   };
 }
