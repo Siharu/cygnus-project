@@ -19,7 +19,7 @@ const SRC_UP = new URL(DIR + 'DRIFTER_Checkpoint_Gate_Raised_Crosswise.png', imp
 const SRC_DN = new URL(DIR + 'DRIFTER_Checkpoint_Gate_Lowered_Crosswise.png', import.meta.url).href;
 
 export const GEO = {
-  K: 0.019,            // view units per source pixel (booth ~5 world units wide)
+  K: 0.0125,           // view units per source pixel (booth walls ~1.6x the player's height)
   SC: 0.7,             // source px -> texture px
   U0: 540, V0: 490,    // booth base centre (source px) -> ctx.x, ctx.z
   booth:   [[340,10],[735,10],[735,482],[548,570],[350,498]],
@@ -29,6 +29,9 @@ export const GEO = {
   sign:    [[1262,590],[1283,560],[1310,555],[1338,560],[1340,610],[1318,640],[1300,655],[1298,742],[1282,742],[1280,655],[1262,630]],
   win: [672, 278, 712, 392],          // right window pane (the render left a magenta reflection in it)
   base: { post: [770, 585], pivotG: [790, 585], pivot: [790, 465], farpost: [1100, 735], jersey: [1170, 785], sign: [1290, 742] },
+  // outline of the arm in each render (raised render / lowered render)
+  armUp: [[898,197],[925,209],[811,468],[806,484],[798,491],[784,491],[775,483],[774,468],[782,459]],
+  armDn: [[792,486],[800,486],[1065,614],[1068,622],[1059,642],[1050,642],[792,518]],
   bands: [[767, 880], [880, 990], [990, 1082]],    // lowered arm is sliced along its length for depth
   armLine: [[770, 585], [1100, 735]],               // ground line of the lowered arm
   cutZ: 13.6, cutBand: 1.6,   // the apron stops at the main road's north edge (world z), dithered over cutBand
@@ -43,10 +46,6 @@ function keyPx(r, g, b, o, i) {
   if (m > 10) { const ex = (Math.min(r, b) - g - 10) * 0.8; r -= ex; b -= ex; }
   o[i] = r < 0 ? 0 : r; o[i + 1] = g; o[i + 2] = b < 0 ? 0 : b; o[i + 3] = a;
 }
-const armness = (r, g, b) => {
-  if (Math.min(r, b) - g > 80 && r > 180 && b > 180) return -100;     // background magenta
-  return Math.max(Math.min(r, g, b) - 120, (r - Math.max(g, b)) - 40, 0); // white / red stripe
-};
 function dilate(m, W, H, r) {
   const t = new Uint8Array(m.length), o = new Uint8Array(m.length);
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (m[y * W + x]) {
@@ -56,8 +55,25 @@ function dilate(m, W, H, r) {
   return o;
 }
 
+// 1 for every pixel whose centre is inside the polygon
+function polyMask(poly, W, H) {
+  const m = new Uint8Array(W * H);
+  for (let y = 0; y < H; y++) {
+    const cy = y + .5, xs = [];
+    for (let k = 0; k < poly.length; k++) {
+      const [x0, y0] = poly[k], [x1, y1] = poly[(k + 1) % poly.length];
+      if ((y0 <= cy) !== (y1 <= cy)) xs.push(x0 + (cy - y0) / (y1 - y0) * (x1 - x0));
+    }
+    xs.sort((p, q) => p - q);
+    for (let k = 0; k < xs.length; k += 2) for (let x = Math.max(0, Math.ceil(xs[k] - .5)); x < Math.min(W, xs[k + 1] - .5); x++) m[y * W + x] = 1;
+  }
+  return m;
+}
+
 // A, B = raw RGBA (Uint8ClampedArray / Uint8Array) of the Raised / Lowered render, W x H.
 // -> { ground, up, dn } keyed RGBA arrays. ground has no arm; up / dn hold only the arm pixels.
+// The two renders line up pixel for pixel, so the Lowered render is the clean plate everywhere except
+// under its own arm, where the Raised render shows the bare road. GEO.armUp / armDn outline the arms.
 export function processGate(A, B, W, H) {
   const n = W * H, ground = new Uint8ClampedArray(n * 4), up = new Uint8ClampedArray(n * 4), dn = new Uint8ClampedArray(n * 4);
   const [wx0, wy0, wx1, wy1] = GEO.win;
@@ -74,15 +90,13 @@ export function processGate(A, B, W, H) {
     const j = i * 4;
     if (Math.abs(A[j] - B[j]) + Math.abs(A[j + 1] - B[j + 1]) + Math.abs(A[j + 2] - B[j + 2]) > 24) d0[i] = 1;
   }
-  const d1 = dilate(d0, W, H, 1);
+  const d1 = dilate(d0, W, H, 1), inUp = polyMask(GEO.armUp, W, H), inDn = polyMask(GEO.armDn, W, H);
   for (let y = 0, i = 0; y < H; y++) for (let x = 0; x < W; x++, i++) {
-    const j = i * 4, a = raw(A, j, x, y);
-    if (!d1[i]) { keyPx(a[0], a[1], a[2], ground, j); continue; }
-    const b = raw(B, j, x, y), sA = armness(a[0], a[1], a[2]), sB = armness(b[0], b[1], b[2]);
-    const lA = a[0] + a[1] + a[2], lB = b[0] + b[1] + b[2];
-    const pickB = sA > sB || (sA === sB && lA < lB);      // true: A is the arm side here
-    if (pickB) { keyPx(b[0], b[1], b[2], ground, j); keyPx(a[0], a[1], a[2], up, j); }
-    else { keyPx(a[0], a[1], a[2], ground, j); keyPx(b[0], b[1], b[2], dn, j); }
+    const j = i * 4, a = raw(A, j, x, y), b = raw(B, j, x, y), g = inDn[i] ? a : b;
+    keyPx(g[0], g[1], g[2], ground, j);
+    if (!d1[i]) continue;
+    if (inUp[i]) keyPx(a[0], a[1], a[2], up, j);
+    if (inDn[i]) keyPx(b[0], b[1], b[2], dn, j);
   }
   return { ground, up, dn };
 }
@@ -171,15 +185,16 @@ export async function createCheckpoint(ctx) {
   sw.userData.hide = true; sw.userData.swing = 1;
   const A_UP = Math.atan2(260, 115), A_DN = Math.atan2(-181, 287), ROT = A_DN - A_UP, LEN = Math.hypot(287, 181) / Math.hypot(115, 260);
 
-  // ---- colliders
+  // ---- colliders (sizes were tuned at K = 0.019 and follow the art scale)
+  const f = K / 0.019;
   const bw = toWorld(U0, V0);
-  sol.push({ x: bw[0], z: bw[1], rx: 2.4, rz: 2.4 });
-  const pw = toWorld(B.post[0], B.post[1]); sol.push({ x: pw[0], z: pw[1], rx: .9, rz: .9 });
-  const fw = toWorld(B.farpost[0], B.farpost[1]); sol.push({ x: fw[0], z: fw[1], rx: .9, rz: .9 });
-  const jw = toWorld(B.jersey[0], B.jersey[1]); sol.push({ x: jw[0], z: jw[1], rx: 1.9, rz: .9 });
-  const sg = toWorld(B.sign[0], B.sign[1]); circ.push({ x: sg[0], z: sg[1], r: .4 });
+  sol.push({ x: bw[0], z: bw[1], rx: 2.4 * f, rz: 2.4 * f });
+  const pw = toWorld(B.post[0], B.post[1]); sol.push({ x: pw[0], z: pw[1], rx: .9 * f, rz: .9 * f });
+  const fw = toWorld(B.farpost[0], B.farpost[1]); sol.push({ x: fw[0], z: fw[1], rx: .9 * f, rz: .9 * f });
+  const jw = toWorld(B.jersey[0], B.jersey[1]); sol.push({ x: jw[0], z: jw[1], rx: 1.9 * f, rz: .9 * f });
+  const sg = toWorld(B.sign[0], B.sign[1]); circ.push({ x: sg[0], z: sg[1], r: .4 * f });
   const [la, lb] = GEO.armLine.map(q => toWorld(q[0], q[1]));
-  const armSolid = { x: (la[0] + lb[0]) / 2, z: (la[1] + lb[1]) / 2, rx: Math.abs(lb[0] - la[0]) / 2 + .3, rz: Math.abs(lb[1] - la[1]) / 2 + .6 };
+  const armSolid = { x: (la[0] + lb[0]) / 2, z: (la[1] + lb[1]) / 2, rx: Math.abs(lb[0] - la[0]) / 2 + .3 * f, rz: Math.abs(lb[1] - la[1]) / 2 + .6 * f };
 
   // ---- keep scatter (trees, plants, rocks) off the apron
   const cell = 2, ga = L.ground;
@@ -192,11 +207,11 @@ export async function createCheckpoint(ctx) {
   }
 
   // ---- lights (point light now, window glows once main.js can make glow sprites)
-  LT.push({ x: bw[0] + 3, z: bw[1] + 3, y: 2.4, c: 0xffb868, I: 1.6 });
+  LT.push({ x: bw[0] + 3 * K / 0.019, z: bw[1] + 3 * K / 0.019, y: 2.4, c: 0xffb868, I: 1.6 });
   const lights = glow => {
     const S3 = new T.Vector3(bw[0], 0, bw[1]);
     for (const [u, v, size, col] of [[455, 345, 3.4, 0xffa850], [625, 385, 1.8, 0xffb060], [768, 497, 1.2, 0xff7a30]])
-      glow(viewPt(S3, (u - U0) * K, -(v - V0) * K, .6), size, new T.Color(col), .5, Math.random() * 9);
+      glow(viewPt(S3, (u - U0) * K, -(v - V0) * K, .6), size * K / 0.019, new T.Color(col), .5, Math.random() * 9);
   };
 
   // ---- state

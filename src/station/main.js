@@ -23,7 +23,7 @@ const BLD={ // k=sprite, x/z=footprint centre, rx/rz=footprint half size, h=worl
  depot:{k:'maintenance_depot',x:-33,z:-8,rx:6,rz:3.2,h:9.2,L:[[0,5,0xffb060,1.5]]},
  wtower:{k:'water_tower',x:9,z:-30,rx:2.4,rz:2.4,h:15.5},
  wtch:{k:'watchtower',x:-27,z:6,rx:2.2,rz:2.2,h:13.5,L:[[2,2,0xffc070,1.3]]},
- booth:{k:'checkpoint_booth',x:-11.5,z:8,rx:3,rz:3,h:8.2,L:[[3,3,0xffb868,1.6]]},
+ booth:{k:'checkpoint_booth',x:-11.5,z:9.9,rx:3,rz:3,h:8.2,L:[[3,3,0xffb868,1.6]]},
  cottage:{k:'residential_cottage',x:15,z:-3,rx:4,rz:3.6,h:9,L:[[0,5,0xffc070,1.6]]},
  ruin:{k:'ruined_building',x:31,z:-14,rx:5,rz:4.5,h:10.5}
 };
