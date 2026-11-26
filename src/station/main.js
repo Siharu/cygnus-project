@@ -3,6 +3,7 @@ import { META } from './meta.js';
 import { createInterior } from './interior.js';
 import { LAYOUT } from './interior_layout.js';
 import { createCheckpoint } from './checkpoint.js';
+import { createGrass, MEADOW } from './grassland.js';
 import { createBuildingInterior } from './interiors_hub.js';
 // THREE comes from the <script> tag in index.html (global).
 /* ===== DRIFTER — WNCORE STATION 01 (HD-2D field build) =====
@@ -54,7 +55,7 @@ function zoneW(x,z,noise){ // -> [soil,asphalt,pave]
   if(noise)d+=(fbm(x*.35,z*.35)-.5)*2*q.n;
   const w=1-sm(-q.soft,q.soft,d);
   cur.g*=1-w;cur.s*=1-w;cur.a*=1-w;cur.p*=1-w;cur[q.m]+=w}
- if(noise){const nz=sm(.6,.72,fbm(x*.07+40,z*.07+11))*sm(20,32,Math.hypot(x+10,z+8))*.0+sm(.64,.74,fbm(x*.09+3,z*.09+8))*.85;const t=cur.g*nz;cur.g-=t;cur.s+=t}
+ if(noise){const nz=sm(.6,.72,fbm(x*.07+40,z*.07+11))*sm(20,32,Math.hypot(x+10,z+8))*.0+sm(.64,.74,fbm(x*.09+3,z*.09+8))*.85*sm(0,2.5,Math.max(MEADOW.x0-x,x-MEADOW.x1,MEADOW.z0-z,z-MEADOW.z1));const t=cur.g*nz;cur.g-=t;cur.s+=t}
  return [cur.s,cur.a,cur.p]}
 // ---------- 1. CORE ----------
 const ren=new T.WebGLRenderer({antialias:false});
@@ -165,6 +166,7 @@ const PLANT=[['fern_clump',2.4],['tall_wild_grass',3.4],['yellow_flower_patch',1
 const BL=Object.values(BLD);
 const TH={x:-21,z:33.5}; // forest trailhead (south of the road)
 PLACED.push({x:TH.x,z:TH.z,r:7});for(let z=23;z<=31;z+=2.7)PLACED.push({x:TH.x,z,r:2.6});
+FP.push(MEADOW); // keep trees, bushes, reeds and rocks out of the grassland
 function onHard(x,z){const w=zoneW(x,z,0);return w[1]>.04||w[2]>.04||w[0]>.55}
 // trees: dense outside the clearing
 let nT=0;for(let k=0;k<7000&&nT<70;k++){const x=rr(-47,47),z=rr(-47,47),d=Math.hypot(x+10,(z+8)*1.05);
@@ -238,6 +240,8 @@ const mistTex=(()=>{const c=document.createElement('canvas');c.width=c.height=12
 const MIST=[...Array(FXK.mist)].map(()=>{const s=new T.Sprite(new T.SpriteMaterial({map:mistTex,transparent:true,opacity:.09+Math.random()*.09,depthWrite:false,fog:false}));const z=16+Math.random()*16;s.scale.set(z*1.7,z*.6,1);s.frustumCulled=false;sc.add(s);return {s,x:Math.random()*80-40,z:Math.random()*80-40,v:.15+Math.random()*.25,y:.8+Math.random()*5}});
 const shaftTex=(()=>{const c=document.createElement('canvas');c.width=64;c.height=256;const g=c.getContext('2d');const gh=g.createLinearGradient(0,0,64,0);gh.addColorStop(0,'rgba(255,255,255,0)');gh.addColorStop(.5,'rgba(255,255,255,1)');gh.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gh;g.fillRect(0,0,64,256);g.globalCompositeOperation='destination-in';const gv=g.createLinearGradient(0,0,0,256);gv.addColorStop(0,'rgba(0,0,0,0)');gv.addColorStop(.25,'rgba(0,0,0,1)');gv.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gv;g.fillRect(0,0,64,256);return new T.CanvasTexture(c)})();
 const SHAFT=[];{const r=mulberry(909);for(let i=0;i<FXK.shaft;i++){const a=r()*6.28,d=22+r()*22,m=new T.SpriteMaterial({map:shaftTex,color:0xaac8e0,blending:T.AdditiveBlending,transparent:true,depthWrite:false,opacity:.05,fog:false});m.rotation=-.5;const s=new T.Sprite(m);const w=2+r()*4;s.scale.set(w,22+r()*8,1);s.center.set(.5,.2);s.position.set(-10+Math.cos(a)*d,0,-8+Math.sin(a)*d);s.frustumCulled=false;sc.add(s);SHAFT.push({s,ph:r()*9,b:.045+r()*.05})}}
+// grassland + loose animated tufts (src/station/grassland.js); built here because it bakes in the static lights
+const GRASS=createGrass({T,sc,IM,LT,AMB,OFF,rnd:mulberry(0x6A55),noise:fbm,clear:(x,z)=>{const w=zoneW(x,z,0);return w[0]+w[1]+w[2]<=.12&&free(x,z,.4,.2)}});
 // audio (procedural, starts on first click)
 let AC=null,aud={},muted=false;
 function audioStart(){if(AC)return;try{AC=new(window.AudioContext||window.webkitAudioContext)();const mg=AC.createGain();mg.gain.value=.9;mg.connect(AC.destination);aud.mg=mg;
@@ -390,7 +394,7 @@ function upd(dt){clock+=dt;let ix=0,iz=0;
  $('st').innerHTML=MAP==1?'NO SIGNAL<br>— — —':'WNCORE-01<br>88.7 FM'}
 const dsq=Math.hypot;
 function anim(dt,t){
- INT.update(t);BI.update(t);if(MAP==1&&FST)FST.update(t);
+ INT.update(t);BI.update(t);if(MAP==1&&FST)FST.update(t);GRASS.update(t,MAP==0&&IN<0,P);
  if(aud.river)aud.river.gain.value=(muted||MAP!=1)?0:.02+.12*sm(20,2,FST.riverDist(P.x,P.z));
  // signal bursts + proximity to the mast
  const dm=IN>=0?6:dsq(P.x-bs.x,P.z-bs.z);let base=.0+.1*sm(16,5,dm);burstT-=dt;if(burstT<0){burstU=.5;burstT=22+Math.random()*30}burstU=Math.max(0,burstU-dt);
@@ -423,7 +427,7 @@ function anim(dt,t){
  for(const m of MIST){m.x+=m.v*dt;let rx=((m.x-cp.x)%80+120)%80-40,rz=((m.z-cp.z)%80+120)%80-40;m.s.position.set(cp.x+rx,m.y,cp.z+rz)}}
 function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;if(st==1)upd(dt);anim(dt,now/1000);ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);ren.render(pS,pC)}
 if(DEBUG){const h=location.hash.slice(1).split(',').map(Number);if(h.length==2&&!isNaN(h[0])){P.x=h[0];P.z=h[1];cp.x=P.x;cp.z=P.z}}
-window.__W={P,start,travel,get FST(){return FST},get MAP(){return MAP},tp:(x,z)=>{P.x=x;P.z=z;cp.x=x-BIAS;cp.z=z-BIAS},BLD,SPR,get n(){return SPR.length},ground:()=>GB.cv.toDataURL('image/png'),cull:()=>SPR.filter(s=>s.visible).length};
+window.__W={P,start,travel,get FST(){return FST},get MAP(){return MAP},tp:(x,z)=>{P.x=x;P.z=z;cp.x=x-BIAS;cp.z=z-BIAS},BLD,SPR,get n(){return SPR.length},grass:GRASS.count,calls:()=>{ren.info.autoReset=false;ren.info.reset();ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);const c=ren.info.render.calls;ren.info.autoReset=true;return c},ground:()=>GB.cv.toDataURL('image/png'),cull:()=>SPR.filter(s=>s.visible).length};
 requestAnimationFrame(loop);
 }
 

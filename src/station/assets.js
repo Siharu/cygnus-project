@@ -2,6 +2,10 @@
 // To swap an image, replace the file in assets/game/ (keep the name).
 const u = f => new URL('../../assets/game/' + f, import.meta.url).href;
 export const A = {
+  'grass_tuft': u('grass_tuft.png'),
+  'grass_reeds': u('grass_reeds.png'),
+  'grass_broadleaf': u('grass_broadleaf.png'),
+  'grass_flowering': u('grass_flowering.png'),
   'bld_relay_station': u('bld_relay_station.png'),
   'int_ctrl': u('int_ctrl.png'),
   'int_rack': u('int_rack.png'),

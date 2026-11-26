@@ -22,6 +22,7 @@ On portrait phones the camera zooms in so the character stays readable.
 ## What's in the build
 
 - **Station overworld:** isometric, sprite-based, built with Three.js r128.
+- **Grassland:** a wind-animated meadow south of the road, plus loose tufts across the open ground (`grassland.js`).
 - **Relay tower interior:** three rooms (control, equipment, briefing) built from billboard sprites on the same iso camera. Layout, collision, glows and interaction points live in `interior_layout.js`.
 - **Silvan:** a lazy-loaded forest section behind a loading screen. It has a shader-ribbon river, three bridges, a trail, eight examinable landmarks, lanterns, sun shafts and river audio. Enter from the trailhead south of the station road; the cairn returns you to the station.
 - **Supplies and vitals:** ten one-use props placed in the tower rooms. FOOD and WATER meters drain slowly and warn when low (no penalty yet).
@@ -34,6 +35,7 @@ vercel.json           static deploy config
 src/station/
   main.js             core game loop, player, overworld, HUD
   forest.js           Silvan forest section
+  grassland.js        animated grass and the meadow
   interior.js         tower interior renderer
   interior_layout.js  interior placement, collision, interaction points
   props.js            supply props and food/water values
