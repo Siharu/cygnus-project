@@ -5,6 +5,7 @@ import { LAYOUT } from './interior_layout.js';
 import { createCheckpoint } from './checkpoint.js';
 import { createGrass, MEADOW } from './grassland.js';
 import { createBuildingInterior } from './interiors_hub.js';
+import { HUB } from './interiors_hub_layout.js';
 import { createWeather } from './weather.js';
 import { createLighting } from './lighting.js';
 // THREE comes from the <script> tag in index.html (global).
@@ -229,7 +230,7 @@ for(const id in BLD){if(!BLD[id].s)continue;const b=BLD[id],m=META['bld_'+b.k],s
  for(const q of m.glows||[]){if(q[6]<28)continue;const du=(q[0]-u.ax)*u.w,dv=(1-q[1]-u.c)*u.h;const sz=Math.max(1.3,q[2]*kx*5.2);glow(viewPt(S,du,dv,.6),sz,new T.Color(q[3],q[4]*.8,q[5]*.5),.5,Math.random()*9)}
  if(id=='station'){const du=(m.top[0]-u.ax)*u.w,dv=(1-m.top[1]-u.c)*u.h+.15;bs.beacon=glow(viewPt(S,du,dv,.8),2.6,0xff2a1a,1);bs.bpos=viewPt(S,du,dv,0)}}
 if(CHK)CHK.lights(glow);
-const beaconL=PL(bs.x,10,bs.z,0xff2a20,1.5,24);LT.push({x:bs.x,z:bs.z+1,c:0xff2a20,I:.8,dyn:1,R:20,cur:1});
+const beaconL=PL(bs.x,10,bs.z,0xff2a20,1.5,24);const beaconLT={x:bs.x,z:bs.z+1,c:0xff2a20,I:.8,dyn:1,R:20,cur:1};LT.push(beaconLT);
 for(const l of LT){const c=new T.Color(l.c);l.cc=[c.r,c.g,c.b];l.R=l.R||13;l.i0=l.I||1;l.pl=PL(l.x,l.y||2.4,l.z,l.c,(l.I||1)*(l.dyn?0:1),l.R)}
 {const px=TH.x+1.6,pz=TH.z+.4;const post=new T.Mesh(new T.BoxGeometry(.16,2.2,.16),new T.MeshLambertMaterial({color:0x4a3a2c}));post.position.set(px,1.1,pz);sc.add(post);
  const lamp=new T.Mesh(new T.BoxGeometry(.42,.4,.42),new T.MeshBasicMaterial({color:0xffd890}));lamp.position.set(px,2.4,pz);sc.add(lamp);
@@ -269,16 +270,18 @@ o('wtch',0,3.4,'Watchtower','The ladder is wet. Whoever watched from here faced 
 o('wtower',2,3.6,'Water tower','Dry. Something taps inside the tank at a slow, even interval.');
 o('cottage',0,5.6,'Operator\'s cottage','Two cups on the table. Both full. Both still warm.');
 o('ruin',-2,6.4,'Collapsed building','Fallen long before the outbreak. The vines grow toward the mast.');
-OB.push({x:-34,z:16.4,n:'Road blockade',note:'Rubble packed across the road, stone by stone. Not a landslide. Someone sealed this end.'});
+OB.push({x:-32,z:16.4,n:'Road blockade',note:'Rubble packed across the road, stone by stone. Not a landslide. Someone sealed this end.'});
 OB.push({x:34,z:16.4,n:'Road blockade',note:'The other end is sealed the same way. The only way out is through the signal.'});
 OB.push({x:TH.x,z:TH.z,n:'Forest trail',t:'f',to:1});
 // building interiors (install_interiors.py): each building's examine point becomes a door into its interior
 {const DR={'Utility shed':['shed','Enter the utility shed'],'Maintenance depot':['depot','Enter the maintenance depot'],'Watchtower':['wtch','Climb into the watchtower'],'Water tower':['wtower','Enter the pump room'],'Collapsed building':['ruin','Step into the collapsed building'],'Checkpoint booth':['booth','Enter the checkpoint booth']};
- for(const q of OB){const d=DR[q.n];if(d){q.t='b';q.b=d[0];q.n=d[1]}}}
+ for(const q of OB){const d=DR[q.n];if(d){q.src=q.n;q.t='b';q.b=d[0];q.n=d[1]}}}
+// logbook entries are keyed, because room interaction objects are recreated on every visit
+function record(k,n,note){if(!found.some(f=>f.k===k))found.push({k,n,note})}
 function toast(t){const m=$('msg');m.textContent=t;m.style.opacity=1;clearTimeout(tt);tt=setTimeout(()=>m.style.opacity=0,4200)}
 function closeP(){open='';$('pn').classList.add('hide');if(aud.stat)aud.stat.gain.value=0}
-function bc(){open='b';bt=0;const msg=BTXT[bIdx%BTXT.length];bIdx++;const h='WNCORE — 88.7 FM: "'+msg.split('\n')[0].replace(/^\.\.\./,'')+'"';if(!bcs.includes(h))bcs.push(h);window.__bmsg=msg;const p=$('pn');p.classList.remove('hide');p.innerHTML='<div class="hd"><span>WNCORE BROADCAST</span><span>88.7 FM</span></div><canvas id="wv" width="300" height="44"></canvas><p id="tx"></p><div class="sg">SIGNAL STRENGTH <i></i><i></i><i></i><i></i><i class="off"></i><i class="off"></i></div>';if(aud.stat)aud.stat.gain.value=.05}
-function lg(tab){open='l';const p=$('pn');p.classList.remove('hide');const T2=['DISCOVERIES','BROADCASTS','NOTES'],L=[found.map(f=>f.n+' — '+f.note),bcs,['Station 01 still answers.','Both ends of the road are sealed.','Someone is keeping the lights on. Find out who.']][tab];
+function bc(){open='b';bt=0;const msg=BTXT[bIdx%BTXT.length];bIdx++;const h='WNCORE — 88.7 FM: "'+msg.split('\n')[0].replace(/^\.\.\./,'')+'"';if(!bcs.includes(h))bcs.push(h);window.__bmsg=msg;const p=$('pn');p.classList.remove('hide','log');p.innerHTML='<div class="hd"><span>WNCORE BROADCAST</span><span>88.7 FM</span></div><canvas id="wv" width="300" height="44"></canvas><p id="tx"></p><div class="sg">SIGNAL STRENGTH <i></i><i></i><i></i><i></i><i class="off"></i><i class="off"></i></div>';if(aud.stat)aud.stat.gain.value=.05}
+function lg(tab){open='l';const p=$('pn');p.classList.remove('hide');p.classList.add('log');const T2=['DISCOVERIES','BROADCASTS','NOTES'],L=[found.map(f=>f.n+' — '+f.note),bcs,['Station 01 still answers.','Both ends of the road are sealed.','Someone is keeping the lights on. Find out who.']][tab];
  p.innerHTML='<div class="hd"><span>LOGBOOK</span><span>STATION 01</span></div><div class="lg"><nav>'+T2.map((n,i)=>'<b class="'+(i==tab?'on':'')+'" onclick="__lg('+i+')">'+(i==tab?'▸ ':'')+n+'</b>').join('')+'</nav><div>'+(L.length?L.map(x=>'<p>'+x+'</p>').join(''):'<p>Nothing recorded yet.</p>')+'</div></div>'}
 window.__lg=lg;
 // ---- vitals: food & water drain slowly; supplies in the station restore them (one use each)
@@ -290,7 +293,7 @@ function vitTick(dt){VIT.food=Math.max(0,VIT.food-dt/420);VIT.water=Math.max(0,V
  for(const k of['food','water']){if(VIT[k]<.2&&!VIT.warn[k]){VIT.warn[k]=1;toast(k=='food'?'Your stomach is empty. There was food in the station.':'Your mouth is dry. There were drinks in the station.')}}}
 const vbar=v=>'▮'.repeat(Math.ceil(v*5))+'▯'.repeat(5-Math.ceil(v*5));
 function act(){if(st!=1||busy)return;if(open){closeP();return}if(!near)return;if(near.t=='r'){bc();return}
- if(near.t=='x'){near.fn();return}if(near.t=='b'){BDOOR[near.b]={x:near.x+.8,z:near.z+.8};goB(near.b,near);return}if(near.t=='f'){travel(near.to);return}if(near.t=='d'){go(0);return}if(near.t=='g'){go(near.to);return}if(near.t=='n'){toast(near.note);return}if(near.t=='c'){eat(near);return}if(!found.includes(near))found.push(near);toast(near.note)}
+ if(near.t=='x'){near.fn();return}if(near.t=='b'){record(near.b,near.src,near.note);BDOOR[near.b]={x:near.x+.8,z:near.z+.8};goB(near.b,near);return}if(near.t=='f'){travel(near.to);return}if(near.t=='d'){go(0);return}if(near.t=='g'){go(near.to);return}if(near.t=='n'){record(near.n+'|'+near.note,near.n,near.note);toast(near.note);return}if(near.t=='c'){eat(near);return}record(near,near.n,near.note);toast(near.note)}
 addEventListener('keydown',e=>{K[e.code]=1;if(e.code=='KeyE')act();if(e.code=='KeyM'){muted=!muted;if(aud.mg)aud.mg.gain.value=muted?0:.9}
  if(e.code=='Space'){e.preventDefault();if(st==1&&!open&&!e.repeat){P.swingStart=clock;P.swingUntil=clock+.62;P.resting=false}}
  if(e.code=='KeyR'&&st==1&&!open&&!e.repeat){P.resting=!P.resting;P.vx=0;P.vz=0}
@@ -317,7 +320,7 @@ $('ov').addEventListener('click',start);
   if(L&&e.pointerId==L.id){clr();const n=performance.now();if(L.mv<12&&n-L.t<250){if(n-lastTap<350){key('KeyR');lastTap=0}else lastTap=n}L=null}
   if(Rr&&e.pointerId==Rr.id){clearTimeout(Rr.tm);if(!Rr.sw&&!Rr.mv&&performance.now()-Rr.t<380){key('KeyE')}Rr=null}};
  addEventListener('pointerup',up);addEventListener('pointercancel',up);
- document.body.style.touchAction='none';document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+ document.body.style.touchAction='none';document.addEventListener('touchmove',e=>{if(!(e.target.closest&&e.target.closest('.lg>div')))e.preventDefault()},{passive:false}); // the logbook list may scroll
  if('ontouchstart' in window){$('ovs').insertAdjacentHTML('beforebegin','<p><b>Touch</b> · drag left side to walk (far = run) · tap right = examine · hold right = swing · double-tap left = rest · top-right = logbook</p>')}}
 
 $('ovs').innerHTML='<b>Click to begin</b>';
@@ -360,6 +363,10 @@ async function goB(id,q){if(busy)return;busy=true;fd.style.opacity=1;
  ff.visible=!inn;for(const m of MIST)m.s.visible=!inn;for(const s of SHAFT)s.s.visible=!inn;
  fd.style.opacity=0;setTimeout(()=>busy=false,350)}
 window.__goB=goB;
+// every note in the game, counted up front so the total never changes mid-run
+const SILVAN_NOTES=8; // examinable landmarks built by forest.js (checked after it loads)
+const isNote=q=>q.t=='n';
+const TOTAL=OB.filter(q=>!q.t||q.t=='b').length+IO.flat().filter(isNote).length+Object.values(HUB.ROOMS).flatMap(r=>r.io).filter(isNote).length+SILVAN_NOTES;
 // ---------- 7c. SECTION TRAVEL: station <-> forest behind a loading screen ----------
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const LD=(()=>{const d=document.createElement('div');d.id='ld';d.innerHTML='<small></small><h2></h2><div class="bar"><i></i></div><p></p>';document.body.appendChild(d);const q=s=>d.querySelector(s);
@@ -371,7 +378,7 @@ async function travel(to){
  LD.show(f?'SILVAN':'RELAY CLEARING',f?'Section 02':'Section 01 · WNCORE Station');LD.set(.01,'Loading section…');
  await sleep(550);
  try{
-  if(f&&!FST){const mod=await import('./forest.js');FST=await mod.buildForest({T,sc,IM,META,spr,glow,LT,circ,SHAFT,shaftTex,ren},(p,m)=>LD.set(p,m));FOB=FST.objects}
+  if(f&&!FST){const mod=await import('./forest.js');FST=await mod.buildForest({T,sc,IM,META,spr,glow,LT,circ,SHAFT,shaftTex,ren},(p,m)=>LD.set(p,m));FOB=FST.objects;const n=FOB.filter(q=>!q.t).length;if(n!=SILVAN_NOTES)console.warn('SILVAN_NOTES is '+SILVAN_NOTES+', forest.js has '+n)}
   else{for(let i=1;i<=10;i++){LD.set(i/10,f?'Entering the trees…':'Back to the road…');await sleep(70)}}
   MAP=f?1:0;P.vx=P.vz=0;pmat.emissive.setHex(f?0x1c2018:0x1c1814);pmat.emissiveIntensity=.6;
   if(f){FST.setVisible(true);P.x=FST.spawn.x;P.z=FST.spawn.z;FST.reset(P.x,P.z);for(let i=0;i<3;i++)AMB[i]=FST.amb[i];sc.background.set(FST.fog);sc.fog.color.set(FST.fog);sc.fog.density=FST.fogD}
@@ -393,7 +400,7 @@ function upd(dt){clock+=dt;let ix=0,iz=0;
  vitTick(dt);near=null;let bd=3;for(const q of (IN>=0?IOB:MAP==1?FOB:OB)){const d=Math.hypot(q.x-P.x,q.z-P.z);if(d<bd){bd=d;near=q}}
  $('pr').textContent=(near&&!open&&!busy)?'[E] '+(near.t=='r'?'Tune the radio':(near.t=='d'||near.t=='g'||near.t=='f'||near.t=='x'||near.t=='b')?near.n:near.t=='c'?(near.p.water&&!near.p.food?'Drink ':'Eat ')+near.n:'Examine '+near.n.toLowerCase()):'';
  if(open=='b'){bt+=dt*26;const m=window.__bmsg;$('tx').textContent=m.slice(0,bt|0);const c=$('wv'),g=c.getContext('2d');g.clearRect(0,0,300,44);g.strokeStyle='#6fae5a';g.beginPath();for(let x=0;x<300;x+=3){const a=Math.abs(Math.sin(x*.05+clock*6))*Math.min(1,bt/20)*18*Math.random();g.moveTo(x,22-a);g.lineTo(x,22+a)}g.stroke()}
- $('dc').innerHTML='DISCOVERIES '+found.length+'/'+(OB.filter(q=>!q.t).length+FOB.filter(q=>!q.t).length)+'<br><span style="font-size:18px;color:'+(VIT.food<.2?'#d9695a':'#b7aa8d')+'">FOOD '+vbar(VIT.food)+'</span> <span style="font-size:18px;color:'+(VIT.water<.2?'#d9695a':'#b7aa8d')+'">WATER '+vbar(VIT.water)+'</span><br><span style="font-size:18px;color:#b7aa8d">SHIFT RUN · SPACE SWING · R REST · M MUTE</span>';
+ $('dc').innerHTML='DISCOVERIES '+found.length+'/'+TOTAL+'<br><span style="font-size:18px;color:'+(VIT.food<.2?'#d9695a':'#b7aa8d')+'">FOOD '+vbar(VIT.food)+'</span> <span style="font-size:18px;color:'+(VIT.water<.2?'#d9695a':'#b7aa8d')+'">WATER '+vbar(VIT.water)+'</span><br><span style="font-size:18px;color:#b7aa8d">SHIFT RUN · SPACE SWING · R REST · M MUTE</span>';
  $('st').innerHTML=(MAP==1?'NO SIGNAL<br>— — —':'WNCORE-01<br>88.7 FM')+(IN<0?'<br><span style="font-size:18px;color:#8a8570">'+WX.label+'</span>':'')}
 const dsq=Math.hypot;
 function anim(dt,t){
@@ -411,7 +418,7 @@ function anim(dt,t){
  const dm=IN>=0?6:dsq(P.x-bs.x,P.z-bs.z);let base=.0+.1*sm(16,5,dm);burstT-=dt;if(burstT<0){burstU=.5;burstT=22+Math.random()*30}burstU=Math.max(0,burstU-dt);
  wrong+=((base+(burstU>0?.8*Math.min(1,burstU*3):0))-wrong)*Math.min(1,dt*8);pu.wrong.value=wrong;pu.time.value=t;
  const on=burstU>0?Math.random()<.4:Math.sin(t*2.4)>-.1;
- const bl=on?1+.1*Math.sin(t*20):.12;LT[LT.length-1].cur=on?1:.05;beaconL.intensity=on?1.6:.1;bs.beacon.material.opacity=on?1:.08;bs.beacon.scale.setScalar(on?2.6+Math.sin(t*3)*.3:1.2);
+ const bl=on?1+.1*Math.sin(t*20):.12;beaconLT.cur=on?1:.05;beaconL.intensity=on?1.6:.1;bs.beacon.material.opacity=on?1:.08;bs.beacon.scale.setScalar(on?2.6+Math.sin(t*3)*.3:1.2);
  LGT.update(t,dt,{vis:outd&&MAP==0,WX,bOn:on,ground:MAP==1&&FST&&FST.ground?FST.ground:ground,outer:MAP==0?OUTER:null});psh.material.opacity=.82*LGT.shade;
  for(const g of GL){if(g.s===bs.beacon)continue;g.s.material.opacity=g.I*(.85+.15*Math.sin(t*3+g.ph)+(Math.random()<.01?-.3:0))}
  if(aud.hum){const hv=.1+.9*sm(30,6,dm);aud.hum.gain.value=muted?0:.05*hv;aud.wind.gain.value=(.1+.04*Math.sin(t*.3))*WX.wa;if(open!='b')aud.stat.gain.value=burstU>0?.06:0;if(Math.random()<dt*.9)aud.cr()}
