@@ -357,13 +357,13 @@ window.__lg=lg;
   {id:'cottage',name:'Operator Cottage',group:'WNCORE STATION 01',sector:0,x:BLD.cottage.x,z:BLD.cottage.z+5.6},
   {id:'ruin',name:'Collapsed Building',group:'WNCORE STATION 01',sector:0,x:BLD.ruin.x-2,z:BLD.ruin.z+6.4},
   {id:'silvan-marker',name:'Silvan Trail Marker',group:'SILVAN',sector:1},
-  {id:'city-junction',name:'Old Town Junction',group:'OLD CITY',sector:2,x:0,z:901},
-  {id:'city-residential',name:'Residential Block',group:'OLD CITY',sector:2,x:-46,z:873},
-  {id:'city-market',name:'Market Street',group:'OLD CITY',sector:2,x:46,z:873},
-  {id:'city-industrial',name:'Industrial Yard',group:'OLD CITY',sector:2,x:91,z:948},
-  {id:'city-avenue',name:'Overgrown Avenue',group:'OLD CITY',sector:2,x:-91,z:975},
-  {id:'city-south',name:'South Blocks',group:'OLD CITY',sector:2,x:46,z:975},
-  {id:'city-exit',name:'Northern City Exit',group:'OLD CITY',sector:2,x:0,z:816,interact:true}
+  {id:'city-junction',name:'Old Town Civic Square',group:'OLD CITY',sector:2,x:0,z:900},
+  {id:'city-residential',name:'Residential Avenue',group:'OLD CITY',sector:2,x:-78,z:985},
+  {id:'city-market',name:'Old Market Arcade',group:'OLD CITY',sector:2,x:78,z:930},
+  {id:'city-industrial',name:'Industrial Quarter',group:'OLD CITY',sector:2,x:140,z:820},
+  {id:'city-avenue',name:'Overgrown District',group:'OLD CITY',sector:2,x:-140,z:765},
+  {id:'city-south',name:'Northern Blocks',group:'OLD CITY',sector:2,x:42,z:765},
+  {id:'city-exit',name:'Northern City Exit',group:'OLD CITY',sector:2,x:0,z:690,interact:true}
  ];
  function waypointItems(){
   const items=STATION_WAYPOINTS.slice();
