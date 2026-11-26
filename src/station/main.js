@@ -210,9 +210,57 @@ const FW=64,FH=96,FR={};
 // state -> atlas columns. walk 4f, run 8f, idle 6f (also used for rest), swing 6f
 const FC={idle:[0,1,2,3,4,5],walking:[0,1,2,3],running:[0,1,2,3,4,5,6,7],swinging:[0,1,2,3,4,5],resting:[0,1,2,3,4,5]};
 for(const s in FC){FR[s]=[];for(let d=0;d<8;d++)FR[s].push(FC[s].map(c=>{const cv=document.createElement('canvas');cv.width=FW;cv.height=FH;const g=cv.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(({running:IM.player_run,idle:IM.player_idle,resting:IM.player_idle,swinging:IM.player_swing})[s]||IM.player,c*FW,d*FH,FW,FH,0,0,FW,FH);const t=new T.CanvasTexture(cv);t.magFilter=t.minFilter=T.NearestFilter;t.generateMipmaps=false;return t}))}
-function col(o,r){for(const s of sol){const dx=o.x-s.x,dz=o.z-s.z,hx=s.rx+r,hz=s.rz+r;if(Math.abs(dx)<hx&&Math.abs(dz)<hz){const px=hx-Math.abs(dx),pz=hz-Math.abs(dz);if(px<pz)o.x+=dx<0?-px:px;else o.z+=dz<0?-pz:pz}}
- for(const c of circ){const dx=o.x-c.x,dz=o.z-c.z,d=Math.hypot(dx,dz),m=c.r+r;if(d<m&&d>0){o.x+=dx/d*(m-d);o.z+=dz/d*(m-d)}}
- if(MAP==1&&FST)FST.col(o,r);else if(MAP==2&&CITY)CITY.col(o,r)}
+const CHAR_R=.4;
+function col(o,r){
+ // Interior props can sit very close to the shell. Resolve collisions inside the
+ // walkable room bounds so a wall cannot clamp the player straight back into a prop.
+ const lim=IN>=0?{x0:IX-IRX+r,x1:IX+IRX-r,z0:IZ-IRZ+r,z1:IZ+IRZ-r}:null;
+ const clampRoom=()=>{if(lim){o.x=Math.max(lim.x0,Math.min(lim.x1,o.x));o.z=Math.max(lim.z0,Math.min(lim.z1,o.z))}};
+ clampRoom();
+ for(let pass=0;pass<4;pass++){
+  let changed=false;
+  for(const s of sol){
+   const dx=o.x-s.x,dz=o.z-s.z,hx=s.rx+r,hz=s.rz+r;
+   if(Math.abs(dx)>=hx||Math.abs(dz)>=hz)continue;
+   const nx=s.x-hx-.012,px=s.x+hx+.012,nz=s.z-hz-.012,pz=s.z+hz+.012;
+   if(lim){
+    const options=[
+     {axis:'x',value:nx,dist:Math.abs(o.x-nx)},
+     {axis:'x',value:px,dist:Math.abs(o.x-px)},
+     {axis:'z',value:nz,dist:Math.abs(o.z-nz)},
+     {axis:'z',value:pz,dist:Math.abs(o.z-pz)}
+    ].filter(q=>q.axis=='x'?(q.value>=lim.x0&&q.value<=lim.x1):(q.value>=lim.z0&&q.value<=lim.z1));
+    if(!options.length)continue;
+    options.sort((a,b)=>a.dist-b.dist);
+    const q=options[0];if(q.axis=='x')o.x=q.value;else o.z=q.value;
+   }else{
+    const ox=hx-Math.abs(dx),oz=hz-Math.abs(dz);
+    if(ox<oz)o.x+=dx<0?-ox:ox;else o.z+=dz<0?-oz:oz;
+   }
+   changed=true;
+  }
+  clampRoom();
+  if(!changed)break;
+ }
+ for(const c of circ){
+  const dx=o.x-c.x,dz=o.z-c.z,d=Math.hypot(dx,dz),m=c.r+r;
+  if(d<m&&d>0){
+   const nx=dx/d*(m-d+.012),nz=dz/d*(m-d+.012);
+   if(lim){
+    const tx=o.x+nx,tz=o.z+nz;
+    const alternatives=[
+     {x:tx,z:o.z,dist:Math.abs(nx)},
+     {x:o.x,z:tz,dist:Math.abs(nz)}
+    ].filter(q=>q.x>=lim.x0&&q.x<=lim.x1&&q.z>=lim.z0&&q.z<=lim.z1);
+    alternatives.sort((a,b)=>a.dist-b.dist);
+    if(alternatives.length){o.x=alternatives[0].x;o.z=alternatives[0].z}
+   }else{o.x+=nx;o.z+=nz}
+  }
+ }
+ clampRoom();
+ if(MAP==1&&FST)FST.col(o,r);else if(MAP==2&&CITY)CITY.col(o,r);
+ clampRoom();
+}
 // colliders for trees etc. were pushed via circ in place(); building footprints in sol
 // ---------- 4c. bake ground, lights, glows ----------
 await new Promise(r=>requestAnimationFrame(r));
@@ -427,7 +475,7 @@ function upd(dt){clock+=dt;let ix=0,iz=0;
  if(!open&&!P.resting&&!busy){ix=(K.KeyD?1:0)+(K.KeyS?1:0)-(K.KeyW?1:0)-(K.KeyA?1:0);iz=(K.KeyS?1:0)+(K.KeyA?1:0)-(K.KeyW?1:0)-(K.KeyD?1:0)}
  const il=Math.hypot(ix,iz);if(il){ix/=il;iz/=il;const sx=ix-iz,sy=-(ix+iz)*.577;P.dr=(Math.round(Math.atan2(sx,sy)/(Math.PI/4))+8)%8;P.resting=false}
  const sp=(K.ShiftLeft||K.ShiftRight)?7.2:4.6,k=Math.min(1,dt*12);P.vx+=(ix*sp-P.vx)*k;P.vz+=(iz*sp-P.vz)*k;P.x+=P.vx*dt;P.z+=P.vz*dt;col(P,.4);
- if(IN>=0){P.x=Math.max(IX-IRX,Math.min(IX+IRX,P.x));P.z=Math.max(IZ-IRZ,Math.min(IZ+IRZ,P.z))}else if(MAP==1){const B=FST.bounds;P.x=Math.max(B.x0,Math.min(B.x1,P.x));P.z=Math.max(B.z0,Math.min(B.z1,P.z))}else if(MAP==2){const B=CITY.bounds;P.x=Math.max(B.x0,Math.min(B.x1,P.x));P.z=Math.max(B.z0,Math.min(B.z1,P.z))}else{P.x=Math.max(-BOUND,Math.min(BOUND,P.x));P.z=Math.max(-BOUND,Math.min(BOUND,P.z))}
+ if(IN>=0){P.x=Math.max(IX-IRX+CHAR_R,Math.min(IX+IRX-CHAR_R,P.x));P.z=Math.max(IZ-IRZ+CHAR_R,Math.min(IZ+IRZ-CHAR_R,P.z))}else if(MAP==1){const B=FST.bounds;P.x=Math.max(B.x0,Math.min(B.x1,P.x));P.z=Math.max(B.z0,Math.min(B.z1,P.z))}else if(MAP==2){const B=CITY.bounds;P.x=Math.max(B.x0,Math.min(B.x1,P.x));P.z=Math.max(B.z0,Math.min(B.z1,P.z))}else{P.x=Math.max(-BOUND,Math.min(BOUND,P.x));P.z=Math.max(-BOUND,Math.min(BOUND,P.z))}
  vitTick(dt);near=null;let bd=3;for(const q of (IN>=0?IOB:MAP==1?FOB:MAP==2?CITY.objects:OB)){const d=Math.hypot(q.x-P.x,q.z-P.z);if(d<bd){bd=d;near=q}}
  $('pr').textContent=(near&&!open&&!busy)?'[E] '+(near.t=='r'?'Tune the radio':(near.t=='d'||near.t=='g'||near.t=='f'||near.t=='x'||near.t=='b')?near.n:near.t=='c'?(near.p.water&&!near.p.food?'Drink ':'Eat ')+near.n:'Examine '+near.n.toLowerCase()):'';
  if(open=='b'){bt+=dt*26;const m=window.__bmsg;$('tx').textContent=m.slice(0,bt|0);const c=$('wv'),g=c.getContext('2d');g.clearRect(0,0,300,44);g.strokeStyle='#6fae5a';g.beginPath();for(let x=0;x<300;x+=3){const a=Math.abs(Math.sin(x*.05+clock*6))*Math.min(1,bt/20)*18*Math.random();g.moveTo(x,22-a);g.lineTo(x,22+a)}g.stroke()}
