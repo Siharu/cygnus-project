@@ -282,7 +282,7 @@ export async function buildCity(ctx,progress=()=>{}){
     q.light.intensity=q.base*pulse*dead;q.tint.cur=pulse*dead;
    }
   },
-  stats:{buildings:structureCount,poi:ASSETS.length,marketProps:market.length,industrialProps:industrial.length,
+  stats:{buildings:structureCount,buildingRows:rows.length,poi:ASSETS.length,marketProps:market.length,industrialProps:industrial.length,
    streetLights:lampPositions.length,utilityPoles:polePositions.length,trees:trees.length,shrubs:shrubs.length,rubble:rubble.length,streetProps:market.length+industrial.length+fences.length}
  };
  await report(1,'Old City sector ready.');
