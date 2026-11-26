@@ -14,31 +14,49 @@ export async function buildCity(ctx,progress=()=>{}){
  const pick=a=>a[Math.floor(rand()*a.length)],range=(a,b)=>a+(b-a)*rand();
  await report(.02,'Opening the old city archive…');
 
- // ---------- 1. Three shared atlases instead of 78 separate PNG requests ----------
+ // ---------- 1. Compact the three source atlases into one low-overhead runtime sheet ----------
  const byId=new Map(ASSETS.map(a=>[a.id,a]));
- const textures=new Map(),flippedTextures=new Map(),atlasTextures=new Map();
- const loader=new T.TextureLoader();
+ const textures=new Map(),flippedTextures=new Map(),loader=new T.TextureLoader();
  const atlasFiles=[...new Set(ASSETS.map(a=>a.atlasFile))];
+ const PACK_W=1536,PAD=4;
+ const packed=new Map();
+ const sorted=[...ASSETS].sort((a,b)=>b.h-a.h||b.w-a.w);
+ let px=PAD,py=PAD,rowH=0,PACK_H=0;
+ for(const a of sorted){
+  const w=a.w+PAD*2,h=a.h+PAD*2;
+  if(px+w>PACK_W){px=PAD;py+=rowH;rowH=0;}
+  packed.set(a.id,{x:px+PAD,y:py+PAD});
+  px+=w;rowH=Math.max(rowH,h);PACK_H=Math.max(PACK_H,py+h);
+ }
+ const canvas=document.createElement('canvas');canvas.width=PACK_W;canvas.height=PACK_H;
+ const ctx2d=canvas.getContext('2d',{alpha:true});
+ ctx2d.clearRect(0,0,PACK_W,PACK_H);
  let loaded=0;
- await Promise.all(atlasFiles.map(file=>new Promise(resolve=>{
-  const url=new URL('../../assets/DRIFTER_POI_Asset_Library_v2/'+file,import.meta.url).href;
-  loader.load(url,t=>{
-   t.magFilter=T.LinearFilter;t.minFilter=T.LinearFilter;t.generateMipmaps=false;
-   atlasTextures.set(file,t);loaded++;
-   progress(.03+.20*loaded/atlasFiles.length,'Loading city atlases '+loaded+'/'+atlasFiles.length+'…');resolve(true);
-  },undefined,e=>{
-   console.warn('City atlas failed:',file,e);loaded++;
-   progress(.03+.20*loaded/atlasFiles.length,'Loading city atlases '+loaded+'/'+atlasFiles.length+'…');resolve(false);
+ // Decode one source sheet at a time, copy only the sprite rectangles, then release it.
+ for(const file of atlasFiles){
+  await new Promise((resolve,reject)=>{
+   const url=new URL('../../assets/DRIFTER_POI_Asset_Library_v2/'+file,import.meta.url).href;
+   loader.load(url,source=>{
+    for(const a of ASSETS){
+     if(a.atlasFile!==file)continue;
+     const [sx,sy,sw,sh]=a.rect,p=packed.get(a.id);
+     ctx2d.drawImage(source.image,sx,sy,sw,sh,p.x,p.y,sw,sh);
+    }
+    source.dispose();loaded++;
+    progress(.03+.20*loaded/atlasFiles.length,'Packing city art '+loaded+'/'+atlasFiles.length+'…');
+    resolve(true);
+   },undefined,e=>{console.warn('City atlas failed:',file,e);reject(e);});
   });
- })));
- // Source atlas dimensions: 1152 by 2304. UV regions use registry sprite rectangles.
- const ATLAS_W=1152,ATLAS_H=2304;
+  await tick();
+ }
+ const packedAtlas=new T.CanvasTexture(canvas);
+ packedAtlas.magFilter=T.LinearFilter;packedAtlas.minFilter=T.LinearFilter;
+ packedAtlas.generateMipmaps=false;packedAtlas.needsUpdate=true;
  for(const a of ASSETS){
-  const source=atlasTextures.get(a.atlasFile);if(!source)continue;
-  const [sx,sy,sw,sh]=a.rect,tex=source.clone();
+  const p=packed.get(a.id),tex=packedAtlas.clone();
   tex.magFilter=T.LinearFilter;tex.minFilter=T.LinearFilter;tex.generateMipmaps=false;
-  tex.repeat.set(sw/ATLAS_W,sh/ATLAS_H);
-  tex.offset.set(sx/ATLAS_W,1-(sy+sh)/ATLAS_H);tex.needsUpdate=true;
+  tex.repeat.set(a.w/PACK_W,a.h/PACK_H);
+  tex.offset.set(p.x/PACK_W,1-(p.y+a.h)/PACK_H);tex.needsUpdate=true;
   textures.set(a.id,tex);
  }
  function poiMap(id,flip=false){
