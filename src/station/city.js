@@ -51,7 +51,7 @@ export async function buildCity(ctx,progress=()=>{}){
   g.fillStyle='rgba(202,185,150,.055)';
   for(let k=0;k<14;k++)g.fillRect(px(x-15+((k*17)%29)),pz(z-15+((k*11)%28)),PPU*.22,PPU*.22);
  }
- const vRoads=[-70,-23,23,70],hRoads=[-55,0,55];
+ const vRoads=[-70,-23,0,23,70],hRoads=[-55,0,55];
  for(const x of vRoads){
   rect(x-6.4,-HZ,12.8,HZ*2,'#77736a');rect(x-4.25,-HZ,8.5,HZ*2,'#303539');
   g.strokeStyle='rgba(184,171,139,.55)';g.lineWidth=PPU*.12;g.setLineDash([PPU*2.4,PPU*2.6]);
