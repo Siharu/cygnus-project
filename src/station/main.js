@@ -319,7 +319,7 @@ function audioStart(){if(AC)return;try{AC=new(window.AudioContext||window.webkit
  }catch(e){console.warn('audio',e)}}
 // ---------- 7. UI ----------
 let MAP=0,FST=null,FOB=[],CITY=null; // MAP: 0 station, 1 forest, 2 city (lazy-built sectors)
-const found=[],bcs=[];let st=0,open='',bt=0,near=null,tt,bIdx=0;
+const found=[],bcs=[];let st=0,open='',bt=0,near=null,tt,bIdx=0,activeWaypoint=null;
 const BTXT=['...this is WNCORE.\nThe signal reaches those who are still listening.\nStay safe, Drifter.','WNCORE continuity. 88.7 FM.\nThis is a recorded transmission.\nIf you can hear it, someone kept the power on.','...station check. All relays answering.\nAll relays answering\nexcept one.'];
 const o=(id,dx,dz,n,note,t)=>OB.push({x:BLD[id].x+dx,z:BLD[id].z+dz,n,note,t});
 o('station',1.63,-1.47,'Enter the relay station','','d');
@@ -344,6 +344,112 @@ function bc(){open='b';bt=0;const msg=BTXT[bIdx%BTXT.length];bIdx++;const h='WNC
 function lg(tab){open='l';const p=$('pn');p.classList.remove('hide');const T2=['DISCOVERIES','BROADCASTS','NOTES'],L=[found.map(f=>f.n+' — '+f.note),bcs,['Station 01 still answers.','Both ends of the road are sealed.','Someone is keeping the lights on. Find out who.']][tab];
  p.innerHTML='<div class="hd"><span>LOGBOOK</span><span>STATION 01</span></div><div class="lg"><nav>'+T2.map((n,i)=>'<b class="'+(i==tab?'on':'')+'" onclick="__lg('+i+')">'+(i==tab?'▸ ':'')+n+'</b>').join('')+'</nav><div>'+(L.length?L.map(x=>'<p>'+x+'</p>').join(''):'<p>Nothing recorded yet.</p>')+'</div></div>'}
 window.__lg=lg;
+
+ // ---------- FIELD COMPASS / WAYPOINTS ----------
+ const STATION_WAYPOINTS=[
+  {id:'relay',name:'Relay Station',group:'WNCORE STATION 01',sector:0,x:BLD.station.x+1.63,z:BLD.station.z-1.47,interact:true},
+  {id:'mast',name:'Relay Mast',group:'WNCORE STATION 01',sector:0,x:BLD.station.x-3.6,z:BLD.station.z},
+  {id:'checkpoint',name:'Checkpoint Booth',group:'WNCORE STATION 01',sector:0,x:BLD.booth.x+3.8,z:BLD.booth.z+2.5,interact:true},
+  {id:'shed',name:'Utility Shed',group:'WNCORE STATION 01',sector:0,x:BLD.shed.x+3,z:BLD.shed.z+4.2,interact:true},
+  {id:'depot',name:'Maintenance Depot',group:'WNCORE STATION 01',sector:0,x:BLD.depot.x-1,z:BLD.depot.z+5.2,interact:true},
+  {id:'water-tower',name:'Water Tower',group:'WNCORE STATION 01',sector:0,x:BLD.wtower.x+2,z:BLD.wtower.z+3.6,interact:true},
+  {id:'watchtower',name:'Watchtower',group:'WNCORE STATION 01',sector:0,x:BLD.wtch.x,z:BLD.wtch.z+3.4,interact:true},
+  {id:'cottage',name:'Operator Cottage',group:'WNCORE STATION 01',sector:0,x:BLD.cottage.x,z:BLD.cottage.z+5.6},
+  {id:'ruin',name:'Collapsed Building',group:'WNCORE STATION 01',sector:0,x:BLD.ruin.x-2,z:BLD.ruin.z+6.4},
+  {id:'silvan-marker',name:'Silvan Trail Marker',group:'SILVAN',sector:1},
+  {id:'city-junction',name:'Old Town Junction',group:'OLD CITY',sector:2,x:0,z:901},
+  {id:'city-residential',name:'Residential Block',group:'OLD CITY',sector:2,x:-46,z:873},
+  {id:'city-market',name:'Market Street',group:'OLD CITY',sector:2,x:46,z:873},
+  {id:'city-industrial',name:'Industrial Yard',group:'OLD CITY',sector:2,x:91,z:948},
+  {id:'city-avenue',name:'Overgrown Avenue',group:'OLD CITY',sector:2,x:-91,z:975},
+  {id:'city-south',name:'South Blocks',group:'OLD CITY',sector:2,x:46,z:975},
+  {id:'city-exit',name:'Northern City Exit',group:'OLD CITY',sector:2,x:0,z:816,interact:true}
+ ];
+ function waypointItems(){
+  const items=STATION_WAYPOINTS.slice();
+  if(FST)FST.objects.forEach((q,i)=>{
+   if(!q.n||q.n==='Trail marker')return;
+   items.push({id:'forest-'+i,name:q.n,group:'SILVAN',sector:1,x:q.x,z:q.z,interact:q.t==='f'});
+  });
+  return items;
+ }
+ function waypointById(id){return waypointItems().find(q=>q.id===id)||null}
+ const navHud=document.createElement('div');
+ navHud.id='nav-hud';
+ navHud.innerHTML='<button id="nav-compass" type="button" aria-label="Choose waypoint"><canvas id="nav-compass-art" width="48" height="48"></canvas><span>WAYFINDER</span></button><div id="wp-arrow"><b class="wp-glyph">▲</b><span class="wp-label"></span><small class="wp-distance"></small></div>';
+ document.body.appendChild(navHud);
+ const navCompass=$('nav-compass'),navCanvas=$('nav-compass-art'),navCtx=navCanvas.getContext('2d'),wpArrow=$('wp-arrow');
+ const wpGlyph=wpArrow.querySelector('.wp-glyph'),wpLabel=wpArrow.querySelector('.wp-label'),wpDistance=wpArrow.querySelector('.wp-distance');
+ const wpPlayerNdc=new T.Vector3(),wpTargetNdc=new T.Vector3();
+ function drawCompass(dx=0,dy=-1){
+  const g=navCtx;g.clearRect(0,0,48,48);g.imageSmoothingEnabled=false;
+  g.fillStyle='#080c10';g.fillRect(2,2,44,44);g.fillStyle='#0e151a';g.fillRect(5,5,38,38);
+  g.strokeStyle='#8b754e';g.lineWidth=2;g.strokeRect(2.5,2.5,43,43);
+  g.fillStyle='#d7c49a';g.font='bold 8px monospace';g.textAlign='center';g.textBaseline='middle';
+  g.fillText('N',24,8);g.fillText('S',24,40);g.fillText('W',8,24);g.fillText('E',40,24);
+  g.strokeStyle='#67583d';g.lineWidth=1;g.beginPath();g.moveTo(24,12);g.lineTo(24,36);g.moveTo(12,24);g.lineTo(36,24);g.stroke();
+  g.save();g.translate(24,24);g.rotate(Math.atan2(dy,dx)+Math.PI/2);
+  g.fillStyle='#d7a24f';g.beginPath();g.moveTo(0,-14);g.lineTo(-5,-1);g.lineTo(0,-4);g.lineTo(5,-1);g.closePath();g.fill();
+  g.fillStyle='#c5d2c5';g.beginPath();g.moveTo(-4,2);g.lineTo(0,14);g.lineTo(4,2);g.lineTo(0,5);g.closePath();g.fill();
+  g.fillStyle='#111';g.fillRect(-1,-1,2,3);g.restore();g.fillStyle='#b7a780';g.fillRect(23,23,2,2);
+ }
+ function waypointTarget(){
+  if(!activeWaypoint)return null;
+  const wp=waypointById(activeWaypoint);if(!wp)return null;
+  if(IN>=0){
+   if(IN===9&&BQ){const L=BI.layout(BQ);return{x:IX+L.exit[0],z:IZ+L.exit[1],label:'ROOM EXIT',interact:true,route:true}}
+   const ex=IO[IN]?.find(q=>q.t==='g'&&(IN===0?q.to===-1:q.to<IN));
+   if(ex)return{x:IX+ex.dx,z:IZ+ex.dz,label:IN===0?'STATION EXIT':'STAIRS / LOWER FLOOR',interact:true,route:true};
+  }
+  if(wp.sector===MAP){
+   if(wp.id==='silvan-marker'&&FST)return{x:FST.cairn.x,z:FST.cairn.z,label:wp.name,interact:true};
+   return Number.isFinite(wp.x)&&Number.isFinite(wp.z)?{x:wp.x,z:wp.z,label:wp.name,interact:!!wp.interact}:null;
+  }
+  if(MAP===0&&wp.sector===1)return{x:TH.x,z:TH.z,label:'SILVAN ENTRANCE',interact:true,route:true};
+  if(MAP===0&&wp.sector===2)return{x:CITY_GATE.x,z:CITY_GATE.z,label:'OLD CITY ROAD',interact:true,route:true};
+  if(MAP===1&&FST)return{x:FST.cairn.x,z:FST.cairn.z,label:'TRAIL MARKER · RETURN TO STATION',interact:true,route:true};
+  if(MAP===2){const exit=CITY?.objects.find(q=>q.t==='f')||{x:0,z:816};return{x:exit.x,z:exit.z,label:'NORTHERN CITY EXIT',interact:true,route:true}}
+  return null;
+ }
+ function updateWaypointHUD(){
+  if(!activeWaypoint||!st||open==='w'){wpArrow.classList.remove('on');drawCompass();return}
+  const wp=waypointById(activeWaypoint),target=waypointTarget();
+  if(!wp||!target){wpArrow.classList.remove('on');drawCompass();return}
+  wpPlayerNdc.set(P.x,.08,P.z).project(cam);wpTargetNdc.set(target.x,.08,target.z).project(cam);
+  let dx=wpTargetNdc.x-wpPlayerNdc.x,dy=-(wpTargetNdc.y-wpPlayerNdc.y);
+  if(wpTargetNdc.z>1){dx=-dx;dy=-dy}if(Math.hypot(dx,dy)<.0001){dx=0;dy=-1}
+  drawCompass(dx,dy);
+  const distance=Math.hypot(target.x-P.x,target.z-P.z),reached=distance<2.6;
+  const onScreen=wpTargetNdc.z>=-1&&wpTargetNdc.z<=1&&Math.abs(wpTargetNdc.x)<.9&&Math.abs(wpTargetNdc.y)<.9;
+  let left,top;
+  if(onScreen){
+   left=(wpTargetNdc.x*.5+.5)*innerWidth;top=(-wpTargetNdc.y*.5+.5)*innerHeight-12;
+   wpGlyph.textContent='▼';wpArrow.classList.add('at-target');wpArrow.style.transform='translate(-50%,-100%)';
+  }else{
+   const ox=(wpPlayerNdc.x*.5+.5)*innerWidth,oy=(-wpPlayerNdc.y*.5+.5)*innerHeight;
+   const mx=Math.max(24,innerWidth/2-38),my=Math.max(30,innerHeight/2-58);
+   const sx=dx===0?Infinity:mx/Math.abs(dx),sy=dy===0?Infinity:my/Math.abs(dy),scale=Math.min(sx,sy);
+   left=Math.max(26,Math.min(innerWidth-26,ox+dx*scale));top=Math.max(32,Math.min(innerHeight-32,oy+dy*scale));
+   wpGlyph.textContent='▲';wpArrow.classList.remove('at-target');
+   wpArrow.style.transform='translate(-50%,-50%) rotate('+(Math.atan2(dy,dx)*180/Math.PI+90)+'deg)';
+  }
+  wpArrow.style.left=left+'px';wpArrow.style.top=top+'px';
+  wpLabel.textContent=reached?(target.interact?'PRESS E · '+target.label:'ARRIVED · '+wp.name):(target.route?target.label:wp.name);
+  wpDistance.textContent=reached?'':Math.round(distance)+'u';wpArrow.classList.add('on');
+ }
+ function openWaypointPanel(){
+  if(st!==1||busy)return;if(open==='w'){closeP();return}if(open)closeP();
+  const items=waypointItems(),groups=['WNCORE STATION 01','SILVAN','OLD CITY'];
+  const html=groups.map(group=>{const entries=items.filter(q=>q.group===group);return entries.length?'<optgroup label="'+group+'">'+entries.map(q=>'<option value="'+q.id+'">'+q.name+'</option>').join('')+'</optgroup>':''}).join('');
+  open='w';const p=$('pn');p.classList.remove('hide');
+  p.innerHTML='<div class="hd"><span>FIELD COMPASS</span><button id="wp-close" type="button">×</button></div><div class="wp-panel"><label for="wp-destination">WHERE TO, DRIFTER?</label><select id="wp-destination"><option value="" disabled>SELECT A LOCATION</option>'+html+'</select><p class="wp-help">The marker guides you to the next route or sector entrance. Follow it, then continue once you arrive.</p><div class="wp-actions"><button id="wp-set" type="button">SET WAYPOINT</button><button id="wp-clear" type="button">CLEAR</button></div></div>';
+  const select=$('wp-destination');if(activeWaypoint&&items.some(q=>q.id===activeWaypoint))select.value=activeWaypoint;else select.selectedIndex=1;
+  $('wp-close').addEventListener('click',closeP);
+  $('wp-set').addEventListener('click',()=>{const q=items.find(q=>q.id===select.value);if(!q)return;activeWaypoint=q.id;closeP();toast('Waypoint set · '+q.name)});
+  $('wp-clear').addEventListener('click',()=>{activeWaypoint=null;closeP();toast('Waypoint cleared.')});
+ }
+ navCompass.addEventListener('click',openWaypointPanel);
+ navHud.classList.add('hide');
 // ---- vitals: food & water drain slowly; supplies in the station restore them (one use each)
 const VIT={food:.85,water:.8,warn:{}};
 function eat(q){const p=q.p;INT.take(p.id);IOB.splice(IOB.indexOf(q),1);near=null;
@@ -357,17 +463,18 @@ function act(){if(st!=1||busy)return;if(open){closeP();return}if(!near)return;if
 addEventListener('keydown',e=>{K[e.code]=1;if(e.code=='KeyE')act();if(e.code=='KeyM'){muted=!muted;if(aud.mg)aud.mg.gain.value=muted?0:.9}
  if(e.code=='Space'){e.preventDefault();if(st==1&&!open&&!e.repeat){P.swingStart=clock;P.swingUntil=clock+.62;P.resting=false}}
  if(e.code=='KeyR'&&st==1&&!open&&!e.repeat){P.resting=!P.resting;P.vx=0;P.vz=0}
+ if(e.code=='KeyN'&&st==1&&!e.repeat)openWaypointPanel();
  if(e.code=='Tab'){e.preventDefault();if(st==1)open=='l'?closeP():lg(0)}if(e.code=='Escape')closeP()});
 addEventListener('keyup',e=>K[e.code]=0);
 addEventListener('blur',()=>{for(const k in K)K[k]=0});
-function start(){if(st)return;st=1;$('ov').classList.add('hide');audioStart();const t=$('ttl');t.innerHTML='WNCORE STATION 01<small>88.7 FM · continuity</small>';t.style.opacity=1;setTimeout(()=>t.style.opacity=0,4200)}
+function start(){if(st)return;st=1;$('ov').classList.add('hide');navHud.classList.remove('hide');audioStart();const t=$('ttl');t.innerHTML='WNCORE STATION 01<small>88.7 FM · continuity</small>';t.style.opacity=1;setTimeout(()=>t.style.opacity=0,4200)}
 $('ov').addEventListener('click',start);
 // ---- invisible touch controls: left half = floating stick (drag far = run, double-tap = rest),
 //      right half = tap examine/close, hold swing, top-right corner = logbook ----
 {const key=(c,t='keydown')=>dispatchEvent(new KeyboardEvent(t,{code:c,bubbles:true}));
  let L=null,Rr=null,lastTap=0;const dirs=['KeyW','KeyA','KeyS','KeyD','ShiftLeft'];
  const clr=()=>dirs.forEach(c=>K[c]=0);
- addEventListener('pointerdown',e=>{if(e.pointerType!='touch'||st!=1)return;if(e.target.closest&&e.target.closest('#pn,#ov'))return;
+ addEventListener('pointerdown',e=>{if(e.pointerType!='touch'||st!=1)return;if(e.target.closest&&e.target.closest('#pn,#ov,#nav-hud'))return;
   if(e.clientX>innerWidth*.7&&e.clientY<innerHeight*.16){key('Tab');return}
   if(e.clientX<innerWidth/2){if(!L)L={id:e.pointerId,ox:e.clientX,oy:e.clientY,t:performance.now(),mv:0}}
   else if(!Rr){Rr={id:e.pointerId,x:e.clientX,y:e.clientY,t:performance.now(),sw:false,tm:setTimeout(()=>{if(Rr&&!Rr.sw){Rr.sw=true;key('Space')}},380)}}},{passive:true});
@@ -514,7 +621,7 @@ function anim(dt,t){
  const IS=IN>=0?1.4:1;ps.scale.setScalar(IS);const EL=MAP==1&&FST?FST.elev(P.x,P.z):0;ps.position.set(P.x,PH*IS/2+bob+EL,P.z);psh.position.set(P.x,.035+EL,P.z);psh.scale.set((1+Math.min(.18,mv*.025))*IS,IS,1);pL.position.set(P.x,2,P.z);
  // camera: follow + headroom, frame the mast near the station
  const fz=sm(24,10,dm)*3.2/.816+BIAS;const tx=IN>=0?IX-ICX:P.x-fz,tz=IN>=0?IZ-ICZ:P.z-fz;cp.x+=(tx-cp.x)*Math.min(1,dt*4);cp.z+=(tz-cp.z)*Math.min(1,dt*4);
- cam.position.set(cp.x+OFF.x,OFF.y,cp.z+OFF.z);cam.lookAt(cp.x,0,cp.z);ps.quaternion.copy(cam.quaternion);
+ cam.position.set(cp.x+OFF.x,OFF.y,cp.z+OFF.z);cam.lookAt(cp.x,0,cp.z);ps.quaternion.copy(cam.quaternion);updateWaypointHUD();
  // cull + tint sprites
  const asp=innerWidth/innerHeight,hw=VH*asp,hh=VH;
  const pSx=(P.x-cp.x-(P.z-cp.z))*.7071,pSy=-(P.x-cp.x+P.z-cp.z)*.4082+1.1,pD=P.x+P.z;
