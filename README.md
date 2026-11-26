@@ -12,7 +12,15 @@
 
 <br>
 
-`WNCORE STATION 01` &nbsp;·&nbsp; `88.7 FM` &nbsp;·&nbsp; `SIGNAL STATUS: RECEIVING`
+**[▶ PLAY THE LIVE FIELD BUILD](https://drifter-tale.vercel.app)**
+
+<sub>WNCORE STATION 01 &nbsp;·&nbsp; 88.7 FM &nbsp;·&nbsp; SIGNAL STATUS: RECEIVING</sub>
+
+<br>
+
+<img src="assets/drifter_player_complete_animations_8d/dodge_roll_preview.gif" alt="Drifter character dodge-roll animation preview" width="320">
+
+<sub>CHARACTER MOTION STUDY · SPRITE ANIMATION PREVIEW</sub>
 
 </div>
 
@@ -29,6 +37,61 @@
 Walk the station grounds. Look inside the buildings. Read the traces people left behind. Follow the road into Silvan, listen to the radio, and work out why the station is still transmitting.
 
 This is an actively developed **playable field build**. The focus is exploration, environmental storytelling, atmosphere, and building a world that feels like it existed before the player arrived.
+
+## ▸ VISUAL ARCHIVE
+
+A look at the characters, environments, and sprite libraries behind the field build.
+
+### Character animation
+
+<div align="center">
+  <img src="assets/drifter_player_complete_animations_8d/idle_preview.png" alt="Drifter idle animation preview" width="190">
+  &nbsp;&nbsp;
+  <img src="assets/drifter_player_complete_animations_8d/walk/drifter_player_walk_8d_preview.png" alt="Drifter eight-direction walk animation preview" width="280">
+  &nbsp;&nbsp;
+  <img src="assets/drifter_player_complete_animations_8d/swing_preview.png" alt="Drifter swing animation preview" width="190">
+</div>
+
+<div align="center">
+  <sub>IDLE</sub> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <sub>8-DIRECTION WALK</sub> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <sub>SWING</sub>
+</div>
+
+### Environment and world assets
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/DRIFTER_Foliage_Asset_Library_Wind_Animated_v2/Foliage_Asset_Contact_Sheet.jpg" alt="Drifter foliage contact sheet" width="100%">
+      <br><sub>FOLIAGE LIBRARY</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/DRIFTER_Terrain_Asset_Library_Animated_Grass_v2/Animated_Grass_Atlas_Preview.png" alt="Animated grass atlas preview" width="100%">
+      <br><sub>WIND-ANIMATED GRASS</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/DRIFTER_Rock_Stone_Asset_Library/DRIFTER_Rock_Stone_Atlas_Preview.png" alt="Rock and stone asset atlas preview" width="100%">
+      <br><sub>ROCK & STONE LIBRARY</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/DRIFTER_Building_Asset_Library/source_building_atlas.png" alt="Building asset atlas" width="100%">
+      <br><sub>BUILDING SPRITE LIBRARY</sub>
+    </td>
+  </tr>
+</table>
+
+<details>
+  <summary><b>More location and interior assets</b></summary>
+  <br>
+  <div align="center">
+    <img src="assets/HUB/02_Standalone_Location_Packs/Collapsed_Building/Assets/DRIFTER_Collapsed_Building_Shell_Atlas_4x2_preview.jpg" alt="Collapsed building shell asset preview" width="48%">
+    <img src="assets/HUB/02_Standalone_Location_Packs/Collapsed_Building/Assets/DRIFTER_Collapsed_Building_Props_Atlas_3x2_preview.jpg" alt="Collapsed building prop asset preview" width="48%">
+    <br><sub>COLLAPSED BUILDING · SHELL AND PROPS</sub>
+  </div>
+</details>
+
+> **Gameplay footage:** The live build is playable at [drifter-tale.vercel.app](https://drifter-tale.vercel.app). A recorded in-game GIF or screenshot has not yet been added to the repository; the animated image above is a character-sprite preview, not a gameplay capture.
 
 ## ▸ WHAT YOU CAN EXPLORE
 
