@@ -3,7 +3,7 @@
 // quiet commercial blocks, distant apartment silhouettes and slowly reclaimed streets.
 // Built from the 78 isolated POI sprites, production terrain tiles, foliage and rock libraries.
 const OX=0,OZ=900,HX=160,HZ=220,PPU=8;
-const ASSETS=[{"id":1,"file":"Individual_PNGs/SRC-001_MasterSheetA_Extract.png","w":203,"h":203},{"id":2,"file":"Individual_PNGs/SRC-002_MasterSheetA_Extract.png","w":194,"h":204},{"id":3,"file":"Individual_PNGs/SRC-003_MasterSheetA_Extract.png","w":154,"h":189},{"id":4,"file":"Individual_PNGs/SRC-004_MasterSheetA_Extract.png","w":200,"h":191},{"id":5,"file":"Individual_PNGs/SRC-005_MasterSheetA_Extract.png","w":191,"h":197},{"id":6,"file":"Individual_PNGs/SRC-006_MasterSheetA_Extract.png","w":174,"h":198},{"id":7,"file":"Individual_PNGs/SRC-007_MasterSheetA_Extract.png","w":146,"h":192},{"id":8,"file":"Individual_PNGs/SRC-008_MasterSheetA_Extract.png","w":164,"h":183},{"id":9,"file":"Individual_PNGs/SRC-009_MasterSheetA_Extract.png","w":231,"h":192},{"id":10,"file":"Individual_PNGs/SRC-010_MasterSheetA_Extract.png","w":268,"h":194},{"id":11,"file":"Individual_PNGs/SRC-011_MasterSheetA_Extract.png","w":175,"h":172},{"id":12,"file":"Individual_PNGs/SRC-012_MasterSheetA_Extract.png","w":126,"h":152},{"id":13,"file":"Individual_PNGs/SRC-013_MasterSheetA_Extract.png","w":126,"h":159},{"id":14,"file":"Individual_PNGs/SRC-014_MasterSheetA_Extract.png","w":141,"h":160},{"id":15,"file":"Individual_PNGs/SRC-015_MasterSheetA_Extract.png","w":130,"h":148},{"id":16,"file":"Individual_PNGs/SRC-016_MasterSheetA_Extract.png","w":156,"h":159},{"id":17,"file":"Individual_PNGs/SRC-017_MasterSheetA_Extract.png","w":129,"h":144},{"id":18,"file":"Individual_PNGs/SRC-018_MasterSheetA_Extract.png","w":210,"h":217},{"id":19,"file":"Individual_PNGs/SRC-019_MasterSheetA_Extract.png","w":251,"h":200},{"id":20,"file":"Individual_PNGs/SRC-020_MasterSheetA_Extract.png","w":196,"h":180},{"id":21,"file":"Individual_PNGs/SRC-021_MasterSheetA_Extract.png","w":226,"h":176},{"id":22,"file":"Individual_PNGs/SRC-022_MasterSheetA_Extract.png","w":240,"h":197},{"id":23,"file":"Individual_PNGs/SRC-023_MasterSheetA_Extract.png","w":160,"h":189},{"id":24,"file":"Individual_PNGs/SRC-024_MasterSheetA_Extract.png","w":193,"h":186},{"id":25,"file":"Individual_PNGs/SRC-025_MasterSheetA_Extract.png","w":146,"h":135},{"id":26,"file":"Individual_PNGs/SRC-026_MasterSheetA_Extract.png","w":171,"h":134},{"id":27,"file":"Individual_PNGs/SRC-027_MasterSheetA_Extract.png","w":130,"h":128},{"id":28,"file":"Individual_PNGs/SRC-028_MasterSheetA_Extract.png","w":104,"h":130},{"id":29,"file":"Individual_PNGs/SRC-029_MasterSheetA_Extract.png","w":108,"h":121},{"id":30,"file":"Individual_PNGs/SRC-030_MasterSheetA_Extract.png","w":89,"h":120},{"id":31,"file":"Individual_PNGs/SRC-031_MasterSheetA_Extract.png","w":105,"h":121},{"id":32,"file":"Individual_PNGs/SRC-032_MasterSheetA_Extract.png","w":135,"h":118},{"id":33,"file":"Individual_PNGs/SRC-033_MasterSheetA_Extract.png","w":112,"h":135},{"id":34,"file":"Individual_PNGs/SRC-034_MasterSheetA_Extract.png","w":97,"h":115},{"id":35,"file":"Individual_PNGs/SRC-035_MasterSheetA_Extract.png","w":111,"h":105},{"id":36,"file":"Individual_PNGs/SRC-036_MasterSheetA_Extract.png","w":101,"h":83},{"id":37,"file":"Individual_PNGs/SRC-037_MasterSheetA_Extract.png","w":117,"h":142},{"id":38,"file":"Individual_PNGs/SRC-038_MasterSheetA_Extract.png","w":110,"h":119},{"id":39,"file":"Individual_PNGs/SRC-039_MasterSheetA_Extract.png","w":147,"h":106},{"id":40,"file":"Individual_PNGs/SRC-040_MasterSheetA_Extract.png","w":146,"h":121},{"id":41,"file":"Individual_PNGs/SRC-041_MasterSheetA_Extract.png","w":150,"h":134},{"id":42,"file":"Individual_PNGs/SRC-042_MasterSheetA_Extract.png","w":165,"h":139},{"id":43,"file":"Individual_PNGs/SRC-043_MasterSheetA_Extract.png","w":170,"h":135},{"id":44,"file":"Individual_PNGs/SRC-044_MasterSheetA_Extract.png","w":168,"h":120},{"id":45,"file":"Individual_PNGs/SRC-045_MasterSheetA_Extract.png","w":170,"h":141},{"id":46,"file":"Individual_PNGs/SRC-046_MasterSheetA_Extract.png","w":133,"h":104},{"id":47,"file":"Individual_PNGs/SRC-047_MasterSheetA_Extract.png","w":167,"h":96},{"id":48,"file":"Individual_PNGs/SRC-048_MasterSheetA_Extract.png","w":115,"h":95},{"id":49,"file":"Individual_PNGs/SRC-049_MasterSheetA_Extract.png","w":91,"h":94},{"id":50,"file":"Individual_PNGs/SRC-050_MasterSheetA_Extract.png","w":131,"h":94},{"id":51,"file":"Individual_PNGs/SRC-051_MasterSheetA_Extract.png","w":115,"h":87},{"id":52,"file":"Individual_PNGs/SRC-052_MasterSheetA_Extract.png","w":80,"h":69},{"id":53,"file":"Individual_PNGs/SRC-053_MasterSheetA_Extract.png","w":101,"h":81},{"id":54,"file":"Individual_PNGs/SRC-054_MasterSheetA_Extract.png","w":116,"h":89},{"id":55,"file":"Individual_PNGs/SRC-055_MasterSheetA_Extract.png","w":126,"h":86},{"id":56,"file":"Individual_PNGs/SRC-056_MasterSheetA_Extract.png","w":127,"h":78},{"id":57,"file":"Individual_PNGs/SRC-057_MasterSheetA_Extract.png","w":111,"h":163},{"id":58,"file":"Individual_PNGs/SRC-058_MasterSheetA_Extract.png","w":116,"h":77},{"id":59,"file":"Individual_PNGs/SRC-059_MasterSheetA_Extract.png","w":69,"h":135},{"id":60,"file":"Individual_PNGs/SRC-060_MasterSheetA_Extract.png","w":131,"h":116},{"id":61,"file":"Individual_PNGs/SRC-061_MasterSheetA_Extract.png","w":58,"h":124},{"id":62,"file":"Individual_PNGs/SRC-062_MasterSheetA_Extract.png","w":53,"h":93},{"id":63,"file":"Individual_PNGs/SRC-063_MasterSheetA_Extract.png","w":98,"h":114},{"id":64,"file":"Individual_PNGs/SRC-064_MasterSheetA_Extract.png","w":99,"h":104},{"id":65,"file":"Individual_PNGs/SRC-065_MasterSheetA_Extract.png","w":46,"h":82},{"id":66,"file":"Individual_PNGs/SRC-066_MasterSheetA_Extract.png","w":100,"h":99},{"id":67,"file":"Individual_PNGs/SRC-067_MasterSheetA_Extract.png","w":68,"h":108},{"id":68,"file":"Individual_PNGs/SRC-068_MasterSheetA_Extract.png","w":56,"h":107},{"id":69,"file":"Individual_PNGs/SRC-069_MasterSheetA_Extract.png","w":88,"h":89},{"id":70,"file":"Individual_PNGs/SRC-070_MasterSheetA_Extract.png","w":42,"h":112},{"id":71,"file":"Individual_PNGs/SRC-071_MasterSheetA_Extract.png","w":89,"h":89},{"id":72,"file":"Individual_PNGs/SRC-072_MasterSheetA_Extract.png","w":51,"h":83},{"id":73,"file":"Individual_PNGs/SRC-073_MasterSheetA_Extract.png","w":147,"h":92},{"id":74,"file":"Individual_PNGs/SRC-074_MasterSheetA_Extract.png","w":54,"h":77},{"id":75,"file":"Individual_PNGs/SRC-075_MasterSheetA_Extract.png","w":70,"h":71},{"id":76,"file":"Individual_PNGs/SRC-076_MasterSheetA_Extract.png","w":88,"h":85},{"id":77,"file":"Individual_PNGs/SRC-077_MasterSheetA_Extract.png","w":57,"h":40},{"id":78,"file":"Individual_PNGs/SRC-078_MasterSheetA_Extract.png","w":55,"h":41}];
+const ASSETS=[{"id":1,"w":203,"h":203,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[42,42,203,203]},{"id":2,"w":194,"h":204,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[335,42,194,204]},{"id":3,"w":154,"h":189,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[643,49,154,189]},{"id":4,"w":200,"h":191,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[908,48,200,191]},{"id":5,"w":191,"h":197,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[48,333,191,197]},{"id":6,"w":174,"h":198,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[345,333,174,198]},{"id":7,"w":146,"h":192,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[647,336,146,192]},{"id":8,"w":164,"h":183,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[926,340,164,183]},{"id":9,"w":231,"h":192,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[28,624,231,192]},{"id":10,"w":268,"h":194,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[300,624,264,191]},{"id":11,"w":175,"h":172,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[632,634,175,172]},{"id":12,"w":126,"h":152,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[945,644,126,152]},{"id":13,"w":126,"h":159,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[81,928,126,159]},{"id":14,"w":141,"h":160,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[361,928,141,160]},{"id":15,"w":130,"h":148,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[655,934,130,148]},{"id":16,"w":156,"h":159,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[930,928,156,159]},{"id":17,"w":129,"h":144,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[79,1224,129,144]},{"id":18,"w":210,"h":217,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[327,1187,210,217]},{"id":19,"w":251,"h":200,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[594,1196,251,200]},{"id":20,"w":196,"h":180,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[910,1206,196,180]},{"id":21,"w":226,"h":176,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[31,1496,226,176]},{"id":22,"w":240,"h":197,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[312,1485,240,197]},{"id":23,"w":160,"h":189,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[640,1489,160,189]},{"id":24,"w":193,"h":186,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[911,1491,193,186]},{"id":25,"w":146,"h":135,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[71,1804,146,135]},{"id":26,"w":171,"h":134,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[346,1805,171,134]},{"id":27,"w":130,"h":128,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[655,1808,130,128]},{"id":28,"w":104,"h":130,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[956,1807,104,130]},{"id":29,"w":108,"h":121,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[90,2099,108,121]},{"id":30,"w":89,"h":120,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[387,2100,89,120]},{"id":31,"w":105,"h":121,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[667,2099,105,121]},{"id":32,"w":135,"h":118,"atlasFile":"Combined_Atlases/POI_Source_Atlas_01.png","rect":[940,2101,135,118]},{"id":33,"w":112,"h":135,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[88,76,112,135]},{"id":34,"w":97,"h":115,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[383,86,97,115]},{"id":35,"w":111,"h":105,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[664,91,111,105]},{"id":36,"w":101,"h":83,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[957,102,101,83]},{"id":37,"w":117,"h":142,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[85,361,117,142]},{"id":38,"w":110,"h":119,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[377,372,110,119]},{"id":39,"w":147,"h":106,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[646,379,147,106]},{"id":40,"w":146,"h":121,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[935,371,146,121]},{"id":41,"w":150,"h":134,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[69,653,150,134]},{"id":42,"w":165,"h":139,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[349,650,165,139]},{"id":43,"w":170,"h":135,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[635,652,170,135]},{"id":44,"w":168,"h":120,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[924,660,168,120]},{"id":45,"w":170,"h":141,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[59,937,170,141]},{"id":46,"w":133,"h":104,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[365,956,133,104]},{"id":47,"w":167,"h":96,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[636,960,167,96]},{"id":48,"w":115,"h":95,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[950,960,115,95]},{"id":49,"w":91,"h":94,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[98,1249,91,94]},{"id":50,"w":131,"h":94,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[366,1249,131,94]},{"id":51,"w":115,"h":87,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[662,1252,115,87]},{"id":52,"w":80,"h":69,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[968,1261,80,69]},{"id":53,"w":101,"h":81,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[93,1543,101,81]},{"id":54,"w":116,"h":89,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[374,1539,116,89]},{"id":55,"w":126,"h":86,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[657,1541,126,86]},{"id":56,"w":127,"h":78,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[944,1545,127,78]},{"id":57,"w":111,"h":163,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[88,1790,111,163]},{"id":58,"w":116,"h":77,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[374,1833,116,77]},{"id":59,"w":69,"h":135,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[685,1804,69,135]},{"id":60,"w":131,"h":116,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[942,1814,131,116]},{"id":61,"w":58,"h":124,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[115,2098,58,124]},{"id":62,"w":53,"h":93,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[405,2113,53,93]},{"id":63,"w":98,"h":114,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[671,2103,98,114]},{"id":64,"w":99,"h":104,"atlasFile":"Combined_Atlases/POI_Source_Atlas_02.png","rect":[958,2108,99,104]},{"id":65,"w":46,"h":82,"atlasFile":"Combined_Atlases/POI_Source_Atlas_03.png","rect":[121,103,46,82]},{"id":66,"w":100,"h":99,"atlasFile":"Combined_Atlases/POI_Source_Atlas_03.png","rect":[382,94,100,99]},{"id":67,"w":68,"h":108,"atlasFile":"Combined_Atlases/POI_Source_Atlas_03.png","rect":[686,90,68,108]},{"id":68,"w":56,"h":107,"atlasFile":"Combined_Atlases/POI_Source_Atlas_03.png","rect":[980,90,56,107]},{"id":69,"w":88,"h":89,"atlasFile":"Combined_Atlases/POI_Source_Atlas_03.png","rect":[100,387,88,89]},{"id":70,"w":42,"h":112,"atlasFile":"Combined_Atlases/POI_Source_Atlas_03.png","rect":[411,376,42,112]},{"id":71,"w":89,"h":89,"atlasFile":"Combined_Atlases/POI_Source_Atlas_03.png","rect":[675,387,89,89]},{"id":72,"w":51,"h":83,"atlasFile":"Combined_Atlases/POI_Source_Atlas_03.png","rect":[982,390,51,83]},{"id":73,"w":147,"h":92,"atlasFile":"Combined_Atlases/POI_Source_Atlas_03.png","rect":[70,674,147,92]},{"id":74,"w":54,"h":77,"atlasFile":"Combined_Atlases/POI_Source_Atlas_03.png","rect":[405,681,54,77]},{"id":75,"w":70,"h":71,"atlasFile":"Combined_Atlases/POI_Source_Atlas_03.png","rect":[685,684,70,71]},{"id":76,"w":88,"h":85,"atlasFile":"Combined_Atlases/POI_Source_Atlas_03.png","rect":[964,677,88,85]},{"id":77,"w":57,"h":40,"atlasFile":"Combined_Atlases/POI_Source_Atlas_03.png","rect":[115,988,57,40]},{"id":78,"w":55,"h":41,"atlasFile":"Combined_Atlases/POI_Source_Atlas_03.png","rect":[404,987,55,41]}];
 
 export async function buildCity(ctx,progress=()=>{}){
  const {T,sc,SPR,sol,circ,IM,META,LT,ren}=ctx;
@@ -14,20 +14,45 @@ export async function buildCity(ctx,progress=()=>{}){
  const pick=a=>a[Math.floor(rand()*a.length)],range=(a,b)=>a+(b-a)*rand();
  await report(.02,'Opening the old city archive…');
 
- // ---------- 1. City sprite archive ----------
- const byId=new Map(ASSETS.map(a=>[a.id,a])),textures=new Map(),loader=new T.TextureLoader();
+ // ---------- 1. Three shared atlases instead of 78 separate PNG requests ----------
+ const byId=new Map(ASSETS.map(a=>[a.id,a]));
+ const textures=new Map(),flippedTextures=new Map(),atlasTextures=new Map();
+ const loader=new T.TextureLoader();
+ const atlasFiles=[...new Set(ASSETS.map(a=>a.atlasFile))];
  let loaded=0;
- await Promise.all(ASSETS.map(a=>new Promise(resolve=>{
-  loader.load(new URL('../../assets/DRIFTER_POI_Asset_Library_v2/'+a.file,import.meta.url).href,t=>{
-   t.magFilter=T.LinearFilter;t.minFilter=T.LinearMipmapLinearFilter;t.generateMipmaps=true;
-   textures.set(a.id,t);loaded++;progress(.03+.22*loaded/ASSETS.length,'Loading city archive '+loaded+'/'+ASSETS.length+'…');resolve(true)
-  },undefined,e=>{console.warn('City asset failed:',a.file,e);loaded++;progress(.03+.22*loaded/ASSETS.length,'Loading city archive '+loaded+'/'+ASSETS.length+'…');resolve(false)})
+ await Promise.all(atlasFiles.map(file=>new Promise(resolve=>{
+  const url=new URL('../../assets/DRIFTER_POI_Asset_Library_v2/'+file,import.meta.url).href;
+  loader.load(url,t=>{
+   t.magFilter=T.LinearFilter;t.minFilter=T.LinearFilter;t.generateMipmaps=false;
+   atlasTextures.set(file,t);loaded++;
+   progress(.03+.20*loaded/atlasFiles.length,'Loading city atlases '+loaded+'/'+atlasFiles.length+'…');resolve(true);
+  },undefined,e=>{
+   console.warn('City atlas failed:',file,e);loaded++;
+   progress(.03+.20*loaded/atlasFiles.length,'Loading city atlases '+loaded+'/'+atlasFiles.length+'…');resolve(false);
+  });
  })));
+ // Source atlas dimensions: 1152 by 2304. UV regions use registry sprite rectangles.
+ const ATLAS_W=1152,ATLAS_H=2304;
+ for(const a of ASSETS){
+  const source=atlasTextures.get(a.atlasFile);if(!source)continue;
+  const [sx,sy,sw,sh]=a.rect,tex=source.clone();
+  tex.magFilter=T.LinearFilter;tex.minFilter=T.LinearFilter;tex.generateMipmaps=false;
+  tex.repeat.set(sw/ATLAS_W,sh/ATLAS_H);
+  tex.offset.set(sx/ATLAS_W,1-(sy+sh)/ATLAS_H);tex.needsUpdate=true;
+  textures.set(a.id,tex);
+ }
+ function poiMap(id,flip=false){
+  const base=textures.get(id);if(!base)return null;if(!flip)return base;
+  if(!flippedTextures.has(id)){
+   const tex=base.clone(),w=base.repeat.x;tex.repeat.x=-w;tex.offset.x+=w;tex.needsUpdate=true;
+   flippedTextures.set(id,tex);
+  }
+  return flippedTextures.get(id);
+ }
  const group=new T.Group();group.visible=false;sc.add(group);
  const cityLights=[],gameTextures=new Map();
  function addPoi(id,x,z,h,opts={}){
-  const a=byId.get(id),base=textures.get(id);if(!a||!base)return null;
-  let map=base;if(opts.flip){map=base.clone();map.wrapS=T.RepeatWrapping;map.repeat.x=-1;map.offset.x=1;map.needsUpdate=true}
+  const a=byId.get(id),map=poiMap(id,!!opts.flip);if(!a||!map)return null;
   const w=h*a.w/a.h,ax=opts.ax??.5,c=opts.c??.025;
   const mat=new T.SpriteMaterial({map,alphaTest:.28,transparent:false,depthWrite:true,fog:true,color:0xffffff});
   const s=new T.Sprite(mat);s.scale.set(w,h,1);s.center.set(opts.flip?1-ax:ax,c);
@@ -134,38 +159,36 @@ export async function buildCity(ctx,progress=()=>{}){
  const ground=new T.Mesh(gg,new T.MeshBasicMaterial({map:groundTexture,fog:true,depthWrite:false}));
  ground.position.set(OX,-.09,OZ);group.add(ground);
 
- // ---------- 3. Skyline and street-front buildings ----------
- await report(.40,'Raising the apartment rows…');
- const columns=[-140,-78,-42,42,78,140],rows=[140,85,30,-25,-80,-135];
- const buildingSolids=[];
- const facadeHeights=[];
- let structureCount=0;
- for(let row=0;row<rows.length;row++)for(let col=0;col<columns.length;col++){
-  const x=columns[col],z=rows[row],id=((row*6+col)%24)+1,a=byId.get(id);
-  if(!a||!textures.has(id))continue;
-  // The far rows stay slightly smaller to create a long avenue perspective.
-  const far=Math.max(.78,1-row*.035);
-  let h=(id<=8?20.5+(id%3)*1.35:id<=18?18.3+(id%4)*1.15:20+(id%3))*far;
-  if(col===0||col===5)h*=.94;
-  const w=h*a.w/a.h,rx=Math.min(10.6,Math.max(6.1,w*.32)),rz=7.3*far;
-  addPoi(id,x,z,h,{flip:(row+col)%4===0});
-  sol.push({x:OX+x,z:OZ+z,rx,rz,city:true});
-  buildingSolids.push({x,z,rx,rz});facadeHeights.push(h);structureCount++;
+ // ---------- 3. Dense street-front skyline: 96 buildings ----------
+ await report(.40,'Raising the residential and commercial rows…');
+ const columns=[-145,-80,-65,-50,-36,-24,24,36,50,65,80,145];
+ const rows=[190,137.5,82.5,27.5,-27.5,-82.5,-137.5,-190];
+ const facadeIds=[1,9,2,10,3,11,4,12,5,13,6,14,7,15,8,16,19,20,17,18,21,22,23,24];
+ const smallColumns=new Set([2,4,7,9]);
+ const buildingSolids=[];let structureCount=0;
+ for(let row=0;row<rows.length;row++){
+  for(let col=0;col<columns.length;col++){
+   const x=columns[col],z=rows[row],id=facadeIds[(row*7+col*5)%facadeIds.length],a=byId.get(id);
+   if(!a||!textures.has(id))continue;
+   const low=smallColumns.has(col),far=Math.max(.86,1-row*.018);
+   const h=low?13.2+(id%4)*.85:((id<=8?24.5+(id%3)*1.6:id<=18?22.5+(id%4)*1.25:25+(id%3)*1.4)*far);
+   const w=h*a.w/a.h,rx=low?4.0:Math.min(9.2,Math.max(6.1,w*.275)),rz=low?5.2:7.5*far;
+   addPoi(id,x,z,h,{flip:(row+col)%4===0});
+   sol.push({x:OX+x,z:OZ+z,rx,rz,city:true});
+   buildingSolids.push({x,z,rx,rz});structureCount++;
+  }
  }
- // Close the first view with a pair of tall but separated apartment silhouettes.
- // The central boulevard itself remains open and leads into the city.
- for(const [id,x,z,h] of [[1,-43,174,25],[3,43,174,26],[9,-78,151,23],[10,78,151,24]]){
-  const a=byId.get(id),w=h*a.w/a.h,rx=Math.min(10,w*.32);
-  addPoi(id,x,z,h,{flip:x<0});sol.push({x:OX+x,z:OZ+z,rx,rz:7.2,city:true});
-  buildingSolids.push({x,z,rx,rz:7.2});structureCount++;
+ // Distant rooflines make the neighbourhood feel larger than the walkable sample.
+ const skyline=[
+  [1,-153,211,23],[5,-125,211,22],[9,-94,211,24],[13,-63,211,19],
+  [3,63,211,25],[7,94,211,22],[11,125,211,24],[15,153,211,20],
+  [2,-153,-211,21],[6,-125,-211,23],[10,-94,-211,22],[14,-63,-211,20],
+  [4,63,-211,23],[8,94,-211,22],[12,125,-211,24],[16,153,-211,20]
+ ];
+ for(const [id,x,z,h] of skyline){
+  const a=byId.get(id),w=h*a.w/a.h,rx=Math.min(8,w*.24);
+  addPoi(id,x,z,h,{flip:x<0});sol.push({x:OX+x,z:OZ+z,rx,rz:6.5,city:true});structureCount++;
  }
- // Distant broken roofline silhouettes give the far avenue a scale beyond the walk zone.
- for(const [id,x,z,h] of [[2,-139,-190,19],[6,-82,-190,22],[8,-41,-190,18],[4,41,-190,20],[7,82,-190,22],[5,139,-190,19]]){
-  const a=byId.get(id),w=h*a.w/a.h,rx=Math.min(9,w*.3);
-  addPoi(id,x,z,h,{flip:x<0});sol.push({x:OX+x,z:OZ+z,rx,rz:6.2,city:true});
-  buildingSolids.push({x,z,rx,rz:6.2});structureCount++;
- }
-
  // ---------- 4. District identity: market, civic square and industrial yard ----------
  await report(.54,'Opening the abandoned market…');
  // Modular perimeter, half-shut loading gates and a fenced industrial court.
@@ -282,7 +305,7 @@ export async function buildCity(ctx,progress=()=>{}){
     q.light.intensity=q.base*pulse*dead;q.tint.cur=pulse*dead;
    }
   },
-  stats:{buildings:structureCount,buildingRows:rows.length,poi:ASSETS.length,marketProps:market.length,industrialProps:industrial.length,
+  stats:{buildings:structureCount,buildingRows:rows.length,poi:ASSETS.length,atlases:atlasFiles.length,marketProps:market.length,industrialProps:industrial.length,
    streetLights:lampPositions.length,utilityPoles:polePositions.length,trees:trees.length,shrubs:shrubs.length,rubble:rubble.length,streetProps:market.length+industrial.length+fences.length}
  };
  await report(1,'Old City sector ready.');
