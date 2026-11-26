@@ -212,35 +212,49 @@ const FC={idle:[0,1,2,3,4,5],walking:[0,1,2,3],running:[0,1,2,3,4,5,6,7],swingin
 for(const s in FC){FR[s]=[];for(let d=0;d<8;d++)FR[s].push(FC[s].map(c=>{const cv=document.createElement('canvas');cv.width=FW;cv.height=FH;const g=cv.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(({running:IM.player_run,idle:IM.player_idle,resting:IM.player_idle,swinging:IM.player_swing})[s]||IM.player,c*FW,d*FH,FW,FH,0,0,FW,FH);const t=new T.CanvasTexture(cv);t.magFilter=t.minFilter=T.NearestFilter;t.generateMipmaps=false;return t}))}
 const CHAR_R=.4;
 function col(o,r){
- // Interior props can sit very close to the shell. Resolve collisions inside the
- // walkable room bounds so a wall cannot clamp the player straight back into a prop.
+ // Interior furniture can sit beside a shell wall. Choose an escape direction that
+ // clears every overlapping hitbox, not merely the nearest side of the first hitbox.
  const lim=IN>=0?{x0:IX-IRX+r,x1:IX+IRX-r,z0:IZ-IRZ+r,z1:IZ+IRZ-r}:null;
  const clampRoom=()=>{if(lim){o.x=Math.max(lim.x0,Math.min(lim.x1,o.x));o.z=Math.max(lim.z0,Math.min(lim.z1,o.z))}};
  clampRoom();
- for(let pass=0;pass<4;pass++){
-  let changed=false;
+ if(lim){
+  const score=(x,z,ox,oz)=>{
+   let count=0,penetration=0;
+   for(const s of sol){
+    const px=s.rx+r-Math.abs(x-s.x),pz=s.rz+r-Math.abs(z-s.z);
+    if(px>0&&pz>0){count++;penetration+=Math.min(px,pz)+.25*Math.max(px,pz)}
+   }
+   return count*1000+penetration*20+Math.hypot(x-ox,z-oz)*.01;
+  };
+  const ox=o.x,oz=o.z;
+  for(let pass=0;pass<8;pass++){
+   let best=score(o.x,o.z,ox,oz),chosen=null;
+   for(const s of sol){
+    const hx=s.rx+r+.012,hz=s.rz+r+.012;
+    if(Math.abs(o.x-s.x)>=hx||Math.abs(o.z-s.z)>=hz)continue;
+    const xs=[s.x-hx,s.x+hx],zs=[s.z-hz,s.z+hz];
+    const candidates=[
+     [xs[0],o.z],[xs[1],o.z],[o.x,zs[0]],[o.x,zs[1]],
+     [xs[0],zs[0]],[xs[0],zs[1]],[xs[1],zs[0]],[xs[1],zs[1]]
+    ];
+    for(const [x,z] of candidates){
+     if(x<lim.x0||x>lim.x1||z<lim.z0||z>lim.z1)continue;
+     const q=score(x,z,ox,oz);
+     if(q<best){best=q;chosen=[x,z]}
+    }
+   }
+   if(!chosen)break;
+   o.x=chosen[0];o.z=chosen[1];
+   if(best<1e-6)break;
+  }
+ }else{
   for(const s of sol){
    const dx=o.x-s.x,dz=o.z-s.z,hx=s.rx+r,hz=s.rz+r;
-   if(Math.abs(dx)>=hx||Math.abs(dz)>=hz)continue;
-   const nx=s.x-hx-.012,px=s.x+hx+.012,nz=s.z-hz-.012,pz=s.z+hz+.012;
-   if(lim){
-    const options=[
-     {axis:'x',value:nx,dist:Math.abs(o.x-nx)},
-     {axis:'x',value:px,dist:Math.abs(o.x-px)},
-     {axis:'z',value:nz,dist:Math.abs(o.z-nz)},
-     {axis:'z',value:pz,dist:Math.abs(o.z-pz)}
-    ].filter(q=>q.axis=='x'?(q.value>=lim.x0&&q.value<=lim.x1):(q.value>=lim.z0&&q.value<=lim.z1));
-    if(!options.length)continue;
-    options.sort((a,b)=>a.dist-b.dist);
-    const q=options[0];if(q.axis=='x')o.x=q.value;else o.z=q.value;
-   }else{
-    const ox=hx-Math.abs(dx),oz=hz-Math.abs(dz);
-    if(ox<oz)o.x+=dx<0?-ox:ox;else o.z+=dz<0?-oz:oz;
+   if(Math.abs(dx)<hx&&Math.abs(dz)<hz){
+    const px=hx-Math.abs(dx),pz=hz-Math.abs(dz);
+    if(px<pz)o.x+=dx<0?-px:px;else o.z+=dz<0?-pz:pz;
    }
-   changed=true;
   }
-  clampRoom();
-  if(!changed)break;
  }
  for(const c of circ){
   const dx=o.x-c.x,dz=o.z-c.z,d=Math.hypot(dx,dz),m=c.r+r;
@@ -248,12 +262,13 @@ function col(o,r){
    const nx=dx/d*(m-d+.012),nz=dz/d*(m-d+.012);
    if(lim){
     const tx=o.x+nx,tz=o.z+nz;
-    const alternatives=[
-     {x:tx,z:o.z,dist:Math.abs(nx)},
-     {x:o.x,z:tz,dist:Math.abs(nz)}
-    ].filter(q=>q.x>=lim.x0&&q.x<=lim.x1&&q.z>=lim.z0&&q.z<=lim.z1);
-    alternatives.sort((a,b)=>a.dist-b.dist);
-    if(alternatives.length){o.x=alternatives[0].x;o.z=alternatives[0].z}
+    if(tx>=lim.x0&&tx<=lim.x1&&tz>=lim.z0&&tz<=lim.z1){o.x=tx;o.z=tz}
+    else{
+     const options=[{x:tx,z:o.z,d:Math.abs(nx)},{x:o.x,z:tz,d:Math.abs(nz)}]
+      .filter(q=>q.x>=lim.x0&&q.x<=lim.x1&&q.z>=lim.z0&&q.z<=lim.z1)
+      .sort((a,b)=>a.d-b.d);
+     if(options.length){o.x=options[0].x;o.z=options[0].z}
+    }
    }else{o.x+=nx;o.z+=nz}
   }
  }
