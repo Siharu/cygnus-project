@@ -551,7 +551,7 @@ async function travel(to){
    FOB=FST.objects;
   }else if(to==2&&!CITY){
    const mod=await import('./city.js');
-   CITY=await mod.buildCity({T,sc,SPR,sol,circ,IM,META,ren},(p,m)=>LD.set(.08+p*.82,m));
+   CITY=await mod.buildCity({T,sc,SPR,sol,circ,IM,META,LT,ren},(p,m)=>LD.set(.08+p*.82,m));
   }else{
    for(let i=1;i<=10;i++){LD.set(i/10,tasks[to]);await sleep(45)}
   }
