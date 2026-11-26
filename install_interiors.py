@@ -38,7 +38,7 @@ LAY = root / 'src/station/interiors_hub_layout.js'
 MOD = root / 'src/station/interiors_hub.js'
 T_ = 14 / 3                      # floor tile pitch, same as the relay-tower rooms
 FLOOR_W = T_ * math.sqrt(2)      # on-screen width of one floor diamond
-MAX_PROP_W = 5.4                 # biggest prop allowed on screen (relay briefing table is 5.4)
+MAX_PROP_W = 4.8                 # biggest prop allowed on screen (relay briefing table is 5.4)
 VK = .816                        # world-y -> screen-up factor of the game camera
 
 
@@ -102,7 +102,8 @@ def P(tok, zone, **kw):
 
 
 # zones:  ('BK',xf) stands against the back wall   ('LF',zf) stands against the left wall
-#         ('FR',x,z) free-standing                 ('WB',xf,hb) / ('WL',zf,hb) hung on back / left wall, hb = height
+#         ('FR',xf,zf) free-standing (fraction of half-room)   ('NR',token,dx,dz) next to an earlier prop
+#                        ('WB',xf,hb) / ('WL',zf,hb) hung on back / left wall, hb = height
 #         ('HG',xf,top) hangs from the top at that height
 # xf / zf run -1 .. 1 along the wall.  Room origin is the centre; back wall z = -hz, left wall x = -hx.
 LOCS = {
@@ -113,18 +114,18 @@ LOCS = {
         back=['right_wall_bulletin', 'right_wall_ajar'], left=['left_wall_service', 'left_wall_service'],
         exit=('back', 1), exit_label='Step outside',
         props=[
-            P('guard_desk', ('LF', -0.3), n='Guard desk',
+            P('guard_desk', ('LF', -0.4), n='Guard desk',
               note='The ledger lists every crossing for six weeks. Today\'s line is in different handwriting.'),
-            P('swivel_stool', ('FR', 0.0, -0.4)),
-            P('barrier_control', ('BK', -0.05), n='Barrier control',
+            P('swivel_stool', ('NR', 'guard_desk', 2.4, 0.3)),
+            P('barrier_control', ('BK', -0.2), n='Barrier control',
               note='The lever is stiff. Someone oiled it this week.',
               glow=dict(kind='led', dy=3.0, size=1.6, col=[1.0, 0.25, 0.2], op=.5)),
-            P('key_cabinet', ('WB', -0.85, 1.6), n='Key cabinet',
+            P('key_cabinet', ('WB', -0.85, 1.2), n='Key cabinet',
               note='Eight hooks, seven keys. The empty hook\'s tag is still swinging.'),
-            P('electric_heater', ('LF', 0.75), n='Electric heater',
+            P('electric_heater', ('LF', 0.8), n='Electric heater',
               note='The coils are orange. Nobody is here to need it.',
               glow=dict(kind='lantern', dy=.8, size=2.4, col=[1.0, 0.5, 0.2], op=.5)),
-            P('field_telephone', ('WL', 0.85, 1.5), n='Field telephone',
+            P('field_telephone', ('WL', 0.85, 1.3), n='Field telephone',
               note='The line is open. Static, then a voice counting frequencies.',
               glow=dict(kind='lantern', dy=2.4, size=1.8, col=[1.0, 0.7, 0.35], op=.5)),
         ]),
@@ -135,17 +136,17 @@ LOCS = {
         back=['arched_hatch', 'right_wall_plate'], left=['left_wall_pipe', 'left_wall_pipe'],
         exit=('back', 0), exit_label='Climb out through the hatch',
         props=[
-            P('pump_station', ('BK', 0.6), n='Pump station',
+            P('pump_station', ('BK', 0.7), n='Pump station',
               note='Dry, but the gauge needle trembles as if water were moving somewhere above you.'),
-            P('vertical_ladder', ('LF', -0.2), n='Vertical ladder',
+            P('vertical_ladder', ('LF', -0.6), n='Vertical ladder',
               note='The rungs are polished by hands. Recent hands.'),
-            P('pipe_manifold', ('BK', 0.05)),
-            P('inspection_hatch', ('WL', 0.8, 1.8), n='Tank hatch',
+            P('pipe_manifold', ('LF', 0.7)),
+            P('bucket_and_mop', ('FR', 0.2, 0.35), n='Bucket and mop', note='The mop is wet.'),
+            P('inspection_hatch', ('WL', 0.0, 1.0), n='Tank hatch',
               note='Something taps inside the tank. Slow. Even.'),
-            P('electrical_panel', ('WB', 0.95, 1.4), n='Electrical panel',
+            P('electrical_panel', ('WB', 0.0, 1.0), n='Electrical panel',
               note='Every breaker is off except one, labelled in marker: RADIO.',
               glow=dict(kind='led', dy=2.6, size=1.4, col=[0.4, 1.0, 0.5], op=.35)),
-            P('bucket_and_mop', ('FR', 1.5, 1.4), n='Bucket and mop', note='The mop is wet.'),
         ]),
     'shed': dict(
         pack='Utility_Shed', name='Utility shed', nx=2, nz=2,
@@ -154,18 +155,17 @@ LOCS = {
         back=['door_wall', 'right_corrugated'], left=['left_corrugated', 'left_corrugated'],
         exit=('back', 0), exit_label='Step outside',
         props=[
-            P('diesel_generator', ('BK', 0.65), n='Diesel generator',
+            P('diesel_generator', ('BK', 0.7), n='Diesel generator',
               note='Warm. The tank is nearly full. Someone refuelled it this week.'),
-            P('battery_charger', ('BK', 0.05), n='Charger box',
-              note='A green light. The radio batteries are on charge.',
-              glow=dict(kind='led', dy=1.8, size=1.4, col=[0.4, 1.0, 0.5], op=.4)),
-            P('workbench', ('LF', -0.45), n='Workbench',
+            P('workbench', ('LF', -0.6), n='Workbench',
               note='A thermos, still warm. A lantern turned low.',
               glow=dict(kind='lantern', dy=1.7, size=2.2, col=[1.0, 0.62, 0.25], op=.5)),
-            P('tool_board', ('WL', -0.45, 3.2), n='Tool board',
-              note='Every tool has an outline. One outline is empty.'),
-            P('jerry_can', ('LF', 0.7), n='Jerry cans', note='Two full, three empty. A tally of marks on the rack.'),
-            P('cable_drum', ('FR', 1.8, 1.2)),
+            P('jerry_can', ('LF', 0.8), n='Jerry cans', note='Two full, three empty. A tally of marks on the rack.'),
+            P('battery_charger', ('NR', 'diesel_generator', -0.4, 2.6), n='Charger box',
+              note='A green light. The radio batteries are on charge.',
+              glow=dict(kind='led', dy=1.8, size=1.4, col=[0.4, 1.0, 0.5], op=.4)),
+            P('tool_board', ('WB', 0.9, 1.4), n='Tool board', note='Every tool has an outline. One outline is empty.'),
+            P('cable_drum', ('FR', -0.05, 0.3)),
         ]),
     'depot': dict(
         pack='Maintenance_Depot', name='Maintenance depot', nx=3, nz=2,
@@ -175,14 +175,14 @@ LOCS = {
         pillar='hazard_striped',
         exit=('back', 1), exit_label='Leave through the shutter',
         props=[
-            P('relay_parts', ('BK', -0.85), n='Relay parts',
+            P('relay_parts', ('BK', -0.8), n='Relay parts',
               note='Spare tubes, still boxed. Every box is stamped with the same date.'),
-            P('frosted_cold_locker', ('BK', 0.75), n='Cold locker', note='Frost on the door. From the inside.'),
-            P('tool_chest', ('LF', 0.3), n='Tool chest', note='Drawers labelled in two different hands.'),
-            P('tyre_rack', ('LF', -0.5), n='Tyre rack', note='Sized for a vehicle that is not here.'),
-            P('engine_on_rolling', ('FR', 1.0, 0.9), n='Engine on stand',
+            P('frosted_cold_locker', ('BK', 0.85), n='Cold locker', note='Frost on the door. From the inside.'),
+            P('tyre_rack', ('LF', -0.7), n='Tyre rack', note='Sized for a vehicle that is not here.'),
+            P('tool_chest', ('LF', 0.8), n='Tool chest', note='Drawers labelled in two different hands.'),
+            P('engine_on_rolling', ('FR', 0.3, 0.1), n='Engine on stand',
               note='Half rebuilt, parts laid out in order. Whoever worked here meant to come back.'),
-            P('engine_hoist', ('FR', -2.6, 1.4), n='Engine hoist',
+            P('engine_hoist', ('FR', -0.2, 0.2), n='Engine hoist',
               note='The chain is wet with oil. The drum beside it is full.'),
         ]),
     'wtch': dict(
@@ -192,15 +192,15 @@ LOCS = {
         back=['right_wall_window', 'right_wall_window'], left=['left_wall_slit', 'left_wall_slit'],
         exit=('floor', 1, 0), exit_label='Climb down the ladder',
         props=[
-            P('watchers_stool', ('FR', -1.0, 0.6), n='Watcher\'s stool', note='Worn smooth. The seat faces the tree line.'),
-            P('tripod_binoculars', ('FR', 0.4, 1.9), n='Binoculars',
+            P('searchlight', ('LF', -0.6), n='Searchlight', note='The lens is clean. The bulb is warm.'),
+            P('watchers_stool', ('FR', -0.2, 0.35), n='Watcher\'s stool', note='Worn smooth. The seat faces the tree line.'),
+            P('tripod_binoculars', ('FR', -0.15, 0.8), n='Binoculars',
               note='Focused on the forest. A note on the lens cap, one word: WAIT.'),
-            P('pinned_map', ('WB', -0.6, 1.3), n='Pinned map', note='The same trail is marked in three colours of pencil.'),
-            P('searchlight', ('LF', 0.4), n='Searchlight', note='The lens is clean. The bulb is warm.'),
-            P('thermos', ('WL', -0.5, 1.4), n='Logbook shelf',
+            P('pinned_map', ('WB', -0.6, 1.2), n='Pinned map', note='The same trail is marked in three colours of pencil.'),
+            P('alarm_bell', ('WB', 0.1, 1.5), n='Alarm bell', note='The rope is frayed. It has been pulled before.'),
+            P('thermos', ('WL', 0.7, 1.2), n='Logbook shelf',
               note='A thermos, a cup, a logbook. The last line: nothing came tonight.',
               glow=dict(kind='lantern', dy=2.4, size=1.6, col=[1.0, 0.65, 0.3], op=.4)),
-            P('alarm_bell', ('WB', 0.15, 1.8), n='Alarm bell', note='The rope is frayed. It has been pulled before.'),
         ]),
     'ruin': dict(
         pack='Collapsed_Building', name='Collapsed building', nx=2, nz=2,
@@ -210,13 +210,12 @@ LOCS = {
         pillar='corner_column',
         exit=('back', 1), exit_label='Step outside',
         props=[
-            P('overturned_desk', ('BK', -0.55), n='Overturned desk', note='Papers rotted to pulp. One drawer is shut and locked.'),
-            P('rusted_bed', ('LF', -0.45), n='Bed frame', note='Vines have woven through the springs.'),
-            P('rubble_pile', ('FR', 1.4, 0.9), n='Rubble', note='Concrete, brick, and a slab tilted like a door.'),
-            P('dead_tree', ('FR', -0.4, -0.3), n='Dead stump', note='It grew through the floor after the roof fell. The roots point at the mast.'),
-            P('cracked_sink', ('WL', 0.3, 0.8), n='Cracked sink', note='The tap drips. The moss beneath it is wet.'),
-            P('hanging_vine', ('HG', 0.2, 5.5)),
-            P('fallen_roof_beam', ('FR', 2.4, -2.0), grp='Shell'),
+            P('overturned_desk', ('BK', -0.6), n='Overturned desk', note='Papers rotted to pulp. One drawer is shut and locked.'),
+            P('rusted_bed', ('LF', -0.5), n='Bed frame', note='Vines have woven through the springs.'),
+            P('dead_tree', ('FR', -0.05, -0.2), n='Dead stump', note='It grew through the floor after the roof fell. The roots point at the mast.'),
+            P('rubble_pile', ('FR', 0.5, 0.15), n='Rubble', note='Concrete, brick, and a slab tilted like a door.'),
+            P('cracked_sink', ('WL', 0.8, 0.8), n='Cracked sink', note='The tap drips. The moss beneath it is wet.'),
+            P('hanging_vine', ('HG', -0.2, 5.5)),
         ]),
 }
 
@@ -227,9 +226,6 @@ DEFS, HUB, COPY, WARN = {}, {}, {}, []
 def build(lid, L):
     pack = L['pack']
     nx, nz = L['nx'], L['nz']
-    hx, hz = nx * T_ / 2, nz * T_ / 2
-    xs = [-hx + T_ / 2 + i * T_ for i in range(nx)]
-    zs = [-hz + T_ / 2 + j * T_ for j in range(nz)]
     A = {}
 
     def asset(group, tok):
@@ -239,7 +235,13 @@ def build(lid, L):
             A[k] = dict(path=p, key='%s_%s_%s' % (lid, group[0].lower(), tok), m=measure(p))
         return A[k]
 
-    S = FLOOR_W / asset('Shell', L['floor'])['m']['cw']
+    walls = [asset('Shell', t) for t in L['back'] + L['left']]
+    S = 6.87 / (sum(a['m']['h'] for a in walls) / len(walls))          # walls ~6.9 tall like the relay tower rooms
+    wcw = sum(a['m']['cw'] for a in walls) / len(walls)
+    PT = min(1.3 * T_, max(T_, (wcw * S - .3) / .7071))                # tile pitch so neighbouring wall pieces meet
+    hx, hz = nx * PT / 2, nz * PT / 2
+    xs = [-hx + PT / 2 + i * PT for i in range(nx)]
+    zs = [-hz + PT / 2 + j * PT for j in range(nz)]
     prop_specs = L['props']
     widest = max(asset(sp.get('grp', 'Props'), sp['tok'])['m']['w'] * S for sp in prop_specs)
     pk = min(1.0, MAX_PROP_W / widest)
@@ -248,7 +250,7 @@ def build(lid, L):
         m = a['m']; w, h = m['w'], m['h']
         ax = (m['x0'] + m['x1']) / 2 / w
         if kind == 'floor':
-            c = 1 - (m['y0'] + .46 * m['ch']) / h
+            c = 1 - (m['y0'] + .2887 * m['cw']) / h        # centre of the top face (iso diamond), ignoring slab thickness
         elif kind == 'wall':
             c = (h - m['ylow'] + .03 * m['ch']) / h
         elif kind == 'top':
@@ -265,17 +267,14 @@ def build(lid, L):
             tok, extra = L['floor'], None
             if (i, j) in L.get('floor_at', {}):
                 tok, extra = L['floor_at'][(i, j)]
-            a = asset('Shell', tok); add_def(a, 'floor', S)
+            a = asset('Shell', tok); add_def(a, 'floor', PT * math.sqrt(2) / a['m']['cw'])
             it = dict(k=a['key'], x=r2(x), z=r2(z), layer='floor')
             if extra:
                 it['solid'] = list(extra); solids.append((x, z, extra[0], extra[1], 'hole'))
             items.append(it)
 
     def hint(tok, m):
-        t = tok.lower()
-        if 'left' in t: return 'L'
-        if 'right' in t: return 'B'
-        return m['orient']
+        return m['orient']      # measured from the alpha shape; the pack file names (left/right) are unreliable
 
     def wall(tok, slot, x, z):
         a = asset('Shell', tok); add_def(a, 'wall', S)
@@ -292,34 +291,36 @@ def build(lid, L):
         for (x, z) in ((hx, -hz), (-hx, hz)):
             items.append(dict(k=a['key'], x=r2(x), z=r2(z), layer='wall'))
 
-    io, glows = [], []
+    io, glows, PL_ = [], [], {}
     for sp in prop_specs:
         grp = sp.get('grp', 'Props'); a = asset(grp, sp['tok']); zn = sp['zone']; kind0 = zn[0]
         kind = {'WB': 'wallart', 'WL': 'wallart', 'HG': 'top'}.get(kind0, 'prop')
         add_def(a, kind, S if grp == 'Shell' else S * pk)
         d = DEFS[a['key']]; W = d['W']; H = W * d['h'] / d['w']
-        hs = max(.35, .26 * W)
+        hs = max(.35, .22 * W)
         it = dict(k=a['key'])
         flip = sp.get('flip')
         if kind0 == 'BK':
-            x, z = zn[1] * (hx - 1.2), -hz + hs + .35
+            x, z = zn[1] * (hx - .8 - hs), -hz + hs + .3
         elif kind0 == 'LF':
-            x, z = -hx + hs + .35, zn[1] * (hz - 1.2)
+            x, z = -hx + hs + .3, zn[1] * (hz - .8 - hs)
             flip = True if flip is None else flip
         elif kind0 == 'FR':
-            x, z = zn[1], zn[2]
+            x, z = zn[1] * hx, zn[2] * hz          # fractions of the half-room
+        elif kind0 == 'NR':                        # next to an earlier prop: ('NR', token, dx, dz)
+            x, z = PL_[zn[1]][0] + zn[2], PL_[zn[1]][1] + zn[3]
         elif kind0 in ('WB', 'WL', 'HG'):
             if kind0 == 'WL':
-                x, z, slot = -hx + .35, zn[1] * (hz - 1.2), 'L'
+                x, z, slot = -hx + .35, zn[1] * (hz - 1.5), 'L'
             else:
-                x, z, slot = zn[1] * (hx - 1.2), -hz + .35, 'B'
+                x, z, slot = zn[1] * (hx - 1.5), -hz + .35, 'B'
             it['y'] = r2((zn[2] if kind0 == 'HG' else zn[2] + d['c'] * H) / VK)
             o = a['m']['orient']
             if flip is None and o and kind0 != 'HG':
                 flip = (o != slot)
         else:
             sys.exit('bad zone %r' % (zn,))
-        it['x'] = r2(x); it['z'] = r2(z)
+        it['x'] = r2(x); it['z'] = r2(z); PL_[sp['tok']] = (x, z)
         if flip: it['flip'] = True
         if kind0 in ('BK', 'LF', 'FR') and sp.get('solid', True):
             sv = sp.get('solid') if isinstance(sp.get('solid'), tuple) else (r2(hs), r2(hs))
@@ -340,7 +341,7 @@ def build(lid, L):
     if ex[0] == 'back': exit_pt = (xs[ex[1]], -hz + 1.5)
     elif ex[0] == 'left': exit_pt = (-hx + 1.5, zs[ex[1]])
     else: exit_pt = (xs[ex[1]], zs[ex[2]])
-    spawn = (hx - 1.6, hz - 1.6)
+    spawn = (hx * .45, hz - 1.5)
 
     # sanity: warn about overlapping solids / blocked spawn or exit
     for n_, s in enumerate(solids):
@@ -355,7 +356,7 @@ def build(lid, L):
     HUB[lid] = dict(name=L['name'], icx=r2(.53 * hx), icz=r2(.53 * hz), irx=r2(hx - .1), irz=r2(hz - .1), zm=zm,
                     spawn=[r2(spawn[0]), r2(spawn[1])], exit=[r2(exit_pt[0]), r2(exit_pt[1])], exitLabel=L['exit_label'],
                     tint=L['tint'], key=L['key'], acc=L['acc'], items=items, io=io, glows=glows)
-    print('  %-7s %s  %dx%d tiles  scale %.4f  prop scale %.2f  (%d sprites)' % (lid, pack, nx, nz, S, pk, len(items)))
+    print('  %-7s %s  %dx%d tiles  pitch %.2f  scale %.4f  prop scale %.2f  (%d sprites)' % (lid, pack, nx, nz, PT, S, pk, len(items)))
 
 
 print('building interiors from the HUB packs ...')
