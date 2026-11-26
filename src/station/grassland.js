@@ -6,7 +6,7 @@
 
 export const MEADOW = { x0: -15, x1: 28, z0: 23.5, z1: 35.5 };
 
-const FRAME = 0.6;                     // seconds per frame (pack's suggested timing)
+const FRAME = 1.4;                     // seconds per frame (slowed from the pack's 0.6 for a calm, gentle sway)
 const SPECIES = {                      // h = world height of one frame cell
   tuft:   { key: 'grass_tuft', h: 1.45 },
   reeds:  { key: 'grass_reeds', h: 1.9 },
@@ -54,9 +54,9 @@ export function createGrass({ T, sc, IM, LT, AMB, OFF, rnd, noise, clear }) {
         // grass flattens around the player so the character stays readable
         .replace('#include <begin_vertex>', `#include <begin_vertex>
  vec2 wp = instanceMatrix[3].xz;
- float gust = 0.55 + 0.45 * sin(uT * 0.21 + dot(wp, vec2(0.045, 0.03)));
- float sway = sin(uT * 0.85 - dot(wp, vec2(0.16, 0.09))) * 0.6
-            + sin(uT * 1.9 - dot(wp, vec2(0.31, 0.2)) + aPhase * 1.57) * 0.2;
+ float gust = 0.55 + 0.45 * sin(uT * 0.12 + dot(wp, vec2(0.045, 0.03)));
+ float sway = sin(uT * 0.4 - dot(wp, vec2(0.16, 0.09))) * 0.5
+            + sin(uT * 0.8 - dot(wp, vec2(0.31, 0.2)) + aPhase * 1.57) * 0.12;
  float lean = (0.35 + sway * gust) * uWd;
  float bend = clamp(transformed.y / uH, 0.0, 1.0); bend *= bend;
  transformed.x += lean * 0.18 * uH * bend * aFlip;
@@ -84,8 +84,8 @@ export function createGrass({ T, sc, IM, LT, AMB, OFF, rnd, noise, clear }) {
 
   return {
     count: meshes.reduce((n, m) => n + m.count, 0),
-    update(t, visible, P, wind = 1, tr = 1, tg = 1, tb = 1) {   // wind: 1 = the original sway; tr/tg/tb dim the grass with the weather
-      time.value = t; windU.value = Math.min(2.6, wind); walker.value.set(P.x, P.z);
+    update(t, visible, P, wind = 1, tr = 1, tg = 1, tb = 1) {   // wind: 1 = the base sway; capped at 1.5 so storms stay gentle; tr/tg/tb dim the grass with the weather
+      time.value = t; windU.value = Math.min(1.5, wind); walker.value.set(P.x, P.z);
       for (const m of meshes) { m.visible = visible; m.material.color.setRGB(tr, tg, tb); }
     },
   };
