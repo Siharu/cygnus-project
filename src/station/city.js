@@ -14,39 +14,45 @@ export async function buildCity(ctx,progress=()=>{}){
  const pick=a=>a[Math.floor(rand()*a.length)],range=(a,b)=>a+(b-a)*rand();
  await report(.02,'Opening the old city archive…');
 
- // ---------- 1. Compact the three source atlases into one low-overhead runtime sheet ----------
+ // ---------- 1. Fetch three atlases in parallel, then repack into one compact texture ----------
  const byId=new Map(ASSETS.map(a=>[a.id,a]));
- const textures=new Map(),flippedTextures=new Map(),loader=new T.TextureLoader();
+ const textures=new Map(),flippedTextures=new Map();
  const atlasFiles=[...new Set(ASSETS.map(a=>a.atlasFile))];
  const PACK_W=1536,PAD=4;
- const packed=new Map();
- const sorted=[...ASSETS].sort((a,b)=>b.h-a.h||b.w-a.w);
+ const packed=new Map(),sorted=[...ASSETS].sort((a,b)=>b.h-a.h||b.w-a.w);
  let px=PAD,py=PAD,rowH=0,PACK_H=0;
  for(const a of sorted){
   const w=a.w+PAD*2,h=a.h+PAD*2;
   if(px+w>PACK_W){px=PAD;py+=rowH;rowH=0;}
-  packed.set(a.id,{x:px+PAD,y:py+PAD});
-  px+=w;rowH=Math.max(rowH,h);PACK_H=Math.max(PACK_H,py+h);
+  packed.set(a.id,{x:px+PAD,y:py+PAD});px+=w;rowH=Math.max(rowH,h);PACK_H=Math.max(PACK_H,py+h);
  }
  const canvas=document.createElement('canvas');canvas.width=PACK_W;canvas.height=PACK_H;
- const ctx2d=canvas.getContext('2d',{alpha:true});
- ctx2d.clearRect(0,0,PACK_W,PACK_H);
- let loaded=0;
- // Decode one source sheet at a time, copy only the sprite rectangles, then release it.
- for(const file of atlasFiles){
-  await new Promise((resolve,reject)=>{
-   const url=new URL('../../assets/DRIFTER_POI_Asset_Library_v2/'+file,import.meta.url).href;
-   loader.load(url,source=>{
-    for(const a of ASSETS){
-     if(a.atlasFile!==file)continue;
-     const [sx,sy,sw,sh]=a.rect,p=packed.get(a.id);
-     ctx2d.drawImage(source.image,sx,sy,sw,sh,p.x,p.y,sw,sh);
-    }
-    source.dispose();loaded++;
-    progress(.03+.20*loaded/atlasFiles.length,'Packing city art '+loaded+'/'+atlasFiles.length+'…');
-    resolve(true);
-   },undefined,e=>{console.warn('City atlas failed:',file,e);reject(e);});
+ const ctx2d=canvas.getContext('2d',{alpha:true});ctx2d.clearRect(0,0,PACK_W,PACK_H);
+ let downloaded=0;
+ const blobs=await Promise.all(atlasFiles.map(async file=>{
+  const url=new URL('../../assets/DRIFTER_POI_Asset_Library_v2/'+file,import.meta.url).href;
+  const res=await fetch(url,{cache:'force-cache'});
+  if(!res.ok)throw new Error('City atlas HTTP '+res.status+': '+file);
+  const blob=await res.blob();downloaded++;
+  progress(.03+.10*downloaded/atlasFiles.length,'Downloading city art '+downloaded+'/'+atlasFiles.length+'…');
+  return blob;
+ }));
+ // Decode one image at a time: the full-resolution padded sheets are never kept together in GPU memory.
+ for(let i=0;i<atlasFiles.length;i++){
+  let bitmap;
+  if(typeof createImageBitmap==='function')bitmap=await createImageBitmap(blobs[i]);
+  else bitmap=await new Promise((resolve,reject)=>{
+   const img=new Image(),url=URL.createObjectURL(blobs[i]);
+   img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};
+   img.onerror=e=>{URL.revokeObjectURL(url);reject(e)};img.src=url;
   });
+  for(const a of ASSETS){
+   if(a.atlasFile!==atlasFiles[i])continue;
+   const [sx,sy,sw,sh]=a.rect,p=packed.get(a.id);
+   ctx2d.drawImage(bitmap,sx,sy,sw,sh,p.x,p.y,sw,sh);
+  }
+  if(bitmap.close)bitmap.close();blobs[i]=null;
+  progress(.13+.10*(i+1)/atlasFiles.length,'Packing city sprites '+(i+1)+'/'+atlasFiles.length+'…');
   await tick();
  }
  const packedAtlas=new T.CanvasTexture(canvas);
