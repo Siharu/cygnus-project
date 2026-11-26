@@ -116,18 +116,18 @@ LOCS = {
         props=[
             P('guard_desk', ('LF', -0.4), n='Guard desk',
               note='The ledger lists every crossing for six weeks. Today\'s line is in different handwriting.'),
-            P('swivel_stool', ('NR', 'guard_desk', 2.4, 0.3)),
+            P('swivel_stool', ('NR', 'guard_desk', 1.9, 0.15)),
             P('barrier_control', ('BK', -0.2), n='Barrier control',
               note='The lever is stiff. Someone oiled it this week.',
-              glow=dict(kind='led', dy=3.0, size=1.6, col=[1.0, 0.25, 0.2], op=.5)),
-            P('key_cabinet', ('WB', -0.85, 1.2), n='Key cabinet',
-              note='Eight hooks, seven keys. The empty hook\'s tag is still swinging.'),
-            P('electric_heater', ('LF', 0.8), n='Electric heater',
+              glow=dict(kind='led', dy=2.7, size=1.45, col=[1.0, 0.25, 0.2], op=.5), scale=.82),
+            P('key_cabinet', ('WB', -0.85, 0.8), n='Key cabinet',
+              note='Eight hooks, seven keys. The empty hook\'s tag is still swinging.', scale=.8),
+            P('electric_heater', ('LF', 0.55), n='Electric heater',
               note='The coils are orange. Nobody is here to need it.',
               glow=dict(kind='lantern', dy=.8, size=2.4, col=[1.0, 0.5, 0.2], op=.5)),
-            P('field_telephone', ('WL', 0.85, 1.3), n='Field telephone',
+            P('field_telephone', ('WL', 0.85, 0.95), n='Field telephone',
               note='The line is open. Static, then a voice counting frequencies.',
-              glow=dict(kind='lantern', dy=2.4, size=1.8, col=[1.0, 0.7, 0.35], op=.5)),
+              glow=dict(kind='lantern', dy=2.0, size=1.55, col=[1.0, 0.7, 0.35], op=.5), scale=.78),
         ]),
     'wtower': dict(
         pack='Water_Tower_Pump_Room', name='Pump room', nx=2, nz=2,
@@ -295,7 +295,7 @@ def build(lid, L):
     for sp in prop_specs:
         grp = sp.get('grp', 'Props'); a = asset(grp, sp['tok']); zn = sp['zone']; kind0 = zn[0]
         kind = {'WB': 'wallart', 'WL': 'wallart', 'HG': 'top'}.get(kind0, 'prop')
-        add_def(a, kind, S if grp == 'Shell' else S * pk)
+        add_def(a, kind, S if grp == 'Shell' else S * pk * sp.get('scale', 1))
         d = DEFS[a['key']]; W = d['W']; H = W * d['h'] / d['w']
         hs = max(.35, .22 * W)
         it = dict(k=a['key'])
