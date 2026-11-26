@@ -305,11 +305,12 @@ void main(){
   const wtex = (() => { const c = document.createElement('canvas'); c.width = c.height = 32; const x = c.getContext('2d'); x.fillStyle = '#6e4e32'; x.fillRect(0, 0, 32, 32); const r = mulberry(5); for (let i = 0; i < 90; i++) { const v = 60 + r() * 50 | 0; x.fillStyle = `rgba(${v + 20},${v},${v - 20},.35)`; x.fillRect(r() * 32 | 0, r() * 32 | 0, 1 + (r() * 6 | 0), 1); } x.fillStyle = 'rgba(0,0,0,.45)'; for (let y = 0; y < 32; y += 8) x.fillRect(0, y, 32, 1); const t = new T.CanvasTexture(c); t.magFilter = t.minFilter = T.NearestFilter; t.generateMipmaps = false; t.wrapS = t.wrapT = T.RepeatWrapping; return t; })();
   const mWood = new T.MeshLambertMaterial({ map: wtex, color: 0xd8c4a8, emissive: 0x2a2218 }), mDark = new T.MeshLambertMaterial({ map: wtex, color: 0x8a7458, emissive: 0x1a140e });
   const box = (G, w, h, d, x, y, z, m, rx = 0, ry = 0, rz = 0) => { const o = new T.Mesh(new T.BoxGeometry(w, h, d), m); o.position.set(x, y + h / 2, z); o.rotation.set(rx, ry, rz); G.add(o); return o; };
-  const lanterns = [];
+  const lanterns = [], lamps = [];
   const lantern = (G, x, z, wx, wz) => {
     box(G, .16, 2.3, .16, x, 0, z, mDark);
     box(G, .42, .4, .42, x, 2.3, z, new T.MeshBasicMaterial({ color: 0xffd890 }));
     box(G, .55, .1, .55, x, 2.7, z, mDark);
+    lamps.push({ x: wx, y: 2.5, z: wz });
     const c = new T.Color(0xffb868); LT.push({ x: wx, z: wz, c: 0xffb868, I: 1.1, R: 11, cc: [c.r, c.g, c.b] });
     glow(new T.Vector3(wx, 2.5, wz), 2.8, 0xffb868, .85, rr(0, 9));
   };
@@ -340,11 +341,36 @@ void main(){
 
   await report(.97, 'Listening for the signal…');
 
+  // ---------- where the wildlife lives (see critters.js); own random stream, so the map layout is unchanged ----------
+  const habitat = (() => {
+    const r = mulberry(0xC817), q = (a, b) => a + r() * (b - a);
+    const open = (x, z) => riverD(x, z) > .8 && !circ.some(c => Math.hypot(c.x - OX - x, c.z - OZ - z) < c.r + .4);
+    const H = { frogs: [], birds: [], squirrels: [], moths: lamps, eyes: [], fish: [], river: { zc, hw, ox: OX }, elev: (x, z) => api.elev(x, z) };
+    for (let x = -PX + 3; x < PX - 3; x += q(2.6, 5)) {              // frogs on both banks, with a spot in the water to dive to
+      const s = r() < .5 ? -1 : 1, h = hw(x), z = zc(x) + s * (h + q(.3, 1.1)) / cs(x), wz = zc(x) + s * h * .6;
+      if (!onDeck(x, z, 1.5) && riverD(x, z) > .1) H.frogs.push({ x: OX + x, z: OZ + z, wx: OX + x + q(-.6, .6), wz: OZ + wz });
+    }
+    for (let x = -100; x < PX - 8; x += q(11, 18)) {                 // flocks on the trail
+      const [tx, tz] = trailAtX(x); if (open(tx, tz)) H.birds.push({ x: OX + tx, z: OZ + tz, n: 3 + (r() * 3 | 0) });
+    }
+    for (let x = -104; x < PX - 8; x += q(10, 17)) {                 // squirrels cross the trail
+      const [tx, tz] = trailAtX(x), a = tz - 3.6, b = tz + 3.6;
+      if (riverD(tx, a) > .8 && riverD(tx, b) > .8) H.squirrels.push({ ax: OX + tx - 1, az: OZ + a, bx: OX + tx + 1, bz: OZ + b });
+    }
+    for (let k = 0; k < 3000 && H.eyes.length < 26; k++) {
+      const x = q(-PX, PX), z = q(-PZ, PZ), d = trailD(x, z);
+      if (d > 5 && d < 11 && riverD(x, z) > 3 && !H.eyes.some(e => Math.hypot(e.x - OX - x, e.z - OZ - z) < 12)) H.eyes.push({ x: OX + x, y: q(.7, 1.8), z: OZ + z });
+    }
+    for (let x = -PX; x < PX; x += q(3.5, 7)) H.fish.push({ x, off: q(-.6, .6) });
+    return H;
+  })();
+
   // ---------- runtime API ----------
   const prev = { x: SPAWN.x, z: SPAWN.z };
   const blockedAt = (x, z) => riverD(x, z) < -.2 && !onDeck(x, z);
   const api = {
     objects: FOB,
+    habitat,
     spawn: { x: OX + SPAWN.x, z: OZ + SPAWN.z },
     cairn: { x: OX + CAIRN.x, z: OZ + CAIRN.z },
     bounds: { x0: OX - PX, x1: OX + PX, z0: OZ - PZ, z1: OZ + PZ },

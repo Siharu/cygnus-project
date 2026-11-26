@@ -6,6 +6,7 @@ import { createCheckpoint } from './checkpoint.js';
 import { createGrass, MEADOW } from './grassland.js';
 import { createBuildingInterior } from './interiors_hub.js';
 import { HUB } from './interiors_hub_layout.js';
+import { createCritters } from './critters.js';
 import { createWeather } from './weather.js';
 import { createLighting } from './lighting.js';
 // THREE comes from the <script> tag in index.html (global).
@@ -256,6 +257,25 @@ function audioStart(){if(AC)return;try{AC=new(window.AudioContext||window.webkit
  const ns=AC.createBufferSource();const wb=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate),wd=wb.getChannelData(0);for(let i=0;i<wd.length;i++)wd[i]=Math.random()*2-1;ns.buffer=wb;ns.loop=true;const bp=AC.createBiquadFilter();bp.type='bandpass';bp.frequency.value=2400;bp.Q.value=.7;aud.stat=AC.createGain();aud.stat.gain.value=0;ns.connect(bp);bp.connect(aud.stat);aud.stat.connect(mg);ns.start();
  aud.cr=()=>{if(!AC||muted)return;const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=4300+Math.random()*700;o.connect(g);g.connect(aud.mg);const n=2+(Math.random()*3|0);g.gain.setValueAtTime(0,t);for(let i=0;i<n;i++){g.gain.setValueAtTime(.012,t+i*.07);g.gain.setValueAtTime(0,t+i*.07+.035)}o.start(t);o.stop(t+n*.07+.05)}
  }catch(e){console.warn('audio',e)}}
+// ---------- 6b. wildlife (src/station/critters.js) ----------
+// soft procedural calls; routed through the master gain, so M mutes them too
+const SFX={croak:[[0,.07,210,150],[.11,.09,230,140]],splash:[[0,.28,1300]],flutter:[[0,.05,2600],[.08,.05,2300],[.16,.05,2800],[.25,.05,2400]],rustle:[[0,.12,3400],[.1,.14,2900]]};
+let sfxBuf=null;
+function sfx(kind,v){if(!AC||muted||v<=.02||st!=1)return;try{
+ if(!sfxBuf){sfxBuf=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);const d=sfxBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}
+ for(const[at,len,f,f1]of SFX[kind]){const t=AC.currentTime+at,g=AC.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v*(f1?.05:.07),t+.012);g.gain.exponentialRampToValueAtTime(.0005,t+len);
+  const fl=AC.createBiquadFilter();let s;if(f1){s=AC.createOscillator();s.type='square';s.frequency.setValueAtTime(f,t);s.frequency.linearRampToValueAtTime(f1,t+len);fl.type='lowpass';fl.frequency.value=900}
+  else{s=AC.createBufferSource();s.buffer=sfxBuf;fl.type='bandpass';fl.frequency.value=f;fl.Q.value=.9}
+  s.connect(fl);fl.connect(g);g.connect(aud.mg);s.start(t);s.stop(t+len+.02)}}catch(e){/* audio is optional */}}
+const stationHabitat=(()=>{const r=mulberry(0xB19D),q=(a,b)=>a+r()*(b-a);
+ const open=(x,z)=>!sol.some(s=>Math.abs(x-s.x)<s.rx+.5&&Math.abs(z-s.z)<s.rz+.5)&&!circ.some(c=>Math.hypot(x-c.x,z-c.z)<c.r+.5);
+ const H={frogs:[],birds:[],squirrels:[],eyes:[],moths:LT.filter(l=>!l.dyn).map(l=>({x:l.x,y:l.y||2.4,z:l.z}))};
+ for(let x=-30;x<34;x+=q(3.5,8)){const z=q(21.4,23.2);if(open(x,z))H.frogs.push({x,z})} // wet verge south of the road
+ for(const[x,z]of[[-6,2],[7,8],[-19,-2],[16,16],[-27,17]])if(open(x,z))H.birds.push({x,z,n:3+(r()*2|0)});
+ for(const[ax,az,bx,bz]of[[-37,2,-31,11],[22,7,28,2],[2,-24,-8,-25],[26,24,33,21]])H.squirrels.push({ax,az,bx,bz});
+ for(let k=0;k<2000&&H.eyes.length<9;k++){const x=q(-38,38),z=q(-38,38);if(Math.hypot(x+10,z+8)>31&&!onHard(x,z)&&!H.eyes.some(e=>Math.hypot(e.x-x,e.z-z)<11))H.eyes.push({x,y:q(.8,1.8),z})}
+ return H})();
+const CRIT=[createCritters({T,sc,habitat:stationHabitat,sfx}),null]; // [station, forest]
 // ---------- 7. UI ----------
 let MAP=0,FST=null,FOB=[]; // MAP: 0 station, 1 forest (lazy-built section)
 const found=[],bcs=[];let st=0,open='',bt=0,near=null,tt,bIdx=0;
@@ -378,7 +398,7 @@ async function travel(to){
  LD.show(f?'SILVAN':'RELAY CLEARING',f?'Section 02':'Section 01 · WNCORE Station');LD.set(.01,'Loading section…');
  await sleep(550);
  try{
-  if(f&&!FST){const mod=await import('./forest.js');FST=await mod.buildForest({T,sc,IM,META,spr,glow,LT,circ,SHAFT,shaftTex,ren},(p,m)=>LD.set(p,m));FOB=FST.objects;const n=FOB.filter(q=>!q.t).length;if(n!=SILVAN_NOTES)console.warn('SILVAN_NOTES is '+SILVAN_NOTES+', forest.js has '+n)}
+  if(f&&!FST){const mod=await import('./forest.js');FST=await mod.buildForest({T,sc,IM,META,spr,glow,LT,circ,SHAFT,shaftTex,ren},(p,m)=>LD.set(p,m));FOB=FST.objects;CRIT[1]=createCritters({T,sc,habitat:FST.habitat,sfx});const n=FOB.filter(q=>!q.t).length;if(n!=SILVAN_NOTES)console.warn('SILVAN_NOTES is '+SILVAN_NOTES+', forest.js has '+n)}
   else{for(let i=1;i<=10;i++){LD.set(i/10,f?'Entering the trees…':'Back to the road…');await sleep(70)}}
   MAP=f?1:0;P.vx=P.vz=0;pmat.emissive.setHex(f?0x1c2018:0x1c1814);pmat.emissiveIntensity=.6;
   if(f){FST.setVisible(true);P.x=FST.spawn.x;P.z=FST.spawn.z;FST.reset(P.x,P.z);for(let i=0;i<3;i++)AMB[i]=FST.amb[i];sc.background.set(FST.fog);sc.fog.color.set(FST.fog);sc.fog.density=FST.fogD}
@@ -412,6 +432,8 @@ function anim(dt,t){
   sc.fog.color.copy(wxc);sc.background.copy(wxc);sc.fog.density=fd*WX.fogM;
   hemi.intensity=.5*WX.hemi+WX.flash*1.1;dl.intensity=.4*WX.sun+WX.flash*.6}
  else{hemi.intensity=.5;dl.intensity=.4}
+ const wild=[AMB[0]*WX.amb[0]+WX.flash*.3,AMB[1]*WX.amb[1]+WX.flash*.3,AMB[2]*WX.amb[2]+WX.flash*.3];
+ CRIT.forEach((c,i)=>{if(!c)return;c.setVisible(outd&&MAP==i);if(outd&&MAP==i)c.update(t,dt,{P,rain:WX.rain,hush:i==0&&wrong>.35,tint:wild})});
  INT.update(t);BI.update(t);if(MAP==1&&FST)FST.update(t);GRASS.update(t,MAP==0&&IN<0,P,WX.windNow,WX.amb[0]*(1-.12*WX.wet),WX.amb[1]*(1-.12*WX.wet),WX.amb[2]*(1-.12*WX.wet));
  if(aud.river)aud.river.gain.value=(muted||MAP!=1)?0:.02+.12*sm(20,2,FST.riverDist(P.x,P.z));
  // signal bursts + proximity to the mast
@@ -446,7 +468,7 @@ function anim(dt,t){
  for(const m of MIST){m.x+=m.v*dt;let rx=((m.x-cp.x)%80+120)%80-40,rz=((m.z-cp.z)%80+120)%80-40;m.s.position.set(cp.x+rx,m.y,cp.z+rz);m.s.material.opacity=m.o*WX.mist}}
 function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;if(st==1)upd(dt);anim(dt,now/1000);ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);ren.render(pS,pC)}
 if(DEBUG){const h=location.hash.slice(1).split(',').map(Number);if(h.length==2&&!isNaN(h[0])){P.x=h[0];P.z=h[1];cp.x=P.x;cp.z=P.z}}
-window.__W={WX,LGT,P,start,travel,get FST(){return FST},get MAP(){return MAP},tp:(x,z)=>{P.x=x;P.z=z;cp.x=x-BIAS;cp.z=z-BIAS},BLD,SPR,get n(){return SPR.length},grass:GRASS.count,calls:()=>{ren.info.autoReset=false;ren.info.reset();ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);const c=ren.info.render.calls;ren.info.autoReset=true;return c},ground:()=>GB.cv.toDataURL('image/png'),cull:()=>SPR.filter(s=>s.visible).length};
+window.__W={CRIT,WX,LGT,P,start,travel,get FST(){return FST},get MAP(){return MAP},tp:(x,z)=>{P.x=x;P.z=z;cp.x=x-BIAS;cp.z=z-BIAS},BLD,SPR,get n(){return SPR.length},grass:GRASS.count,calls:()=>{ren.info.autoReset=false;ren.info.reset();ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);const c=ren.info.render.calls;ren.info.autoReset=true;return c},ground:()=>GB.cv.toDataURL('image/png'),cull:()=>SPR.filter(s=>s.visible).length};
 requestAnimationFrame(loop);
 }
 
