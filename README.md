@@ -29,10 +29,9 @@ On portrait phones the camera zooms in so the character stays readable.
 ## Project layout
 
 ```
-index.html            root entry, redirects to src/station/
+index.html            game page
 vercel.json           static deploy config
 src/station/
-  index.html          game page
   main.js             core game loop, player, overworld, HUD
   forest.js           Silvan forest section
   interior.js         tower interior renderer
@@ -49,7 +48,7 @@ CHANGELOG.md          change notes
 
 ## Running locally
 
-There is no build step. Serve the repo root with any static server and open `/src/station/`:
+There is no build step. Serve the repo root with any static server and open `/`:
 
 ```
 npx serve .
@@ -59,7 +58,7 @@ Opening `index.html` straight from disk will not work because the game uses ES m
 
 ## Deploy
 
-Hosted on Vercel as a static site. `vercel.json` redirects `/` to `/src/station/` and caches `/assets/` for a day. `.vercelignore` skips legacy files.
+Hosted on Vercel as a static site. The game is served at `/`; `vercel.json` redirects the old `/src/station/` address there and caches `/assets/` for a day. `.vercelignore` skips legacy files.
 
 ## Roadmap
 

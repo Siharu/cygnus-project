@@ -6,7 +6,8 @@
   "outputDirectory": ".",
   "cleanUrls": true,
   "redirects": [
-    { "source": "/", "destination": "/src/station/", "permanent": false }
+    { "source": "/src/station", "destination": "/", "permanent": false },
+    { "source": "/src/station/", "destination": "/", "permanent": false }
   ],
   "headers": [
     {
