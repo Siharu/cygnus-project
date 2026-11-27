@@ -1,0 +1,17 @@
+{
+  "character": "SHU",
+  "source": "generated composite sprite sheet",
+  "cell_size": [96, 96],
+  "directions": ["N", "NE", "E", "SE", "S", "SW", "W", "NW"],
+  "animations": {
+    "Idle": {"frames_per_direction": 5},
+    "Walk": {"frames_per_direction": 5},
+    "Run": {"frames_per_direction": {"N": 6, "NE": 4, "E": 4, "SE": 5, "S": 5, "SW": 4, "W": 4, "NW": 5}},
+    "Sit": {"frames_per_direction": 4},
+    "Groom": {"frames_per_direction": 4},
+    "Sleep": {"frames_per_direction": 3},
+    "Alert": {"frames_per_direction": 4}
+  },
+  "frame_format": "PNG RGBA, 96x96, transparent background",
+  "quality_note": "Extracted crops only; source animation poses are not anatomically repaired or validated."
+}
