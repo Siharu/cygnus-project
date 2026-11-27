@@ -7,6 +7,7 @@ import { createGrass, MEADOW } from './grassland.js';
 import { createBuildingInterior } from './interiors_hub.js';
 import { HUB } from './interiors_hub_layout.js';
 import { createCritters } from './critters.js';
+import { createCompass } from './compass.js';
 import { createWeather } from './weather.js';
 import { createLighting } from './lighting.js';
 // THREE comes from the <script> tag in index.html (global).
@@ -317,6 +318,7 @@ function act(){if(st!=1||busy)return;if(open){closeP();return}if(!near)return;if
 addEventListener('keydown',e=>{K[e.code]=1;if(e.code=='KeyE')act();if(e.code=='KeyM'){muted=!muted;if(aud.mg)aud.mg.gain.value=muted?0:.9}
  if(e.code=='Space'){e.preventDefault();if(st==1&&!open&&!e.repeat){P.swingStart=clock;P.swingUntil=clock+.62;P.resting=false}}
  if(e.code=='KeyR'&&st==1&&!open&&!e.repeat){P.resting=!P.resting;P.vx=0;P.vz=0}
+ if(e.code=='KeyN'&&st==1&&!e.repeat)NAV.toggle();
  if(e.code=='Tab'){e.preventDefault();if(st==1)open=='l'?closeP():lg(0)}if(e.code=='Escape')closeP()});
 addEventListener('keyup',e=>K[e.code]=0);
 addEventListener('blur',()=>{for(const k in K)K[k]=0});
@@ -327,7 +329,7 @@ $('ov').addEventListener('click',start);
 {const key=(c,t='keydown')=>dispatchEvent(new KeyboardEvent(t,{code:c,bubbles:true}));
  let L=null,Rr=null,lastTap=0;const dirs=['KeyW','KeyA','KeyS','KeyD','ShiftLeft'];
  const clr=()=>dirs.forEach(c=>K[c]=0);
- addEventListener('pointerdown',e=>{if(e.pointerType!='touch'||st!=1)return;if(e.target.closest&&e.target.closest('#pn,#ov'))return;
+ addEventListener('pointerdown',e=>{if(e.pointerType!='touch'||st!=1)return;if(e.target.closest&&e.target.closest('#pn,#ov,#nav-hud'))return;
   if(e.clientX>innerWidth*.7&&e.clientY<innerHeight*.16){key('Tab');return}
   if(e.clientX<innerWidth/2){if(!L)L={id:e.pointerId,ox:e.clientX,oy:e.clientY,t:performance.now(),mv:0}}
   else if(!Rr){Rr={id:e.pointerId,x:e.clientX,y:e.clientY,t:performance.now(),sw:false,tm:setTimeout(()=>{if(Rr&&!Rr.sw){Rr.sw=true;key('Space')}},380)}}},{passive:true});
@@ -387,6 +389,23 @@ window.__goB=goB;
 const SILVAN_NOTES=8; // examinable landmarks built by forest.js (checked after it loads)
 const isNote=q=>q.t=='n';
 const TOTAL=OB.filter(q=>!q.t||q.t=='b').length+IO.flat().filter(isNote).length+Object.values(HUB.ROOMS).flatMap(r=>r.io).filter(isNote).length+SILVAN_NOTES;
+// ---------- 7b2. field compass + waypoint (src/station/compass.js) ----------
+function destinations(){
+ const out=[],G='WNCORE STATION 01';
+ OB.forEach((q,i)=>{if(q.t=='x'||q.t=='f')return;const n=q.t=='d'?'Relay station':q.n=='Road blockade'?(q.x<0?'West':'East')+' road blockade':q.src||q.n;out.push({id:'s'+i,group:G,name:n,map:0,x:q.x,z:q.z})});
+ // Silvan's landmarks are listed once the forest has been visited; before that only its trail marker
+ out.push({id:'silvan',group:'SILVAN',name:'Silvan trail marker',map:1,x:FST&&FST.cairn.x,z:FST&&FST.cairn.z});
+ FOB.forEach((q,i)=>{if(!q.t)out.push({id:'f'+i,group:'SILVAN',name:q.n,map:1,x:q.x,z:q.z})});
+ return out}
+function route(id){
+ const w=destinations().find(q=>q.id==id);if(!w)return null;
+ const via=(x,z,label)=>({x,z,label,final:false});
+ if(IN==9&&BQ){const e=BI.layout(BQ).exit;return via(IX+e[0],IZ+e[1],'ROOM EXIT')}
+ if(IN>=0){const e=IO[IN].find(q=>q.t=='g'&&q.to<IN);return via(IX+e.dx,IZ+e.dz,IN?'STAIRS DOWN':'STATION EXIT')}
+ if(w.map==MAP)return{x:w.x,z:w.z,label:w.name,final:true};
+ return MAP==0?via(TH.x,TH.z,'SILVAN ENTRANCE'):via(FST.cairn.x,FST.cairn.z,'BACK TO STATION')}
+const NAV=createCompass({T,cam,ctx:{list:destinations,route,toast,close:closeP,isOpen:()=>open=='w',
+ panel:html=>{if(st!=1||busy)return false;closeP();open='w';const p=$('pn');p.classList.remove('hide','log');p.innerHTML=html;return true}}});
 // ---------- 7c. SECTION TRAVEL: station <-> forest behind a loading screen ----------
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const LD=(()=>{const d=document.createElement('div');d.id='ld';d.innerHTML='<small></small><h2></h2><div class="bar"><i></i></div><p></p>';document.body.appendChild(d);const q=s=>d.querySelector(s);
@@ -420,7 +439,7 @@ function upd(dt){clock+=dt;let ix=0,iz=0;
  vitTick(dt);near=null;let bd=3;for(const q of (IN>=0?IOB:MAP==1?FOB:OB)){const d=Math.hypot(q.x-P.x,q.z-P.z);if(d<bd){bd=d;near=q}}
  $('pr').textContent=(near&&!open&&!busy)?'[E] '+(near.t=='r'?'Tune the radio':(near.t=='d'||near.t=='g'||near.t=='f'||near.t=='x'||near.t=='b')?near.n:near.t=='c'?(near.p.water&&!near.p.food?'Drink ':'Eat ')+near.n:'Examine '+near.n.toLowerCase()):'';
  if(open=='b'){bt+=dt*26;const m=window.__bmsg;$('tx').textContent=m.slice(0,bt|0);const c=$('wv'),g=c.getContext('2d');g.clearRect(0,0,300,44);g.strokeStyle='#6fae5a';g.beginPath();for(let x=0;x<300;x+=3){const a=Math.abs(Math.sin(x*.05+clock*6))*Math.min(1,bt/20)*18*Math.random();g.moveTo(x,22-a);g.lineTo(x,22+a)}g.stroke()}
- $('dc').innerHTML='DISCOVERIES '+found.length+'/'+TOTAL+'<br><span style="font-size:18px;color:'+(VIT.food<.2?'#d9695a':'#b7aa8d')+'">FOOD '+vbar(VIT.food)+'</span> <span style="font-size:18px;color:'+(VIT.water<.2?'#d9695a':'#b7aa8d')+'">WATER '+vbar(VIT.water)+'</span><br><span style="font-size:18px;color:#b7aa8d">SHIFT RUN · SPACE SWING · R REST · M MUTE</span>';
+ $('dc').innerHTML='DISCOVERIES '+found.length+'/'+TOTAL+'<br><span style="font-size:18px;color:'+(VIT.food<.2?'#d9695a':'#b7aa8d')+'">FOOD '+vbar(VIT.food)+'</span> <span style="font-size:18px;color:'+(VIT.water<.2?'#d9695a':'#b7aa8d')+'">WATER '+vbar(VIT.water)+'</span><br><span style="font-size:18px;color:#b7aa8d">SHIFT RUN · SPACE SWING · R REST · N COMPASS · M MUTE</span>';
  $('st').innerHTML=(MAP==1?'NO SIGNAL<br>— — —':'WNCORE-01<br>88.7 FM')+(IN<0?'<br><span style="font-size:18px;color:#8a8570">'+WX.label+'</span>':'')}
 const dsq=Math.hypot;
 function anim(dt,t){
@@ -451,7 +470,7 @@ function anim(dt,t){
  const IS=IN>=0?1.4:1;ps.scale.setScalar(IS);const EL=MAP==1&&FST?FST.elev(P.x,P.z):0;ps.position.set(P.x,PH*IS/2+bob+EL,P.z);psh.position.set(P.x,.035+EL,P.z);psh.scale.set((1+Math.min(.18,mv*.025))*IS,IS,1);pL.position.set(P.x,2,P.z);
  // camera: follow + headroom, frame the mast near the station
  const fz=sm(24,10,dm)*3.2/.816+BIAS;const tx=IN>=0?IX-ICX:P.x-fz,tz=IN>=0?IZ-ICZ:P.z-fz;cp.x+=(tx-cp.x)*Math.min(1,dt*4);cp.z+=(tz-cp.z)*Math.min(1,dt*4);
- cam.position.set(cp.x+OFF.x,OFF.y,cp.z+OFF.z);cam.lookAt(cp.x,0,cp.z);ps.quaternion.copy(cam.quaternion);
+ cam.position.set(cp.x+OFF.x,OFF.y,cp.z+OFF.z);cam.lookAt(cp.x,0,cp.z);ps.quaternion.copy(cam.quaternion);NAV.update(P,{hud:st==1,mark:!busy&&!open});
  // cull + tint sprites
  const asp=innerWidth/innerHeight,hw=VH*asp,hh=VH,wam=outd?WX.amb:ONE,fl=outd?WX.flash*.3:0;
  const pSx=(P.x-cp.x-(P.z-cp.z))*.7071,pSy=-(P.x-cp.x+P.z-cp.z)*.4082+1.1,pD=P.x+P.z;
@@ -468,7 +487,7 @@ function anim(dt,t){
  for(const m of MIST){m.x+=m.v*dt;let rx=((m.x-cp.x)%80+120)%80-40,rz=((m.z-cp.z)%80+120)%80-40;m.s.position.set(cp.x+rx,m.y,cp.z+rz);m.s.material.opacity=m.o*WX.mist}}
 function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;if(st==1)upd(dt);anim(dt,now/1000);ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);ren.render(pS,pC)}
 if(DEBUG){const h=location.hash.slice(1).split(',').map(Number);if(h.length==2&&!isNaN(h[0])){P.x=h[0];P.z=h[1];cp.x=P.x;cp.z=P.z}}
-window.__W={CRIT,WX,LGT,P,start,travel,get FST(){return FST},get MAP(){return MAP},tp:(x,z)=>{P.x=x;P.z=z;cp.x=x-BIAS;cp.z=z-BIAS},BLD,SPR,get n(){return SPR.length},grass:GRASS.count,calls:()=>{ren.info.autoReset=false;ren.info.reset();ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);const c=ren.info.render.calls;ren.info.autoReset=true;return c},ground:()=>GB.cv.toDataURL('image/png'),cull:()=>SPR.filter(s=>s.visible).length};
+window.__W={NAV,CRIT,WX,LGT,P,start,travel,get FST(){return FST},get MAP(){return MAP},tp:(x,z)=>{P.x=x;P.z=z;cp.x=x-BIAS;cp.z=z-BIAS},BLD,SPR,get n(){return SPR.length},grass:GRASS.count,calls:()=>{ren.info.autoReset=false;ren.info.reset();ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);const c=ren.info.render.calls;ren.info.autoReset=true;return c},ground:()=>GB.cv.toDataURL('image/png'),cull:()=>SPR.filter(s=>s.visible).length};
 requestAnimationFrame(loop);
 }
 

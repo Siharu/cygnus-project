@@ -126,6 +126,7 @@ A look at the characters, environments, and sprite libraries behind the field bu
 | `R` | Rest / stop |
 | `E` | Examine / interact, eat, or drink |
 | `TAB` | Open the logbook |
+| `N` | Open the field compass and set a waypoint |
 | `ESC` | Close the current panel |
 | `M` | Mute / unmute audio |
 
