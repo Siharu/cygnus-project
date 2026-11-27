@@ -6,8 +6,14 @@ Notable changes to the **Drifter's Tale** field build, newest first.
 
 ## [2026-11-27] — The ??? city
 
+### Fixed
+- Fences and buildings now sit square to the streets. The art is drawn at about 24 degrees and the streets run at 30, so each sprite is corrected when the city loads (`city_catalog.py` measures the correction).
+- Fences join post to post, turn corners, and are mirrored to follow either street direction.
+- Buildings share frontages along their streets, turn their fronts to them, and stand on paved slabs.
+- Removed the six building-library sprites from the city: they are drawn at about 10 degrees and cannot be corrected without badly distorting them.
+
 ### Added
-- **Section 03, "???"**: a city with no name, built from the POI sprite library, six unused building-library sprites, the station's foliage, rocks and terrain tiles, and the supply props. Built the first time you visit.
+- **Section 03, "???"**: a city with no name, built from the POI sprite library, the station's foliage, rocks and terrain tiles, and the supply props. Built the first time you visit.
 - An unmarked road south of the east end of the station road, with a repainted "???" sign and a violet lamp.
 - Ten examine points, six supplies, street lamps that dim as you approach, lit windows, birds, moths and eyes, and a second mast that blinks half a beat late.
 - City landmarks in the field compass; the discovery total now counts the city's notes.

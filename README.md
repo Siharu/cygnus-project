@@ -188,7 +188,7 @@ cygnus-project/
 │   └── ...                      # Source libraries, atlases, and animation packs
 ├── scripts/
 │   ├── modularize.py            # Original modularisation helper
-│   └── city_catalog.py          # Measures city art, paints the ??? sign
+│   └── city_catalog.py          # Measures city art and angle corrections, paints the ??? sign
 ├── install_checkpoint.py        # Checkpoint installer
 ├── install_interiors.py         # Building-interior installer
 ├── process_city_assets.py       # City sprite processing utility

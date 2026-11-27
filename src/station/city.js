@@ -1,7 +1,6 @@
 // ===== DRIFTER — "???" CITY (section 03) =====
-// A city with its name scraped off. Built from the POI sprite library, the unused building-library sprites,
-// the station's foliage, rocks and terrain tiles, and the supply props. Layout data is in city_layout.js,
-// sprite measurements in city_catalog.js (scripts/city_catalog.py),
+// A city with its name scraped off. Built from the POI sprite library, the station's foliage, rocks and terrain tiles, and the supply props. Layout data is in city_layout.js,
+// sprite measurements and the angle corrections in city_catalog.js (scripts/city_catalog.py),
 // repainting of the POI art's faults in city_shade.js.
 //
 // API:  const CITY = await buildCity(ctx, progress)
@@ -15,7 +14,16 @@ import { retouch, GLARE } from './city_shade.js';
 
 const OX = 0, OZ = 1000;            // far from the station (0,0) and Silvan (1000,0)
 const HALF = 75, PPU = 20;          // painted ground: 150 x 150 units
-const LIB = ['apartment', 'shop', 'garage', 'shed', 'clinic', 'fuel'];
+
+// size of a corrected sprite in the world: L.HEIGHT is the height of the art as drawn, in units
+function dims(k) { const m = CAT[k], unit = L.HEIGHT[k] / m.h; return { m, unit, w: m.W * unit, h: m.H * unit }; }
+// a point on the art as drawn (fractions across, down) -> the same point on the corrected sprite
+function warped(k, u, v) { const m = CAT[k], [s, c, kk, e, f] = m.t; return [(s * u * m.w + e) / m.W, (c * u * m.w + kk * v * m.h + f) / m.H]; }
+// the correction itself: brings the art's ground lines to the 30 degrees the streets run at
+function straighten(src, k) {
+  const m = CAT[k], [s, c, kk, e, f] = m.t, cv = document.createElement('canvas'); cv.width = m.W; cv.height = m.H;
+  const g = cv.getContext('2d'); g.imageSmoothingQuality = 'high'; g.setTransform(s, c, 0, kk, e, f); g.drawImage(src, 0, 0); return cv;
+}
 
 function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 const url = p => new URL('../../assets/' + p, import.meta.url).href;
@@ -29,13 +37,13 @@ export async function buildCity(ctx, progress = () => {}) {
 
   // ---------- art ----------
   const files = {};
-  for (const k in CAT) files[k] = LIB.includes(k) ? 'city/' + k + '.png' : 'DRIFTER_POI_Asset_Library_v2/Individual_PNGs/SRC-' + k.slice(1).padStart(3, '0') + '_MasterSheetA_Extract.png';
+  for (const k in CAT) files[k] = 'DRIFTER_POI_Asset_Library_v2/Individual_PNGs/SRC-' + k.slice(1).padStart(3, '0') + '_MasterSheetA_Extract.png';
   files.p33 = 'city/sign_unknown.png';
   for (const [id] of L.SUPPLIES) files[id] = 'game/props/' + id + '.png';
   const img = {}; let done = 0; const keys = Object.keys(files);
   await Promise.all(keys.map(async k => { img[k] = await load(url(files[k])); progress(.05 + .55 * ++done / keys.length, 'Reading the streets…'); }));
   // everything that can fail has loaded: only now is anything added to the world
-  for (const k in CAT) if (!LIB.includes(k)) { img[k] = retouch(img[k], k); if (++done % 12 === 0) await frame(); }
+  for (const k in CAT) { img[k] = straighten(retouch(img[k], k), k); if (++done % 12 === 0) await frame(); }
   progress(.64, 'Drawing the shadows in…');
   const TX = {};
   const tex = (k, flip) => {
@@ -77,38 +85,44 @@ export async function buildCity(ctx, progress = () => {}) {
 
   function glare(s, k, c, flip) {                   // city_shade.js: a light beside whatever should not be looked at
     const { x, z, w, h } = s.userData;
-    for (const [u, v, size, color, o, fl] of GLARE[k] || []) {
-      const p = viewPt(new T.Vector3(x, 0, z), ((flip ? 1 - u : u) - s.center.x) * w, (1 - v - c) * h, 12);
+    for (const [u0, v0, size, color, o, fl] of GLARE[k] || []) {
+      const [u, v] = warped(k, u0, v0), p = viewPt(new T.Vector3(x, 0, z), ((flip ? 1 - u : u) - s.center.x) * w, (1 - v - c) * h, 12);
       windows.push({ glow: flare(p, size, color, o), base: o, ph: R() * 9, fl });
     }
   }
 
   // ---------- buildings ----------
-  function building(k, x, z, flip) {
-    const m = CAT[k], h = L.HEIGHT[k], w = h * m.w / m.h;
+  const lots = [];
+  function building(k, x, z, flip, lit) {
+    const { m, w, h } = dims(k);
     let a = m.a * w, b = m.b * w; if (flip) [a, b] = [b, a];
+    // lot lines (see city_layout.js): push that side of the footprint against the line
+    if (typeof x === 'string') x = +x.slice(1) + (x[0] === 'e' ? -a / 2 : a / 2);
+    if (typeof z === 'string') z = +z.slice(1) + (z[0] === 's' ? -b / 2 : b / 2);
     const c = (a + b) / 2 * .4082 / h + m.gap;
     const s = sprite(k, x, z, h, w, flip ? 1 - m.ax : m.ax, c, Math.abs(a - b) / 2, flip);
     fadeable(s);
     sol.push({ x: OX + x, z: OZ + z, rx: a * .47, rz: b * .47 });
     shadows.push({ x, z, rx: a * .5, rz: b * .5, ht: h, rect: 1 });
-    for (const [u, v] of m.lit || []) {           // somebody left these windows on
-      const p = viewPt(new T.Vector3(OX + x, 0, OZ + z), (u - s.center.x) * w, (1 - v - c) * h, 12);
-      windows.push({ glow: flare(p, 2.4, 0xffb060, .34), base: .34, ph: R() * 9 });
+    if (Math.abs(x) < 50 && Math.abs(z) < 54) lots.push({ x, z, a, b });
+    for (const [u0, v0] of lit || []) {           // somebody left these windows on
+      const [u, v] = warped(k, u0, v0);
+      const p = viewPt(new T.Vector3(OX + x, 0, OZ + z), ((flip ? 1 - u : u) - s.center.x) * w, (1 - v - c) * h, 12);
+      windows.push({ glow: flare(p, 2.4, 0xffb060, .4), base: .4, ph: R() * 9 });
     }
     glare(s, k, c, flip);
-    if (m.lit) { const fx = x + a * .5 + 1, fz = z + b * .5 + 1; lightAt(fx, fz, 0xffb060, .8, 10); pool(fx, fz, 9, 0xffa050, .16); }
+    if (lit) { const fx = x + a * .5 + 1, fz = z + b * .5 + 1; lightAt(fx, fz, 0xffb060, .8, 10); pool(fx, fz, 9, 0xffa050, .16); }
   }
-  for (const [k, x, z, f] of L.BUILDINGS) building(k, x, z, !!f);
+  for (const [k, x, z, f, lit] of L.BUILDINGS) building(k, x, z, !!f, lit);
   for (const [k, x, z, f] of L.BACKDROP) { if (CAT[k].axis) plane(k, x, z); else building(k, x, z, !!f); }
   progress(.68, 'Counting windows…'); await frame();
 
   // ---------- fences, walls, the sign: upright planes in the world, so they sort correctly along their length ----------
-  function plane(k, x, z) {
-    const m = CAT[k], h = L.HEIGHT[k], w = h * m.w / m.h, unit = w / m.w, alongX = m.axis === 'x';
+  function plane(k, x, z, axis) {                  // centred on (x, z), which is where the middle of its foot goes
+    const { m, unit, w, h } = dims(k), flip = !!axis && axis !== m.axis, alongX = (m.axis === 'x') !== flip;
     const pos = [], uv = [];
     for (const [u, v] of [[0, 0], [1, 0], [0, 1], [1, 1]]) {     // top-left, top-right, bottom-left, bottom-right
-      const sx = (u - .5) * w, sy = (m.base - v * m.h) * unit;    // screen offset from the ground point
+      const sx = (u * m.W - m.px) * unit * (flip ? -1 : 1), sy = (m.py - v * m.H) * unit;   // screen offset from that point
       const t = (alongX ? sx : -sx) / .7071, y = (sy + .4082 * t) / .8165;
       pos.push(alongX ? t : 0, y, alongX ? 0 : t); uv.push(u, 1 - v);
     }
@@ -119,21 +133,24 @@ export async function buildCity(ctx, progress = () => {}) {
     const s = new T.Mesh(g, mat); s.position.set(OX + x, 0, OZ + z); s.frustumCulled = false;
     s.userData = { x: OX + x, z: OZ + z, w, h, c: .2, ax: .5, mat, key: 'city_' + k };
     sc.add(s); SPR.push(s);
-    return w / .7071;                                             // length along its axis
   }
-  for (const [k, x, z, n] of L.FENCES) {
-    const m = CAT[k], len = L.HEIGHT[k] * m.w / m.h / .7071 * .92, dx = m.axis === 'x' ? 1 : 0, dz = 1 - dx;
-    for (let i = 0; i < n; i++) { const o = (i - (n - 1) / 2) * len; plane(k, x + dx * o, z + dz * o); }
-    const half = n * len / 2;
-    sol.push({ x: OX + x, z: OZ + z, rx: dx ? half : .35, rz: dz ? half : .35 });
-    shadows.push({ x, z, rx: dx ? half : .3, rz: dz ? half : .3, ht: L.HEIGHT[k] * .6, rect: 1 });
+  const length = k => { const { m, unit } = dims(k); return m.run * unit / .7071; };   // of one piece, along its axis
+  for (const [k, x, z, axis, n] of L.FENCES) {
+    const len = length(k), dx = axis === 'x' ? 1 : 0, dz = 1 - dx;
+    for (let i = 0; i < n; i++) {                  // post to post; alternate pieces a hair apart so shared posts do not shimmer
+      const o = (i + .5) * len, nudge = (i % 2) * .006;
+      plane(k, x + dx * o + dz * nudge, z + dz * o + dx * nudge, axis);
+    }
+    const half = n * len / 2, cx = x + dx * half, cz = z + dz * half;
+    sol.push({ x: OX + cx, z: OZ + cz, rx: dx ? half : .35, rz: dz ? half : .35 });
+    shadows.push({ x: cx, z: cz, rx: dx ? half : .3, rz: dz ? half : .3, ht: L.HEIGHT[k] * .6, rect: 1 });
   }
-  { const len = plane('p33', L.SIGN.x, L.SIGN.z);
-    for (const o of [-len * .36, len * .36]) circ.push({ x: OX + L.SIGN.x + o, z: OZ + L.SIGN.z, r: .45 }); }
+  { plane('p33', L.SIGN.x, L.SIGN.z);
+    const len = length('p33'); for (const o of [-len * .36, len * .36]) circ.push({ x: OX + L.SIGN.x + o, z: OZ + L.SIGN.z, r: .45 }); }
 
   // ---------- street furniture ----------
   for (const [k, x, z] of L.PROPS) {
-    const m = CAT[k], h = L.HEIGHT[k], w = h * m.w / m.h, r = (L.SOLID[k] || 0) * w;
+    const { w, h } = dims(k), r = (L.SOLID[k] || 0) * w;
     const c = Math.min(.2, w * .16 / h), s = sprite(k, x, z, h, w, .5, c, 0, false);
     if (h >= 3.5) fadeable(s);
     glare(s, k, c, false);
@@ -158,14 +175,15 @@ export async function buildCity(ctx, progress = () => {}) {
   // ---------- lamps ----------
   const lamps = [];
   for (const [x, z, dead] of L.LAMPS) {
-    const m = CAT.p59, h = L.HEIGHT.p59, w = h * m.w / m.h, flip = x > 0;
+    const { w, h } = dims('p59'), flip = x > 0, foot = warped('p59', .76, .96), top = warped('p59', .26, .1);
     // the art has its post on the right and its head on the left; the post stands on (x, z)
-    const s = sprite('p59', x, z, h, w, flip ? .24 : .76, .04, 0, flip);
+    const s = sprite('p59', x, z, h, w, flip ? 1 - foot[0] : foot[0], 1 - foot[1], 0, flip);
+    const out = (foot[0] - top[0]) * w, up = (foot[1] - top[1]) * h;   // from the foot to the lamp head
     fadeable(s); circ.push({ x: OX + x, z: OZ + z, r: .32 });
     if (dead) continue;
-    const head = viewPt(new T.Vector3(OX + x, 0, OZ + z), (flip ? .5 : -.5) * w, h * .86, 1.2);
+    const head = viewPt(new T.Vector3(OX + x, 0, OZ + z), (flip ? out : -out), up, 1.2);
     // ground point under the head (for the light it throws)
-    const side = (flip ? .5 : -.5) * w * .7071, lx = x + side, lz = z - side;
+    const side = (flip ? out : -out) * .7071, lx = x + side, lz = z - side;
     lamps.push({ x: OX + x, z: OZ + z, head, glow: flare(head, 2.6, 0xffc27a, .6), pool: pool(lx, lz, 11, 0xffae60, .2), light: lightAt(lx, lz, 0xffbd78, .95, 12), k: 1, ph: R() * 9 });
   }
   // the one lit machine, and the mast's beacon
@@ -218,6 +236,12 @@ export async function buildCity(ctx, progress = () => {}) {
   // the square: a circle where the paving was lifted and laid again, slightly wrong
   g.save(); g.beginPath(); g.arc(px(0), px(-29), 5.4 * PPU, 0, 7); g.clip(); g.translate(px(0), px(-29)); g.rotate(.4); g.translate(-px(0), -px(-29)); tiles('pave', -9, -38, 9, -20); g.restore();
   g.strokeStyle = 'rgba(8,10,14,.6)'; g.lineWidth = .18 * PPU; g.beginPath(); g.arc(px(0), px(-29), 5.4 * PPU, 0, 7); g.stroke();
+  // every building stands on a slab laid square to the streets
+  for (const { x, z, a, b } of lots) {
+    const x0 = x - a / 2 - .45, z0 = z - b / 2 - .45, x1 = x + a / 2 + .45, z1 = z + b / 2 + .45;
+    tiles('pave', x0, z0, x1, z1); fill(x0, z0, x1, z1, 'rgba(24,26,38,.22)');
+    g.strokeStyle = 'rgba(170,164,150,.32)'; g.lineWidth = .14 * PPU; g.strokeRect(px(x0), px(z0), (x1 - x0) * PPU, (z1 - z0) * PPU);
+  }
   // moss, grime and cracks
   const blot = (x, z, r, c) => { const gr = g.createRadialGradient(px(x), px(z), 0, px(x), px(z), r * PPU); gr.addColorStop(0, c); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(px(x - r), px(z - r), 2 * r * PPU, 2 * r * PPU); };
   for (let i = 0; i < 520; i++) blot(rr(-HALF, HALF), rr(-HALF, HALF), rr(1, 4.5), i % 3 ? 'rgba(10,12,18,.34)' : 'rgba(52,74,42,.34)');

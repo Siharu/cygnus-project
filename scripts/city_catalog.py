@@ -4,12 +4,15 @@ city_catalog.py -- measure the city art and (re)write src/station/city_catalog.j
 
   python3 scripts/city_catalog.py            (needs: pip install pillow numpy scipy)
 
-For every sprite: pixel size. For buildings: the ground footprint read from the alpha (so colliders and depth
-sorting match the art). For fences/walls: the base line (they are drawn as upright world planes). For the six
-unused Building Asset Library sprites: a cleaned copy in assets/city/ and the positions of their lit windows.
-It also paints the city-limits sign (assets/city/sign_unknown.png).
+The city's ground axes run at 30 degrees on screen; the POI sheet is drawn at about 24, so as it stands fences
+stair-step and buildings sit crooked on their lots. For every sprite this works out the 2D correction that brings
+its ground lines to exactly 30 degrees while upright lines stay upright:
+  buildings, props, corner walls   both ground directions at once (a mild stretch plus shear)
+  fences, barriers, the sign       a vertical shear along the one direction they run
+city.js applies the correction when it loads the art. The footprints (colliders, lot placement, depth order) and
+the fence joints are measured here on the corrected shapes. It also paints the city-limits sign.
 """
-import json, random
+import json, math, random
 from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw
@@ -18,10 +21,62 @@ from scipy import ndimage
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / 'assets/city'
 POI = ROOT / 'assets/DRIFTER_POI_Asset_Library_v2/Individual_PNGs'
-LIB = {'apartment': '02_two_story_apartment', 'shop': '03_roadside_shop', 'garage': '04_workshop_garage',
-       'shed': '05_warehouse_shed', 'clinic': '06_rural_clinic', 'fuel': '07_fuel_station'}
 BUILDINGS = list(range(1, 28)) + [37, 40, 41, 42, 43, 44, 45, 54]
 PLANES = {28: 'x', 29: 'x', 30: 'z', 31: 'x', 32: 'z', 33: 'x', 34: 'z', 35: 'x', 36: 'x', 38: 'z', 39: 'x', 75: 'x', 76: 'z'}
+POSTS = [28, 29, 30, 31, 34, 38]        # runs that end in a post at each side: joined post to post
+CORNERS = [32, 39]                      # walls with a visible depth: corrected like buildings
+CUT = {38: .757}                        # loose bracket cut off by city_shade.js (fraction of the width)
+ISO = math.tan(math.radians(30))
+SHEET = (23.5, 25.5)                    # the sheet's usual ground angles: down-right, up-right
+
+
+def ground_angles(arr):
+    """Angles of the straight edges running down-right and up-right (degrees), from the gradient directions."""
+    a = arr.astype(float)
+    g = ndimage.gaussian_filter((a[..., 0] * .3 + a[..., 1] * .59 + a[..., 2] * .11) * a[..., 3] / 255, .8)
+    gx, gy = ndimage.sobel(g, 1), ndimage.sobel(g, 0)
+    th = (np.degrees(np.arctan2(gy, gx)) + 180) % 180 - 90
+    j11, j22, j12 = (ndimage.gaussian_filter(v, 2) for v in (gx * gx, gy * gy, gx * gy))
+    coh = np.sqrt((j11 - j22) ** 2 + 4 * j12 ** 2) / (j11 + j22 + 1e-6)
+    h, _ = np.histogram(th.ravel(), bins=180, range=(-90, 90), weights=(np.hypot(gx, gy) * np.clip(coh - .5, 0, None) ** 2).ravel())
+    h = ndimage.gaussian_filter1d(h, 2.0, mode='wrap')
+
+    def peak(lo, hi):
+        i = int(np.argmax(h[lo + 90:hi + 90])) + lo + 90
+        y0, y1, y2 = h[i - 1], h[i], h[i + 1]
+        return i + .5 - 90 + (.5 * (y0 - y2) / (y0 - 2 * y1 + y2) if y0 - 2 * y1 + y2 else 0)
+    return peak(6, 52), -peak(-52, -6)
+
+
+def both_ways(a1, a2):
+    """x' = s*x, y' = c*x + k*y: takes ground lines at +a1 / -a2 degrees to +30 / -30."""
+    m1, m2 = math.tan(math.radians(a1)), -math.tan(math.radians(a2))
+    r = 2 * ISO / (m1 - m2)
+    s, k = r ** -.5, r ** .5
+    return s, -k * (m1 + m2) / 2, k
+
+
+def posts(a):
+    """Feet of the two end posts of a fence."""
+    cols = np.nonzero((a > 128).sum(axis=0) > 3)[0]
+    x0, x1 = cols.min(), cols.max()
+    feet = []
+    for lo, hi in ((x0, x0 + (x1 - x0) * .14), (x1 - (x1 - x0) * .14, x1)):
+        band = [c for c in cols if lo <= c <= hi]
+        tall = np.array([(a[:, c] > 128).sum() for c in band])
+        post = [c for c, t in zip(band, tall) if t >= tall.max() * .85]      # the post itself, not the grass
+        feet.append((float(np.mean(post)), float(np.percentile([np.nonzero(a[:, c] > 128)[0].max() for c in post], 60))))
+    return feet
+
+
+def warp(im, s, c, k):
+    """Apply the correction and trim. Returns the image and the canvas transform [a, b, d, e, f] city.js uses."""
+    w, h = im.size
+    f = -min(0.0, c * w)
+    big = (int(math.ceil(s * w)) + 1, int(math.ceil(abs(c) * w + k * h)) + 1)
+    out = im.transform(big, Image.AFFINE, (1 / s, 0, 0, -c / (k * s), 1 / k, -f / k), Image.BILINEAR)
+    x0, y0, x1, y1 = out.getchannel('A').point(lambda v: 255 if v > 24 else 0).getbbox()
+    return out.crop((x0, y0, x1, y1)), [round(s, 5), round(c, 5), round(k, 5), -x0, round(f - y0, 3)]
 
 
 def footprint(a):
@@ -36,38 +91,6 @@ def footprint(a):
     span = (right - left) * .9                                     # base art overhangs the walls a little
     return dict(ax=round(float((left + right) / 2 / W), 3), a=round(float(span * fr * 2 ** .5 / W), 3),
                 b=round(float(span * (1 - fr) * 2 ** .5 / W), 3), gap=round(float((a.shape[0] - 1 - y1) / a.shape[0]), 3))
-
-
-def base_line(a):
-    cols = np.nonzero((a > 128).any(axis=0))[0]
-    bottom = [np.nonzero(a[:, c] > 128)[0].max() for c in cols]
-    n = len(cols)
-    slope, icpt = np.polyfit(cols[n // 8:-n // 8], bottom[n // 8:-n // 8], 1)
-    return int(round(slope * a.shape[1] / 2 + icpt))              # image row of the ground at mid-width
-
-
-def main_silhouette(im):
-    """Drop the stray specks left over from the atlas cut."""
-    arr = np.array(im)
-    solid = arr[..., 3] > 40
-    lab, n = ndimage.label(ndimage.binary_dilation(solid, iterations=2))
-    arr[lab != np.argmax(ndimage.sum(solid, lab, range(1, n + 1))) + 1] = 0
-    ys, xs = np.nonzero(arr[..., 3] > 8)
-    return Image.fromarray(arr[ys.min():ys.max() + 1, xs.min():xs.max() + 1])
-
-
-def lit_windows(im):
-    r, g, b, al = (np.array(im)[..., i].astype(int) for i in range(4))
-    warm = (al > 200) & (r > 200) & (g > 120) & (b < 130)
-    lab, n = ndimage.label(ndimage.binary_dilation(warm, iterations=3))
-    found = sorted(((ndimage.sum(warm, lab, i), i) for i in range(1, n + 1)), reverse=True)[:3]
-    out = []
-    for area, i in found:
-        if area < 12:
-            continue
-        y, x = ndimage.center_of_mass(lab == i)
-        out.append([round(x / im.width, 3), round(y / im.height, 3)])
-    return out
 
 
 def paint_sign():
@@ -95,21 +118,53 @@ def paint_sign():
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
+    paint_sign()
     cat = {}
     for i in range(1, 79):
-        im = Image.open(POI / ('SRC-%03d_MasterSheetA_Extract.png' % i)).convert('RGBA')
-        a = np.array(im)[..., 3]
-        e = dict(w=im.width, h=im.height)
+        im = Image.open(OUT / 'sign_unknown.png' if i == 33 else POI / ('SRC-%03d_MasterSheetA_Extract.png' % i)).convert('RGBA')
+        w, h = im.size
+        if i in CUT:
+            im.paste((0, 0, 0, 0), (int(CUT[i] * w), 0, w, h))
+        arr = np.array(im)
+        a1, a2 = ground_angles(arr)
+        feet = None
+        if i in PLANES and i not in CORNERS:
+            along_x = PLANES[i] == 'x'
+            if i in POSTS:
+                feet = posts(arr[..., 3])
+                m = (feet[1][1] - feet[0][1]) / (feet[1][0] - feet[0][0])
+            else:
+                deg = a1 if along_x else a2
+                deg = deg if 15 <= deg <= 30 else SHEET[0 if along_x else 1]
+                m = math.tan(math.radians(deg)) * (1 if along_x else -1)
+            s, c, k = 1.0, (ISO if along_x else -ISO) - m, 1.0
+        else:
+            if i in BUILDINGS or i in CORNERS:
+                a1 = a1 if 19 <= a1 <= 30 else SHEET[0]
+                a2 = a2 if 19 <= a2 <= 30 else SHEET[1]
+            else:
+                a1, a2 = SHEET
+            s, c, k = both_ways(a1, a2)
+        out, t = warp(im, s, c, k)
+        e = dict(w=w, h=h, W=out.width, H=out.height, t=t)
         if i in BUILDINGS:
-            e.update(footprint(a))
+            e.update(footprint(np.array(out)[..., 3]))
         if i in PLANES:
-            e.update(axis=PLANES[i], base=base_line(a))
+            sign = 1 if PLANES[i] == 'x' else -1
+            if feet:                                                       # post feet, after the correction
+                p = [(s * x + t[3], c * x + k * y + t[4]) for x, y in feet]
+                mid = ((p[0][0] + p[1][0]) / 2, (p[0][1] + p[1][1]) / 2)
+                run = p[1][0] - p[0][0]
+            else:                                                          # ground line under the whole piece
+                al = np.array(out)[..., 3]
+                cols = np.nonzero((al > 128).any(axis=0))[0]
+                inner = cols[len(cols) // 10:-len(cols) // 10]
+                low = np.array([np.nonzero(al[:, x] > 128)[0].max() for x in inner])
+                x = out.width / 2
+                mid = (x, float(np.percentile(low - sign * ISO * (inner - x), 70)))
+                run = (cols.max() - cols.min()) * .94
+            e.update(axis=PLANES[i], px=round(float(mid[0]), 2), py=round(float(mid[1]), 2), run=round(float(run), 2))
         cat['p%d' % i] = e
-    for key, name in LIB.items():
-        im = main_silhouette(Image.open(ROOT / ('assets/DRIFTER_Building_Asset_Library/%s.png' % name)).convert('RGBA'))
-        im.save(OUT / (key + '.png'), optimize=True)
-        cat[key] = dict(w=im.width, h=im.height, **footprint(np.array(im)[..., 3]), lit=lit_windows(im))
-    paint_sign()
     body = ',\n'.join('  %s: %s' % (k, json.dumps(v, separators=(',', ':'))) for k, v in cat.items())
     (ROOT / 'src/station/city_catalog.js').write_text(
         '// GENERATED by scripts/city_catalog.py -- do not edit by hand.\nexport const CAT = {\n' + body + '\n};\n')
