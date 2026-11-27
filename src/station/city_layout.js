@@ -18,7 +18,6 @@ export const HEIGHT = {
   p46: 2.8, p47: 2, p48: 2.1, p49: 2.5, p50: 2.1, p51: 1.5, p52: 1.2, p53: 1.8, p54: 3.6, p55: 2.2, p56: 1,
   p57: 8, p58: 1.3, p59: 7.5, p60: 2.9, p61: 9.5, p62: 2.3, p63: 2.5, p64: 2.4, p65: 1.5, p66: 2.2, p67: 4.4,
   p68: 2.9, p69: 2, p70: 4, p71: 1.7, p72: 2, p73: 2.2, p74: 1.2, p75: 1.5, p76: 1.8, p77: .8, p78: .8,
-  apartment: 11, shop: 9.5, garage: 10.5, shed: 10, clinic: 11, fuel: 9,
 };
 // collision radius of a prop as a fraction of its width (0 = walk through)
 export const SOLID = {
@@ -27,22 +26,32 @@ export const SOLID = {
   p68: .34, p69: .34, p70: .12, p71: .3, p72: .32, p73: .26, p74: .18, p77: 0, p78: 0,
 };
 
-// buildings: [sprite, x, z, mirrored]   (sprites with lettering are never mirrored)
+// buildings: [sprite, x, z, mirrored, lit windows]
+// x and z are either the centre, or a lot line the building is pushed against, so that a row shares one frontage:
+//   'e-9.6' its +x side sits at -9.6   'w29' its -x side   's2.4' its +z side   'n18.5' its -z side
+// Fronts face the viewer's side of a street: the +z face is drawn on the left, the +x face on the right.
+// Mirroring swaps the two (sprites with lettering are never mirrored).
 export const BUILDINGS = [
-  // SW: shop row facing the avenue, homes behind it
-  ['p11', -12.5, 20.5], ['p16', -12, 28], ['p13', -12, 35], ['p14', -12, 41.8],
-  ['shop', -23, 22], ['apartment', -26.5, 33], ['p6', -22, 44], ['p15', -36, 21], ['p1', -40, 31], ['p8', -33, 45],
-  ['p3', -42.5, 42, 1],
+  // SW: shop row, fronts on the avenue
+  ['p11', 'e-9.6', 'n18.5'], ['p14', 'e-9.6', 'n24.6', 1], ['p13', 'e-9.6', 'n30.2'], ['p17', 'e-9.6', 'n35'], ['p15', 'e-9.6', 'n39.8'],
+  // SW: two rows of homes behind it
+  ['p26', 'e-20', 'n19', 0, [[.22, .60]]], ['p7', 'e-20', 'n26.4', 1], ['p8', 'e-20', 'n34', 1], ['p12', 'e-20', 'n41.8', 1, [[.34, .56]]],
+  ['p5', 'e-34', 'n18.5'], ['p1', 'e-34', 'n27', 1], ['p3', 'e-34', 'n37.5', 1],
+  // north side of the cross street: supermarket, yakitori shop, clinic, a collapsed block
+  ['p9', 'e-9.8', 's2.4'], ['p16', 'e-18.8', 's2.4'], ['p6', 'e-24.4', 's2.4', 0, [[.36, .78]]], ['p2', 'e-36', 's2.4'],
+  // NW: residential lane, one side facing it
+  ['p4', 'w-29.5', 's-15'], ['p7', 'w-29.5', 's-28'], ['p12', 'w-29.5', 's-40', 0, [[.34, .56]]],
+  ['p5', 'e-36.5', 's-16'], ['p26', 'e-36.5', 's-28'], ['p17', 'e-36.5', 's-40'],
+  ['p25', -43.5, -9], ['p27', -22.5, -25],
   // SE: near side of both streets, so it stays low
-  ['fuel', 16.5, 22], ['p10', 35.5, 22], ['p54', 15, 35], ['p43', 22.5, 35], ['p44', 15, 42.5], ['p54', 23, 43, 1],
-  ['p26', 31.5, 43], ['p17', 41, 44], ['p40', 41.5, 34], ['p26', 31, 33, 1],
-  // NW: supermarket, clinic, residential lane
-  ['p9', -15.5, -3.2], ['clinic', -28.5, -4], ['p2', -39.5, -3],
-  ['p4', -27.5, -19], ['p5', -38.5, -20], ['p7', -27.5, -31], ['p26', -38.5, -31, 1], ['p12', -27, -43],
-  ['p17', -38, -43, 1], ['p25', -43.5, -11], ['p27', -22.5, -25],
-  // NE: industrial yard
-  ['p41', 17, -6], ['p21', 29, -6], ['p22', 41, -7], ['p24', 18.5, -23], ['p19', 31, -21], ['p18', 42.5, -24],
-  ['p42', 23.5, -13.5], ['p37', 22, -37], ['p20', 33.5, -36], ['shed', 41.5, -46], ['p45', 29.5, -47], ['garage', 42.5, -35.5],
+  ['p10', 'w12.5', 'n18'], ['p20', 'w32', 'n18.5'], ['p54', 'w13', 's37'], ['p43', 'w20', 's37'], ['p44', 'w13', 's45.5'], ['p54', 'w21', 's45.5', 1],
+  ['p26', 'w29', 's45.5'], ['p17', 'w37.5', 's45.5'], ['p40', 'w37.5', 's36'], ['p26', 'w29', 's36', 1],
+  // NE: industrial yard, workshop fronts toward the street in straight rows
+  ['p41', 'w13.5', 's-1.6'], ['p21', 'w21.6', 's-1.6'], ['p22', 'w33.5', 's-1.6'],
+  ['p24', 'w14.5', 's-18'], ['p19', 'w26', 's-18'], ['p18', 'w36.5', 's-18'],
+  ['p42', 23.5, -13.5],
+  ['p37', 'w19.5', 's-33'], ['p20', 'w28', 's-33'], ['p41', 'w38', 's-33'],
+  ['p45', 29.5, -46.5], ['p26', 'w39', 's-42'],
   // the second mast, at the head of the square
   ['p23', 0, -43],
 ];
@@ -55,14 +64,16 @@ export const BACKDROP = [
   ...[-52, -40, -28, -16, 16, 28, 40, 52].map((x, i) => [['p27', 'p25', 'p32', 'p27', 'p25', 'p32', 'p27', 'p25'][i], x, 59 + (i % 2) * 3]),
 ];
 
-// fences and walls, drawn as upright planes. A run is [sprite, x, z, pieces]; its axis comes from the art.
+// fences and walls, drawn as upright planes and joined end to end: [sprite, x, z, axis, pieces]
+// (x, z) is where the run starts; it goes toward +x or +z. A sprite drawn for the other axis is mirrored.
 export const FENCES = [
-  ['p28', 14, 2, 2], ['p31', 31.5, 2, 3],        // south edge of the yard, gate gap at x 22..29
-  ['p30', 11, -12, 3], ['p38', 11, -27, 2], ['p34', 11, -45, 2],
-  ['p29', -44, 15.9, 2], ['p39', -20, -38, 1], ['p32', -21.5, -12, 1], ['p29', 40, 49, 1],
-  ['p28', 13, 49.5, 3], ['p34', 45.5, 28, 2],
-  ['p35', -46.5, 7.5, 1], ['p75', -46.5, 11, 1],  // road ends sealed
-  ['p36', 43, 3.4, 1], ['p76', -3.6, 52.8, 1], ['p35', 3.4, 52.8, 1],
+  ['p28', 10.6, 2.2, 'x', 3], ['p31', 28.8, 2.2, 'x', 5],        // south edge of the yard, gate gap at x 20..29
+  ['p30', 10.6, -5.8, 'z', 3], ['p38', 10.6, -27, 'z', 5], ['p34', 10.6, -48, 'z', 4],   // west edge, two ways in
+  ['p28', 11, 49.6, 'x', 6], ['p29', 37.4, 49.6, 'x', 2], ['p34', 45.6, 31, 'z', 6],     // back of the market
+  ['p29', -46, 15.9, 'x', 2], ['p39', -23, -37.5, 'x', 1], ['p32', -21.5, -14.9, 'z', 1],
+  // road ends sealed
+  ['p35', -46.5, 6, 'z', 2], ['p75', -46.5, 10.7, 'z', 2], ['p36', 46.4, 6.4, 'z', 3],
+  ['p76', -4.7, 52.8, 'x', 2], ['p35', -.4, 52.8, 'x', 2],
 ];
 export const SIGN = { x: -9.4, z: 48.6 };         // the city-limits billboard
 
@@ -83,11 +94,11 @@ export const PROPS = [
   // fuel stop and market
   ['p65', 10.2, 17.8], ['p65', 11.4, 18.4], ['p64', 24.5, 18.2], ['p66', 24.5, 27.5], ['p74', 9.8, 27], ['p74', 11.5, 28],
   ['p69', 18.8, 38.8], ['p51', 11, 38], ['p52', 27.5, 38.5], ['p49', 11.2, 46.5], ['p71', 27, 29], ['p68', 27.5, 46.8],
-  ['p63', 44, 17.8], ['p53', 45, 40],
+  ['p63', 44, 17.8], ['p53', 43.4, 40.5],
   // cross street
-  ['p61', -41, 15.4], ['p61', -17, 3.6], ['p61', 17, 3.6], ['p61', 41, 15.4], ['p67', -10.8, 15.2],
+  ['p61', -35.8, 15.2], ['p61', -17, 3.6], ['p61', 17, 3.6], ['p61', 41, 15.4], ['p67', -10.8, 15.2],
   // supermarket, clinic, homes
-  ['p69', -9.4, -1], ['p63', -22, -8.5], ['p71', -9.4, -9], ['p58', -34.5, 1.5], ['p58', -22.5, 1.5],
+  ['p69', -8.9, -1], ['p63', -22, -8.5], ['p71', -9.4, -9], ['p58', -34.4, 3.9], ['p58', -23.4, 3.9],
   ['p58', -33, -14], ['p56', -33, -25], ['p58', -33, -37], ['p47', -43.5, -38], ['p62', -22.5, -35.5], ['p71', -33.5, -47],
   ['p57', -33, -19.5], ['p57', -33, -31], ['p57', -33, -43], ['p50', -21.5, -49], ['p73', -44, -26],
   // yard
@@ -118,8 +129,8 @@ export const GREEN = [
   ['fol_yellow_flower_patch', -20.5, 49, 1.6], ['fol_tropical_banana_plant', -45, -45, 3.6],
 ];
 export const RUBBLE = [   // [rock key, x, z, scale]
-  ['rok_43', -45, -2, .022], ['rok_41', -44, -16, .02], ['rok_47', -21, -30, .02], ['rok_45', 10, 1, .018],
-  ['rok_42', 45.5, -34, .022], ['rok_35', -46, 37, .022], ['rok_40', 46, 46, .022], ['rok_44', -9.5, -34, .016],
+  ['rok_43', -45, -2, .022], ['rok_41', -44, -16, .02], ['rok_47', -21, -30, .02], ['rok_45', 9.3, 0.8, .018],
+  ['rok_42', 45.5, -34, .022], ['rok_35', -46, 37, .022], ['rok_40', 43.5, 47.6, .022], ['rok_44', -9.5, -34, .016],
   ['rok_37', 8.8, 51, .016],
 ];
 
@@ -130,13 +141,13 @@ export const SUPPLIES = [   // [id from props.js, x, z]
 
 export const NOTES = [   // [name, x, z, note]
   ['City-limits sign', -6.2, 49.2, 'The name has been scraped down to bare metal. Someone has painted three question marks over it, carefully, more than once.'],
-  ['Yakitori counter', -8.2, 28, 'The grill is cold. Eight skewers are laid out, evenly spaced, as if somebody counted them.'],
-  ['Fuel stop', 14, 28.6, 'Every pump stopped on the same reading: 88.7.'],
-  ['Supermarket', -9.2, 2.6, 'Behind the glass every shelf is faced and full. Every price card is blank.'],
-  ['Clinic', -28.5, 2.6, 'The waiting-room light is on. Every line of the sign-in sheet is in the same handwriting. Every line is crossed out.'],
+  ['Yakitori counter', -20.6, 3.9, 'The grill is cold. Eight skewers are laid out, evenly spaced, as if somebody counted them.'],
+  ['Fuel stop', 14, 28.4, 'Every pump stopped on the same reading: 88.7.'],
+  ['Supermarket', -13.4, 3.9, 'Behind the glass every shelf is faced and full. Every price card is blank.'],
+  ['Clinic', -27.2, 3.9, 'The waiting-room light is on. Every line of the sign-in sheet is in the same handwriting. Every line is crossed out.'],
   ['Residential lane', -33, -22.5, 'Doors shut, none locked. A kettle clicks off somewhere inside. Nobody comes to pour it.'],
-  ['Storage tank', 15, -19.5, 'You knock once. It knocks back twice, from the top.'],
-  ['Water tower', 18, -33.5, 'The ladder rungs are polished bright. The lowest three are missing.'],
+  ['Storage tank', 18, -16.4, 'You knock once. It knocks back twice, from the top.'],
+  ['Water tower', 21.6, -31.4, 'The ladder rungs are polished bright. The lowest three are missing.'],
   ['Vending machine', 0, -26.6, 'The only one still lit. Every button reads SOLD OUT. Something drops into the tray anyway.'],
   ['Second mast', 0, -37.2, 'Its beacon blinks half a beat behind the one you left. Your radio finds 88.7 and plays footsteps. They stop when you do.'],
 ];
