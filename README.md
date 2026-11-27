@@ -101,6 +101,7 @@ A look at the characters, environments, and sprite libraries behind the field bu
 | **Relay Tower** | Three cutaway rooms: Control, Equipment, and Briefing. Each has its own layout, lighting, props, and points of interest. |
 | **Station Buildings** | Walk-in interiors for the utility shed, maintenance depot, water tower, watchtower, checkpoint booth, and collapsed building. |
 | **Silvan** | A separate forest region with a winding river, three bridges, a trail, eight examinable landmarks, lanterns, sun shafts, and river ambience. |
+| **???** (section 03) | A city with its name scraped off, reached by the unmarked road south of the east end of the station road. A shop street, fuel stop and market, supermarket, clinic, homes, an industrial yard and a square, with ten places to examine and six supplies. Exteriors only. |
 | **The Grassland** | A meadow south of the station road, with four animated grass types and loose vegetation across the open ground. |
 
 ## ▸ SYSTEMS ONLINE
@@ -110,7 +111,7 @@ A look at the characters, environments, and sprite libraries behind the field bu
 - **Walk-in interiors:** Room layouts use camera-facing sprites, dedicated collision, lighting, and interaction points.
 - **Checkpoint gate:** A layered checkpoint scene separates the ground, booth, posts, and barrier arm; the gate has raised and lowered states.
 - **Radio and discoveries:** Tune into WNCORE broadcasts, examine objects, and collect discoveries in the logbook.
-- **Supplies and vitals:** Ten one-use supplies are placed in the relay tower. FOOD and WATER meters drain over time and warn when low.
+- **Supplies and vitals:** Ten one-use supplies are placed in the relay tower and six in the ??? city. FOOD and WATER meters drain over time and warn when low.
 
 <sub>Field note: low FOOD / WATER currently triggers warnings only. Survival consequences are not implemented yet.</sub>
 
@@ -175,13 +176,19 @@ cygnus-project/
 │       ├── interior_layout.js    # Relay tower room data
 │       ├── interiors_hub.js      # Additional building interior renderer
 │       ├── interiors_hub_layout.js # Additional room data
-│       └── props.js              # Supplies and FOOD / WATER values
+│       ├── props.js              # Supplies and FOOD / WATER values
+│       ├── compass.js            # Field compass and waypoint marker
+│       ├── city.js               # ??? city (built on first visit)
+│       ├── city_layout.js        # ??? city placement and note text
+│       ├── city_catalog.js       # Generated sprite measurements
+│       └── city_shade.js         # Shadow and light retouching of the city art
 ├── assets/
 │   ├── game/                    # Runtime-ready sprites and textures
 │   ├── HUB/                     # Building and interior asset collections
 │   └── ...                      # Source libraries, atlases, and animation packs
 ├── scripts/
-│   └── modularize.py            # Original modularisation helper
+│   ├── modularize.py            # Original modularisation helper
+│   └── city_catalog.py          # Measures city art, paints the ??? sign
 ├── install_checkpoint.py        # Checkpoint installer
 ├── install_interiors.py         # Building-interior installer
 ├── process_city_assets.py       # City sprite processing utility
@@ -197,7 +204,7 @@ The world is still being built. Current development targets include:
 - Give low FOOD / WATER levels actual gameplay consequences.
 - Add usable medical items, a battery, flashlight, handheld radio, and extinguisher.
 - Place supplies and survival interactions in Silvan.
-- Continue developing the city asset pipeline and bring the processed city assets into the playable world.
+- Add walk-in interiors to the ??? city.
 - Expand environmental storytelling and the places available to explore.
 
 ## ▸ DEPLOYMENT

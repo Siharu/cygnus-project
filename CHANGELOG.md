@@ -4,6 +4,20 @@ Notable changes to the **Drifter's Tale** field build, newest first.
 
 ---
 
+## [2026-11-27] — The ??? city
+
+### Added
+- **Section 03, "???"**: a city with no name, built from the POI sprite library, six unused building-library sprites, the station's foliage, rocks and terrain tiles, and the supply props. Built the first time you visit.
+- An unmarked road south of the east end of the station road, with a repainted "???" sign and a violet lamp.
+- Ten examine points, six supplies, street lamps that dim as you approach, lit windows, birds, moths and eyes, and a second mast that blinks half a beat late.
+- City landmarks in the field compass; the discovery total now counts the city's notes.
+- **Art retouching** (`city_shade.js`): shadow patches over gibberish lettering and malformed geometry, hardened sprite outlines, loose specks removed, and flickering lights near the worst spots. Source PNGs are unchanged.
+
+### Changed
+- Cleared thirteen plants from the station's south-east corner to open the road.
+
+---
+
 ## [2026-11-26] — World, grass, checkpoint & deployment
 
 ### Added

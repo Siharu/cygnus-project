@@ -198,6 +198,13 @@ let nS=0;for(let k=0;k<3000&&nS<46;k++){const x=rr(-44,44),z=rr(-44,44);const w=
  rock(pick(ROCKS.concat(ROCKC.slice(5))),x,z,rr(.014,.022));nS++}
 rock('rok_41',TH.x-.9,TH.z+.3,.022,{});rock('rok_43',TH.x+.7,TH.z-.2,.02,{});rock('rok_42',TH.x,TH.z-1,.02,{});
 rock('rok_28',BLD.wtower.x-1,BLD.wtower.z+4.5,.02,{r:META.rok_28.w*.02*.3});rock('rok_23',-28,-22,.026,{r:.7});rock('rok_31',33,-4,.02,{r:META.rok_31.w*.02*.3});rock('rok_33',37,-7,.019,{r:META.rok_33.w*.019*.3});
+// the unmarked road to the "???" city: cleared after planting, so the rest of the station stays exactly as it was
+const CG={x:32,z:33.5};
+{const lane=(x,z)=>x>28.6&&x<35.4&&z>21.4&&z<37.5;
+ const tree=u=>/tree|sapling|banana/.test(u.key)&&u.x>24&&u.x<48&&u.z>23&&u.z<50; // canopies that would hang over the road and its sign
+ for(let i=SPR.length-1;i>=0;i--){const u=SPR[i].userData;if(lane(u.x,u.z)||tree(u)){sc.remove(SPR[i]);SPR.splice(i,1);if(tree(u))for(const a of[circ,SH]){const j=a.findIndex(c=>c.x==u.x&&c.z==u.z);if(j>=0)a.splice(j,1)}}}
+ for(const a of[circ,SH])for(let i=a.length-1;i>=0;i--)if(lane(a[i].x,a[i].z))a.splice(i,1);
+ ZONES.push({m:'s',r:[30.4,22,33.6,36.5],soft:1.6,n:1.4})}
 // ---------- 5. PLAYER (drifter_player walk atlas: 8 directions N,NE,E,SE,S,SW,W,NW x 4 frames, 64x96) ----------
 const P={x:-6.5,z:13.5,vx:0,vz:0,dr:1,resting:false,swingStart:-99,swingUntil:-99},K={};
 const blank=document.createElement('canvas');blank.width=blank.height=1;const bt0=new T.CanvasTexture(blank);bt0.magFilter=bt0.minFilter=T.NearestFilter;
@@ -237,6 +244,15 @@ for(const l of LT){const c=new T.Color(l.c);l.cc=[c.r,c.g,c.b];l.R=l.R||13;l.i0=
 {const px=TH.x+1.6,pz=TH.z+.4;const post=new T.Mesh(new T.BoxGeometry(.16,2.2,.16),new T.MeshLambertMaterial({color:0x4a3a2c}));post.position.set(px,1.1,pz);sc.add(post);
  const lamp=new T.Mesh(new T.BoxGeometry(.42,.4,.42),new T.MeshBasicMaterial({color:0xffd890}));lamp.position.set(px,2.4,pz);sc.add(lamp);
  glow(new T.Vector3(px,2.5,pz),2.8,0xffb868,.85,2.1);const c=new T.Color(0xffb868);LT.push({x:px,z:pz,y:2.5,c:0xffb868,I:1.1,R:11,cone:1,cc:[c.r,c.g,c.b]})}
+{const img=new Image();img.onload=()=>{const t=new T.Texture(img);t.magFilter=t.minFilter=T.LinearFilter;t.generateMipmaps=false;t.needsUpdate=true; // the name sign
+  const mat=new T.SpriteMaterial({map:t,alphaTest:.4,transparent:false,fog:true}),s=new T.Sprite(mat),h=3.6,w=h*img.width/img.height,x=CG.x+2.4,z=CG.z-1;
+  s.scale.set(w,h,1);s.center.set(.5,.08);s.position.set(x,0,z);s.frustumCulled=false;s.userData={x,z,w,h,c:.08,ax:.5,mat,key:'city_sign'};sc.add(s);SPR.push(s)};
+ img.onerror=()=>console.warn('city sign missing');img.src=new URL('../../assets/city/sign_unknown.png',import.meta.url).href;
+ circ.push({x:CG.x+2.4,z:CG.z-1,r:.8});
+ const lx=CG.x-1.7,lz=CG.z-.4; // a lamp post like the trailhead's, but a colder bulb
+ const post=new T.Mesh(new T.BoxGeometry(.16,2.2,.16),new T.MeshLambertMaterial({color:0x34303c}));post.position.set(lx,1.1,lz);sc.add(post);
+ const bulb=new T.Mesh(new T.BoxGeometry(.42,.4,.42),new T.MeshBasicMaterial({color:0xd8ccff}));bulb.position.set(lx,2.4,lz);sc.add(bulb);circ.push({x:lx,z:lz,r:.3});
+ glow(new T.Vector3(lx,2.5,lz),2.8,0xb8a0ff,.85,4.7);const c=new T.Color(0xc8b4ff);LT.push({x:lx,z:lz,y:2.5,c:0xc8b4ff,I:1.1,R:11,cone:1,cc:[c.r,c.g,c.b]})}
 const LGT=createLighting({T,sc,SH,LT,glowTex,beaconPos:bs.bpos,dl}); // src/station/lighting.js: cast shadows, halos, wet reflections
 // ---------- 6. FX ----------
 const FFN=FXK.ff,ffG=new T.BufferGeometry(),ffP=new Float32Array(FFN*3),ffS=[...Array(FFN)].map(()=>[Math.random()*6.28,Math.random()*6.28,.4+Math.random()*.8,Math.random()*52,Math.random()*52]);
@@ -276,9 +292,9 @@ const stationHabitat=(()=>{const r=mulberry(0xB19D),q=(a,b)=>a+r()*(b-a);
  for(const[ax,az,bx,bz]of[[-37,2,-31,11],[22,7,28,2],[2,-24,-8,-25],[26,24,33,21]])H.squirrels.push({ax,az,bx,bz});
  for(let k=0;k<2000&&H.eyes.length<9;k++){const x=q(-38,38),z=q(-38,38);if(Math.hypot(x+10,z+8)>31&&!onHard(x,z)&&!H.eyes.some(e=>Math.hypot(e.x-x,e.z-z)<11))H.eyes.push({x,y:q(.8,1.8),z})}
  return H})();
-const CRIT=[createCritters({T,sc,habitat:stationHabitat,sfx}),null]; // [station, forest]
+const CRIT=[createCritters({T,sc,habitat:stationHabitat,sfx}),null,null]; // [station, forest, city]
 // ---------- 7. UI ----------
-let MAP=0,FST=null,FOB=[]; // MAP: 0 station, 1 forest (lazy-built section)
+let MAP=0,FST=null,FOB=[],CITY=null; // MAP: 0 station, 1 forest, 2 "???" city (1 and 2 are built on first visit)
 const found=[],bcs=[];let st=0,open='',bt=0,near=null,tt,bIdx=0;
 const BTXT=['...this is WNCORE.\nThe signal reaches those who are still listening.\nStay safe, Drifter.','WNCORE continuity. 88.7 FM.\nThis is a recorded transmission.\nIf you can hear it, someone kept the power on.','...station check. All relays answering.\nAll relays answering\nexcept one.'];
 const o=(id,dx,dz,n,note,t)=>OB.push({x:BLD[id].x+dx,z:BLD[id].z+dz,n,note,t});
@@ -294,6 +310,7 @@ o('ruin',-2,6.4,'Collapsed building','Fallen long before the outbreak. The vines
 OB.push({x:-32,z:16.4,n:'Road blockade',note:'Rubble packed across the road, stone by stone. Not a landslide. Someone sealed this end.'});
 OB.push({x:34,z:16.4,n:'Road blockade',note:'The other end is sealed the same way. The only way out is through the signal.'});
 OB.push({x:TH.x,z:TH.z,n:'Forest trail',t:'f',to:1});
+OB.push({x:CG.x,z:CG.z,n:'Unmarked road',t:'f',to:2});
 // building interiors (install_interiors.py): each building's examine point becomes a door into its interior
 {const DR={'Utility shed':['shed','Enter the utility shed'],'Maintenance depot':['depot','Enter the maintenance depot'],'Watchtower':['wtch','Climb into the watchtower'],'Water tower':['wtower','Enter the pump room'],'Collapsed building':['ruin','Step into the collapsed building'],'Checkpoint booth':['booth','Enter the checkpoint booth']};
  for(const q of OB){const d=DR[q.n];if(d){q.src=q.n;q.t='b';q.b=d[0];q.n=d[1]}}}
@@ -307,7 +324,7 @@ function lg(tab){open='l';const p=$('pn');p.classList.remove('hide');p.classList
 window.__lg=lg;
 // ---- vitals: food & water drain slowly; supplies in the station restore them (one use each)
 const VIT={food:.85,water:.8,warn:{}};
-function eat(q){const p=q.p;INT.take(p.id);IOB.splice(IOB.indexOf(q),1);near=null;
+function eat(q){const p=q.p;if(q.take)q.take();else{INT.take(p.id);IOB.splice(IOB.indexOf(q),1)}near=null;
  VIT.food=Math.min(1,VIT.food+(p.food||0));VIT.water=Math.min(1,VIT.water+(p.water||0));VIT.warn={};
  toast((p.water&&!p.food?'You drink the ':'You eat the ')+p.n+'. '+p.msg)}
 function vitTick(dt){VIT.food=Math.max(0,VIT.food-dt/420);VIT.water=Math.max(0,VIT.water-dt/300);
@@ -387,8 +404,9 @@ async function goB(id,q){if(busy)return;busy=true;fd.style.opacity=1;
 window.__goB=goB;
 // every note in the game, counted up front so the total never changes mid-run
 const SILVAN_NOTES=8; // examinable landmarks built by forest.js (checked after it loads)
+const CITY_NOTES=10; // examine points in city_layout.js (checked after it loads)
 const isNote=q=>q.t=='n';
-const TOTAL=OB.filter(q=>!q.t||q.t=='b').length+IO.flat().filter(isNote).length+Object.values(HUB.ROOMS).flatMap(r=>r.io).filter(isNote).length+SILVAN_NOTES;
+const TOTAL=OB.filter(q=>!q.t||q.t=='b').length+IO.flat().filter(isNote).length+Object.values(HUB.ROOMS).flatMap(r=>r.io).filter(isNote).length+SILVAN_NOTES+CITY_NOTES;
 // ---------- 7b2. field compass + waypoint (src/station/compass.js) ----------
 function destinations(){
  const out=[],G='WNCORE STATION 01';
@@ -396,6 +414,8 @@ function destinations(){
  // Silvan's landmarks are listed once the forest has been visited; before that only its trail marker
  out.push({id:'silvan',group:'SILVAN',name:'Silvan trail marker',map:1,x:FST&&FST.cairn.x,z:FST&&FST.cairn.z});
  FOB.forEach((q,i)=>{if(!q.t)out.push({id:'f'+i,group:'SILVAN',name:q.n,map:1,x:q.x,z:q.z})});
+ out.push({id:'city',group:'???',name:'??? city limits',map:2,x:CITY&&CITY.sign.x,z:CITY&&CITY.sign.z});
+ if(CITY)CITY.notes.forEach((q,i)=>{if(i)out.push({id:'c'+i,group:'???',name:q.n,map:2,x:q.x,z:q.z})});
  return out}
 function route(id){
  const w=destinations().find(q=>q.id==id);if(!w)return null;
@@ -403,28 +423,36 @@ function route(id){
  if(IN==9&&BQ){const e=BI.layout(BQ).exit;return via(IX+e[0],IZ+e[1],'ROOM EXIT')}
  if(IN>=0){const e=IO[IN].find(q=>q.t=='g'&&q.to<IN);return via(IX+e.dx,IZ+e.dz,IN?'STAIRS DOWN':'STATION EXIT')}
  if(w.map==MAP)return{x:w.x,z:w.z,label:w.name,final:true};
- return MAP==0?via(TH.x,TH.z,'SILVAN ENTRANCE'):via(FST.cairn.x,FST.cairn.z,'BACK TO STATION')}
+ if(MAP==0)return w.map==2?via(CG.x,CG.z,'UNMARKED ROAD'):via(TH.x,TH.z,'SILVAN ENTRANCE');
+ const back=MAP==1?FST.cairn:CITY.exit;return via(back.x,back.z,'BACK TO STATION')}
 const NAV=createCompass({T,cam,ctx:{list:destinations,route,toast,close:closeP,isOpen:()=>open=='w',
  panel:html=>{if(st!=1||busy)return false;closeP();open='w';const p=$('pn');p.classList.remove('hide','log');p.innerHTML=html;return true}}});
-// ---------- 7c. SECTION TRAVEL: station <-> forest behind a loading screen ----------
+// ---------- 7c. SECTION TRAVEL: station <-> forest / city behind a loading screen ----------
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const LD=(()=>{const d=document.createElement('div');d.id='ld';d.innerHTML='<small></small><h2></h2><div class="bar"><i></i></div><p></p>';document.body.appendChild(d);const q=s=>d.querySelector(s);
  return{show(t,s){q('h2').textContent=t;q('small').textContent=s;q('.bar i').style.width='0%';q('p').textContent='';d.classList.add('on')},
   set(p,m){q('.bar i').style.width=(p*100|0)+'%';if(m!=null)q('p').textContent=m},hide(){d.classList.remove('on')}}})();
 const AMB0=AMB.slice(),FOGD0=sc.fog.density,wxc=new T.Color(),ONE=[1,1,1];
+const SEC=[
+ {name:'RELAY CLEARING',sub:'Section 01 · WNCORE Station',walk:'Back to the road…',card:'RELAY CLEARING<small>WNCORE Station 01</small>'},
+ {name:'SILVAN',sub:'Section 02',walk:'Entering the trees…',card:'SILVAN<small>no signal · follow the river</small>'},
+ {name:'???',sub:'Section 03',walk:'Following the unmarked road…',card:'???<small>no name on any map</small>'}];
 async function travel(to){
- if(busy||st!=1)return;busy=true;closeP();const f=to==1;
- LD.show(f?'SILVAN':'RELAY CLEARING',f?'Section 02':'Section 01 · WNCORE Station');LD.set(.01,'Loading section…');
+ if(busy||st!=1)return;busy=true;closeP();const from=MAP,S=SEC[to];
+ LD.show(S.name,S.sub);LD.set(.01,'Loading section…');
  await sleep(550);
  try{
-  if(f&&!FST){const mod=await import('./forest.js');FST=await mod.buildForest({T,sc,IM,META,spr,glow,LT,circ,SHAFT,shaftTex,ren},(p,m)=>LD.set(p,m));FOB=FST.objects;CRIT[1]=createCritters({T,sc,habitat:FST.habitat,sfx});const n=FOB.filter(q=>!q.t).length;if(n!=SILVAN_NOTES)console.warn('SILVAN_NOTES is '+SILVAN_NOTES+', forest.js has '+n)}
-  else{for(let i=1;i<=10;i++){LD.set(i/10,f?'Entering the trees…':'Back to the road…');await sleep(70)}}
-  MAP=f?1:0;P.vx=P.vz=0;pmat.emissive.setHex(f?0x1c2018:0x1c1814);pmat.emissiveIntensity=.6;
-  if(f){FST.setVisible(true);P.x=FST.spawn.x;P.z=FST.spawn.z;FST.reset(P.x,P.z);for(let i=0;i<3;i++)AMB[i]=FST.amb[i];sc.background.set(FST.fog);sc.fog.color.set(FST.fog);sc.fog.density=FST.fogD}
-  else{FST&&FST.setVisible(false);P.x=TH.x;P.z=TH.z-3.8;for(let i=0;i<3;i++)AMB[i]=AMB0[i];sc.background.set(FOG);sc.fog.color.set(FOG);sc.fog.density=FOGD0}
+  if(to==1&&!FST){const mod=await import('./forest.js');FST=await mod.buildForest({T,sc,IM,META,spr,glow,LT,circ,SHAFT,shaftTex,ren},(p,m)=>LD.set(p,m));FOB=FST.objects;CRIT[1]=createCritters({T,sc,habitat:FST.habitat,sfx});const n=FOB.filter(q=>!q.t).length;if(n!=SILVAN_NOTES)console.warn('SILVAN_NOTES is '+SILVAN_NOTES+', forest.js has '+n)}
+  else if(to==2&&!CITY){const mod=await import('./city.js');CITY=await mod.buildCity({T,sc,IM,META,spr,SPR,sol,circ,LT,viewPt,glowTex,ren},(p,m)=>LD.set(p,m));CRIT[2]=createCritters({T,sc,habitat:CITY.habitat,sfx});const n=CITY.notes.length;if(n!=CITY_NOTES)console.warn('CITY_NOTES is '+CITY_NOTES+', city.js has '+n)}
+  else{for(let i=1;i<=10;i++){LD.set(i/10,S.walk);await sleep(70)}}
+  MAP=to;P.vx=P.vz=0;pmat.emissive.setHex(to==1?0x1c2018:0x1c1814);pmat.emissiveIntensity=.6;
+  FST&&FST.setVisible(to==1);CITY&&CITY.setVisible(to==2);ff.visible=to!=2;
+  const Z=to==1?FST:to==2?CITY:null;
+  if(Z){P.x=Z.spawn.x;P.z=Z.spawn.z;if(Z.reset)Z.reset(P.x,P.z)}else{const g=from==2?CG:TH;P.x=g.x;P.z=g.z-3.8}
+  for(let i=0;i<3;i++)AMB[i]=Z?Z.amb[i]:AMB0[i];sc.background.set(Z?Z.fog:FOG);sc.fog.color.set(Z?Z.fog:FOG);sc.fog.density=Z?Z.fogD:FOGD0;
   cp.x=P.x-BIAS;cp.z=P.z-BIAS;
   await sleep(450);LD.hide();await sleep(500);
-  const t=$('ttl');t.innerHTML=f?'SILVAN<small>no signal · follow the river</small>':'RELAY CLEARING<small>WNCORE Station 01</small>';t.style.opacity=1;setTimeout(()=>t.style.opacity=0,4200);
+  const t=$('ttl');t.innerHTML=S.card;t.style.opacity=1;setTimeout(()=>t.style.opacity=0,4200);
  }catch(e){console.error(e);LD.set(0,'Failed to load: '+e.message);await sleep(2500);LD.hide()}
  busy=false}
 window.__travel=travel;
@@ -435,32 +463,32 @@ function upd(dt){clock+=dt;let ix=0,iz=0;
  if(!open&&!P.resting&&!busy){ix=(K.KeyD?1:0)+(K.KeyS?1:0)-(K.KeyW?1:0)-(K.KeyA?1:0);iz=(K.KeyS?1:0)+(K.KeyA?1:0)-(K.KeyW?1:0)-(K.KeyD?1:0)}
  const il=Math.hypot(ix,iz);if(il){ix/=il;iz/=il;const sx=ix-iz,sy=-(ix+iz)*.577;P.dr=(Math.round(Math.atan2(sx,sy)/(Math.PI/4))+8)%8;P.resting=false}
  const sp=(K.ShiftLeft||K.ShiftRight)?7.2:4.6,k=Math.min(1,dt*12);P.vx+=(ix*sp-P.vx)*k;P.vz+=(iz*sp-P.vz)*k;P.x+=P.vx*dt;P.z+=P.vz*dt;col(P,.4);
- if(IN>=0){P.x=Math.max(IX-IRX,Math.min(IX+IRX,P.x));P.z=Math.max(IZ-IRZ,Math.min(IZ+IRZ,P.z))}else if(MAP==1){const B=FST.bounds;P.x=Math.max(B.x0,Math.min(B.x1,P.x));P.z=Math.max(B.z0,Math.min(B.z1,P.z))}else{P.x=Math.max(-BOUND,Math.min(BOUND,P.x));P.z=Math.max(-BOUND,Math.min(BOUND,P.z))}
- vitTick(dt);near=null;let bd=3;for(const q of (IN>=0?IOB:MAP==1?FOB:OB)){const d=Math.hypot(q.x-P.x,q.z-P.z);if(d<bd){bd=d;near=q}}
+ if(IN>=0){P.x=Math.max(IX-IRX,Math.min(IX+IRX,P.x));P.z=Math.max(IZ-IRZ,Math.min(IZ+IRZ,P.z))}else if(MAP){const B=(MAP==1?FST:CITY).bounds;P.x=Math.max(B.x0,Math.min(B.x1,P.x));P.z=Math.max(B.z0,Math.min(B.z1,P.z))}else{P.x=Math.max(-BOUND,Math.min(BOUND,P.x));P.z=Math.max(-BOUND,Math.min(BOUND,P.z))}
+ vitTick(dt);near=null;let bd=3;for(const q of (IN>=0?IOB:MAP==1?FOB:MAP==2?CITY.objects:OB)){const d=Math.hypot(q.x-P.x,q.z-P.z);if(d<bd){bd=d;near=q}}
  $('pr').textContent=(near&&!open&&!busy)?'[E] '+(near.t=='r'?'Tune the radio':(near.t=='d'||near.t=='g'||near.t=='f'||near.t=='x'||near.t=='b')?near.n:near.t=='c'?(near.p.water&&!near.p.food?'Drink ':'Eat ')+near.n:'Examine '+near.n.toLowerCase()):'';
  if(open=='b'){bt+=dt*26;const m=window.__bmsg;$('tx').textContent=m.slice(0,bt|0);const c=$('wv'),g=c.getContext('2d');g.clearRect(0,0,300,44);g.strokeStyle='#6fae5a';g.beginPath();for(let x=0;x<300;x+=3){const a=Math.abs(Math.sin(x*.05+clock*6))*Math.min(1,bt/20)*18*Math.random();g.moveTo(x,22-a);g.lineTo(x,22+a)}g.stroke()}
  $('dc').innerHTML='DISCOVERIES '+found.length+'/'+TOTAL+'<br><span style="font-size:18px;color:'+(VIT.food<.2?'#d9695a':'#b7aa8d')+'">FOOD '+vbar(VIT.food)+'</span> <span style="font-size:18px;color:'+(VIT.water<.2?'#d9695a':'#b7aa8d')+'">WATER '+vbar(VIT.water)+'</span><br><span style="font-size:18px;color:#b7aa8d">SHIFT RUN · SPACE SWING · R REST · N COMPASS · M MUTE</span>';
- $('st').innerHTML=(MAP==1?'NO SIGNAL<br>— — —':'WNCORE-01<br>88.7 FM')+(IN<0?'<br><span style="font-size:18px;color:#8a8570">'+WX.label+'</span>':'')}
+ $('st').innerHTML=(MAP==1?'NO SIGNAL<br>— — —':MAP==2?'???<br>88.7 FM ?':'WNCORE-01<br>88.7 FM')+(IN<0?'<br><span style="font-size:18px;color:#8a8570">'+WX.label+'</span>':'')}
 const dsq=Math.hypot;
 function anim(dt,t){
  const outd=IN<0,asp0=innerWidth/innerHeight;
  // weather: state machine, rain, wind, lightning; then push the smoothed values into fog / lights
  WX.update(dt,t,{cx:cp.x,cz:cp.z,hw:VH*asp0,hh:VH,ppu:innerHeight*ren.getPixelRatio()/(2*VH),out:outd});
- if(outd){const base=MAP==1&&FST?FST.fog:FOG,fd=MAP==1&&FST?FST.fogD:FOGD0,w=WX.fogW;wxc.set(base);
+ if(outd){const Z=MAP==1?FST:MAP==2?CITY:null,base=Z?Z.fog:FOG,fd=Z?Z.fogD:FOGD0,w=WX.fogW;wxc.set(base);
   wxc.r+=(WX.fogT[0]-wxc.r)*w+WX.flash*.22;wxc.g+=(WX.fogT[1]-wxc.g)*w+WX.flash*.25;wxc.b+=(WX.fogT[2]-wxc.b)*w+WX.flash*.3;
   sc.fog.color.copy(wxc);sc.background.copy(wxc);sc.fog.density=fd*WX.fogM;
   hemi.intensity=.5*WX.hemi+WX.flash*1.1;dl.intensity=.4*WX.sun+WX.flash*.6}
  else{hemi.intensity=.5;dl.intensity=.4}
  const wild=[AMB[0]*WX.amb[0]+WX.flash*.3,AMB[1]*WX.amb[1]+WX.flash*.3,AMB[2]*WX.amb[2]+WX.flash*.3];
  CRIT.forEach((c,i)=>{if(!c)return;c.setVisible(outd&&MAP==i);if(outd&&MAP==i)c.update(t,dt,{P,rain:WX.rain,hush:i==0&&wrong>.35,tint:wild})});
- INT.update(t);BI.update(t);if(MAP==1&&FST)FST.update(t);GRASS.update(t,MAP==0&&IN<0,P,WX.windNow,WX.amb[0]*(1-.12*WX.wet),WX.amb[1]*(1-.12*WX.wet),WX.amb[2]*(1-.12*WX.wet));
+ INT.update(t);BI.update(t);if(MAP==1&&FST)FST.update(t);if(MAP==2&&CITY)CITY.update(t,dt,P);GRASS.update(t,MAP==0&&IN<0,P,WX.windNow,WX.amb[0]*(1-.12*WX.wet),WX.amb[1]*(1-.12*WX.wet),WX.amb[2]*(1-.12*WX.wet));
  if(aud.river)aud.river.gain.value=(muted||MAP!=1)?0:.02+.12*sm(20,2,FST.riverDist(P.x,P.z));
  // signal bursts + proximity to the mast
- const dm=IN>=0?6:dsq(P.x-bs.x,P.z-bs.z);let base=.0+.1*sm(16,5,dm);burstT-=dt;if(burstT<0){burstU=.5;burstT=22+Math.random()*30}burstU=Math.max(0,burstU-dt);
+ const dm=IN>=0?6:dsq(P.x-bs.x,P.z-bs.z);let base=MAP==2&&IN<0?CITY.wrong(P):.1*sm(16,5,dm);burstT-=dt;if(burstT<0){burstU=.5;burstT=22+Math.random()*30}burstU=Math.max(0,burstU-dt);
  wrong+=((base+(burstU>0?.8*Math.min(1,burstU*3):0))-wrong)*Math.min(1,dt*8);pu.wrong.value=wrong;pu.time.value=t;
  const on=burstU>0?Math.random()<.4:Math.sin(t*2.4)>-.1;
  const bl=on?1+.1*Math.sin(t*20):.12;beaconLT.cur=on?1:.05;beaconL.intensity=on?1.6:.1;bs.beacon.material.opacity=on?1:.08;bs.beacon.scale.setScalar(on?2.6+Math.sin(t*3)*.3:1.2);
- LGT.update(t,dt,{vis:outd&&MAP==0,WX,bOn:on,ground:MAP==1&&FST&&FST.ground?FST.ground:ground,outer:MAP==0?OUTER:null});psh.material.opacity=.82*LGT.shade;
+ LGT.update(t,dt,{vis:outd&&MAP==0,WX,bOn:on,ground:MAP==1&&FST&&FST.ground?FST.ground:MAP==2&&CITY?CITY.ground:ground,outer:MAP==0?OUTER:null});psh.material.opacity=.82*LGT.shade;
  for(const g of GL){if(g.s===bs.beacon)continue;g.s.material.opacity=g.I*(.85+.15*Math.sin(t*3+g.ph)+(Math.random()<.01?-.3:0))}
  if(aud.hum){const hv=.1+.9*sm(30,6,dm);aud.hum.gain.value=muted?0:.05*hv;aud.wind.gain.value=(.1+.04*Math.sin(t*.3))*WX.wa;if(open!='b')aud.stat.gain.value=burstU>0?.06:0;if(Math.random()<dt*.9)aud.cr()}
  const mv=Math.hypot(P.vx,P.vz);let an='idle',fr=0,bob=0;const run=K.ShiftLeft||K.ShiftRight;
@@ -487,7 +515,7 @@ function anim(dt,t){
  for(const m of MIST){m.x+=m.v*dt;let rx=((m.x-cp.x)%80+120)%80-40,rz=((m.z-cp.z)%80+120)%80-40;m.s.position.set(cp.x+rx,m.y,cp.z+rz);m.s.material.opacity=m.o*WX.mist}}
 function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;if(st==1)upd(dt);anim(dt,now/1000);ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);ren.render(pS,pC)}
 if(DEBUG){const h=location.hash.slice(1).split(',').map(Number);if(h.length==2&&!isNaN(h[0])){P.x=h[0];P.z=h[1];cp.x=P.x;cp.z=P.z}}
-window.__W={NAV,CRIT,WX,LGT,P,start,travel,get FST(){return FST},get MAP(){return MAP},tp:(x,z)=>{P.x=x;P.z=z;cp.x=x-BIAS;cp.z=z-BIAS},BLD,SPR,get n(){return SPR.length},grass:GRASS.count,calls:()=>{ren.info.autoReset=false;ren.info.reset();ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);const c=ren.info.render.calls;ren.info.autoReset=true;return c},ground:()=>GB.cv.toDataURL('image/png'),cull:()=>SPR.filter(s=>s.visible).length};
+window.__W={get CITY(){return CITY},NAV,CRIT,WX,LGT,P,start,travel,get FST(){return FST},get MAP(){return MAP},tp:(x,z)=>{P.x=x;P.z=z;cp.x=x-BIAS;cp.z=z-BIAS},BLD,SPR,get n(){return SPR.length},grass:GRASS.count,calls:()=>{ren.info.autoReset=false;ren.info.reset();ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);const c=ren.info.render.calls;ren.info.autoReset=true;return c},ground:()=>GB.cv.toDataURL('image/png'),cull:()=>SPR.filter(s=>s.visible).length};
 requestAnimationFrame(loop);
 }
 
