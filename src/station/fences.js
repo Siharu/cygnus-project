@@ -32,19 +32,44 @@ export function fencePieces(runs = RUNS) {
   const out = [];
   for (const [x0, z0, x1, z1] of runs) {
     let a = [x0, z0], b = [x1, z1];
-    if (a[0] - a[1] > b[0] - b[1]) [a, b] = [b, a];           // a is the end further left on screen
-    const k = b[0] + b[1] > a[0] + a[1] ? 'p28' : 'p30';      // art running down-right or up-right
-    const m = CAT[k], unit = TALL / m.h, slope = m.axis === 'x' ? ISO : -ISO;
-    const across = .7071 * ((b[0] - b[1]) - (a[0] - a[1]));   // width of the run on screen
-    const n = Math.max(1, Math.round(across / (m.run * unit)));
-    const uL = m.px - m.run / 2, vL = m.py - slope * m.run / 2;
-    for (let i = 0; i < n; i++) {
-      const at = f => [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
-      const p = at(i / n), q = at((i + 1) / n), nudge = (i % 2) * .006;   // so shared posts do not shimmer
+    let dx = b[0] - a[0], dz = b[1] - a[1];
+    const length = Math.hypot(dx, dz);
+    if (length < 1e-4) continue;
+
+    // Orient every run left-to-right in the isometric projection. This chooses the
+    // matching fence artwork and lets every panel use one consistent UV direction.
+    let dirX = dx / length, dirZ = dz / length;
+    let screenPerUnit = .7071 * (dirX - dirZ);
+    if (screenPerUnit < 0) {
+      [a, b] = [b, a];
+      dx = -dx; dz = -dz;
+      dirX = -dirX; dirZ = -dirZ;
+      screenPerUnit = -screenPerUnit;
+    }
+
+    // p28 runs toward the far side of the isometric projection; p30 runs toward
+    // the near side. Angled checkpoint returns use the same projection math.
+    const k = dirX + dirZ >= 0 ? 'p28' : 'p30';
+    const m = CAT[k], unit = TALL / m.h;
+    const nativeRun = m.run * unit / screenPerUnit;
+    const count = Math.max(1, Math.round(length / nativeRun));
+    const pieceLength = length / count;
+    const stretch = pieceLength / nativeRun;
+
+    for (let i = 0; i < count; i++) {
+      const alongCentre = (i + .5) * pieceLength;
+      const cx = a[0] + dirX * alongCentre, cz = a[1] + dirZ * alongCentre;
       const corners = [[0, 0], [1, 0], [0, 1], [1, 1]].map(([u, v]) => {
-        const t = (u * m.W - uL) / m.run, foot = vL + t * slope * m.run;
-        return [p[0] + (q[0] - p[0]) * t + nudge, (foot - v * m.H) * unit / .8165, p[1] + (q[1] - p[1]) * t + nudge, u, v];
+        // Match city.js's fence-plane transform. Scale the actual ground run to fit
+        // this section, then derive the vertical correction from that scaled run.
+        const sx = (u * m.W - m.px) * unit;
+        const sy = (m.py - v * m.H) * unit;
+        const along = sx / screenPerUnit * stretch;
+        const y = (sy + .4082 * (dirX + dirZ) * along) / .8165;
+        return [cx + dirX * along, y, cz + dirZ * along, u, v];
       });
+      const p = [a[0] + dirX * i * pieceLength, a[1] + dirZ * i * pieceLength];
+      const q = [a[0] + dirX * (i + 1) * pieceLength, a[1] + dirZ * (i + 1) * pieceLength];
       out.push({ k, corners, a: p, b: q, w: m.W * unit, h: m.H * unit });
     }
   }
