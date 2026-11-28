@@ -11,7 +11,7 @@ import { createCritters } from './critters.js';
 import { createCompass } from './compass.js';
 import { createWeather } from './weather.js';
 import { createLighting } from './lighting.js';
-import { createCompanion } from './companion.js';
+import { createCompanion } from '../../assets/companion/companion.js';
 // THREE comes from the <script> tag in index.html (global).
 /* ===== DRIFTER — WNCORE STATION 01 (HD-2D field build) =====
    Sections: 0 config/layout · 1 core · 2 assets · 3 ground bake · 4 world · 5 player (+ Shu, the companion) · 6 fx · 7 ui · 8 loop
