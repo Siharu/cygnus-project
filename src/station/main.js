@@ -11,9 +11,10 @@ import { createCritters } from './critters.js';
 import { createCompass } from './compass.js';
 import { createWeather } from './weather.js';
 import { createLighting } from './lighting.js';
+import { createCompanion } from './companion.js';
 // THREE comes from the <script> tag in index.html (global).
 /* ===== DRIFTER — WNCORE STATION 01 (HD-2D field build) =====
-   Sections: 0 config/layout · 1 core · 2 assets · 3 ground bake · 4 world · 5 player · 6 fx · 7 ui · 8 loop
+   Sections: 0 config/layout · 1 core · 2 assets · 3 ground bake · 4 world · 5 player (+ Shu, the companion) · 6 fx · 7 ui · 8 loop
    Assets (sprites / terrain tiles / player atlas) live in the final <script> block, one per line. */
 async function boot(A,META){
 const T=THREE,$=i=>document.getElementById(i);
@@ -222,6 +223,15 @@ const FW=64,FH=96,FR={};
 // state -> atlas columns. walk 4f, run 8f, idle 6f (also used for rest), swing 6f
 const FC={idle:[0,1,2,3,4,5],walking:[0,1,2,3],running:[0,1,2,3,4,5,6,7],swinging:[0,1,2,3,4,5],resting:[0,1,2,3,4,5]};
 for(const s in FC){FR[s]=[];for(let d=0;d<8;d++)FR[s].push(FC[s].map(c=>{const cv=document.createElement('canvas');cv.width=FW;cv.height=FH;const g=cv.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(({running:IM.player_run,idle:IM.player_idle,resting:IM.player_idle,swinging:IM.player_swing})[s]||IM.player,c*FW,d*FH,FW,FH,0,0,FW,FH);const t=new T.CanvasTexture(cv);t.magFilter=t.minFilter=T.NearestFilter;t.generateMipmaps=false;return t}))}
+// ---------- 5b. COMPANION: Shu the cat (src/station/companion.js) ----------
+// her frames load in the background (assets/companion/); she joins the game once they are ready
+let SHU=null;const SHUC={};
+createCompanion({T,sc,pmat}).then(c=>{SHU=c}).catch(e=>console.warn('companion',e));
+const shuElev=(x,z)=>MAP==1&&FST?FST.elev(x,z):0;
+function shuClamp(o){ // same walk limits as the player: current room, Silvan / city bounds, or the station
+ if(IN>=0){o.x=Math.max(IX-IRX,Math.min(IX+IRX,o.x));o.z=Math.max(IZ-IRZ,Math.min(IZ+IRZ,o.z))}
+ else if(MAP){const B=(MAP==1?FST:CITY).bounds;o.x=Math.max(B.x0,Math.min(B.x1,o.x));o.z=Math.max(B.z0,Math.min(B.z1,o.z))}
+ else{o.x=Math.max(-BOUND,Math.min(BOUND,o.x));o.z=Math.max(-BOUND,Math.min(BOUND,o.z))}}
 function col(o,r){for(const s of sol){const dx=o.x-s.x,dz=o.z-s.z,hx=s.rx+r,hz=s.rz+r;if(Math.abs(dx)<hx&&Math.abs(dz)<hz){const px=hx-Math.abs(dx),pz=hz-Math.abs(dz);if(px<pz)o.x+=dx<0?-px:px;else o.z+=dz<0?-pz:pz}}
  for(const c of circ){const dx=o.x-c.x,dz=o.z-c.z,d=Math.hypot(dx,dz),m=c.r+r;if(d<m&&d>0){o.x+=dx/d*(m-d);o.z+=dz/d*(m-d)}}
  if(MAP==1&&FST)FST.col(o,r)}
@@ -501,7 +511,9 @@ function anim(dt,t){
  const IS=IN>=0?1.4:1;ps.scale.setScalar(IS);const EL=MAP==1&&FST?FST.elev(P.x,P.z):0;ps.position.set(P.x,PH*IS/2+bob+EL,P.z);psh.position.set(P.x,.035+EL,P.z);psh.scale.set((1+Math.min(.18,mv*.025))*IS,IS,1);pL.position.set(P.x,2,P.z);
  // camera: follow + headroom, frame the mast near the station
  const fz=sm(24,10,dm)*3.2/.816+BIAS;const tx=IN>=0?IX-ICX:P.x-fz,tz=IN>=0?IZ-ICZ:P.z-fz;cp.x+=(tx-cp.x)*Math.min(1,dt*4);cp.z+=(tz-cp.z)*Math.min(1,dt*4);
- cam.position.set(cp.x+OFF.x,OFF.y,cp.z+OFF.z);cam.lookAt(cp.x,0,cp.z);ps.quaternion.copy(cam.quaternion);NAV.update(P,{hud:st==1,mark:!busy&&!open});
+ cam.position.set(cp.x+OFF.x,OFF.y,cp.z+OFF.z);cam.lookAt(cp.x,0,cp.z);ps.quaternion.copy(cam.quaternion);
+ if(SHU){SHUC.P=P;SHUC.mv=mv;SHUC.swing=P.swingUntil>clock;SHUC.resting=P.resting;SHUC.zone=IN>=0?'i'+IN+':'+BQ:'m'+MAP;SHUC.col=col;SHUC.clamp=shuClamp;SHUC.elev=shuElev;SHUC.scale=IS;SHUC.shade=LGT.shade;SHUC.quat=cam.quaternion;SHU.update(t,dt,SHUC)}
+ NAV.update(P,{hud:st==1,mark:!busy&&!open});
  // cull + tint sprites
  const asp=innerWidth/innerHeight,hw=VH*asp,hh=VH,wam=outd?WX.amb:ONE,fl=outd?WX.flash*.3:0;
  const pSx=(P.x-cp.x-(P.z-cp.z))*.7071,pSy=-(P.x-cp.x+P.z-cp.z)*.4082+1.1,pD=P.x+P.z;
@@ -518,7 +530,7 @@ function anim(dt,t){
  for(const m of MIST){m.x+=m.v*dt;let rx=((m.x-cp.x)%80+120)%80-40,rz=((m.z-cp.z)%80+120)%80-40;m.s.position.set(cp.x+rx,m.y,cp.z+rz);m.s.material.opacity=m.o*WX.mist}}
 function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;if(st==1)upd(dt);anim(dt,now/1000);ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);ren.render(pS,pC)}
 if(DEBUG){const h=location.hash.slice(1).split(',').map(Number);if(h.length==2&&!isNaN(h[0])){P.x=h[0];P.z=h[1];cp.x=P.x;cp.z=P.z}}
-window.__W={get CITY(){return CITY},NAV,CRIT,WX,LGT,P,start,travel,get FST(){return FST},get MAP(){return MAP},tp:(x,z)=>{P.x=x;P.z=z;cp.x=x-BIAS;cp.z=z-BIAS},BLD,SPR,get n(){return SPR.length},grass:GRASS.count,calls:()=>{ren.info.autoReset=false;ren.info.reset();ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);const c=ren.info.render.calls;ren.info.autoReset=true;return c},ground:()=>GB.cv.toDataURL('image/png'),cull:()=>SPR.filter(s=>s.visible).length};
+window.__W={get CITY(){return CITY},get SHU(){return SHU},NAV,CRIT,WX,LGT,P,start,travel,get FST(){return FST},get MAP(){return MAP},tp:(x,z)=>{P.x=x;P.z=z;cp.x=x-BIAS;cp.z=z-BIAS},BLD,SPR,get n(){return SPR.length},grass:GRASS.count,calls:()=>{ren.info.autoReset=false;ren.info.reset();ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);const c=ren.info.render.calls;ren.info.autoReset=true;return c},ground:()=>GB.cv.toDataURL('image/png'),cull:()=>SPR.filter(s=>s.visible).length};
 requestAnimationFrame(loop);
 }
 
