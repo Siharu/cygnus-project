@@ -33,6 +33,10 @@ const FOLLOW_GAP = 1.5;   // she aims to stop about this far from you
 const START_GAP = 2.9;    // you are this far away and standing still: she comes over
 const TRAIL_GAP = 2.2;    // you are walking and she is this far behind: she follows
 const MAX_SPEED = 6.2;    // keep the companion just behind the player's run pace
+// The game loop renders at display rate; gait pose changes are sampled at 15/24 fps.
+// An 8-frame cycle then lasts ~0.53s walking and ~0.33s running without over-cranking the stride.
+const WALK_FRAME_RATE = 15;
+const RUN_FRAME_RATE = 24;
 const RUN_ON = 4.9, RUN_OFF = 4.2; // switch to a faster gait while catching up
 
 const SIT_ROWS = [4, 7, 8];                  // the three actual sitting-pose rows
@@ -214,8 +218,9 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
 
       if (sp > 0.4) { hx += (ux - hx) * Math.min(1, dt * 10); hz += (uz - hz) * Math.min(1, dt * 10); dir = dirOf(hx, hz); }
       if (!running && sp > RUN_ON) running = true; else if (running && sp < RUN_OFF) running = false;
-      phase += dt * (running ? 16 : 11); // faster, more readable 8-frame strides
-      pick = { f: (running ? frames.run : frames.walk)[dir][Math.floor(phase) % 8], mirror: false };
+      const cycle = (running ? frames.run : frames.walk)[dir];
+      phase = (phase + dt * (running ? RUN_FRAME_RATE : WALK_FRAME_RATE)) % Math.max(1, cycle.length);
+      pick = { f: cycle[Math.floor(phase)], mirror: false };
 
       if (!pMoving && d < TRAIL_GAP + 0.1 && sp < 0.5) { viewDir = dir; turnAcc = 0; setAct('sit'); actDur = 3 + rnd() * 2; }
     } else {
@@ -293,9 +298,15 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
     // The source front/back gaits have subtle paw separation. A restrained body
     // bounce makes each contact/lift phase readable without changing Shu's silhouette.
     const gaitBob = walking
-      ? Math.abs(Math.sin(phase * Math.PI / 4)) * (running ? 0.065 : 0.032)
+      ? Math.abs(Math.sin(phase * Math.PI / 4)) * (running ? 0.078 : 0.038)
       : 0;
-    const w = f.w / PPU * K, h = f.h / PPU * K * breathe;
+    // Small run compression adds impact to the provisional non-profile run poses
+    // without repainting or materially changing Shu's silhouette.
+    const runSquash = walking && running
+      ? 1 - 0.025 * Math.max(0, Math.sin(phase * Math.PI / 4))
+      : 1;
+    const w = f.w / PPU * K * (walking && running ? 1.01 : 1);
+    const h = f.h / PPU * K * breathe * runSquash;
     mesh.scale.set(pick.mirror ? -w : w, h, 1);
     mesh.quaternion.copy(ctx.quat);
     right.set(1, 0, 0).applyQuaternion(ctx.quat);
