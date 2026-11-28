@@ -1,5 +1,5 @@
 // ===== DRIFTER — STATION FENCES =====
-// Chain-link round the WNCORE base and along the approach to the checkpoint. Uses the city's two chain-link sprites,
+// Chain-link round the whole WNCORE station and along the approach to the checkpoint. Uses the city's two chain-link sprites,
 // but each piece is fitted to the ground line it is given: the post feet land exactly on both ends and the posts
 // stay upright, so a run can follow any angle (the checkpoint road is not quite square to the grid).
 //
@@ -9,18 +9,17 @@
 import { CAT } from './city_catalog.js';
 import { retouch, straighten } from './city_shade.js';
 
-// [x0, z0, x1, z1]. The base is open at three side gates and at the checkpoint.
+// [x0, z0, x1, z1]. One perimeter round every building; the checkpoint is the only way in. The walk limit is
+// +-36, so the west, north and east sides mostly stand just beyond it, behind the outer buildings.
 export const RUNS = [
-  // front of the base: broken only by the booth and the barrier
-  [-22.5, 9.4, -13.2, 9.4], [-.1, 8.9, 5.5, 8.9],
-  // east side, gate toward the operator's cottage (z -5 .. 1)
-  [5.5, 8.9, 5.5, 1], [5.5, -5, 5.5, -22],
-  // north side, gate toward the water tower (x -4 .. 1.5)
-  [5.5, -22, 1.5, -22], [-4, -22, -22.5, -22],
-  // west side, gate toward the depot and watchtower (z -5 .. 1)
-  [-22.5, -22, -22.5, -5], [-22.5, 1, -22.5, 9.4],
-  // approach road: both verges, from the main road up to the booth and the far barrier post
-  [-13.4, 9.6, -14.2, 13.1], [-2.55, 9.35, -3.35, 13.15],
+  // south front, west: down the road verge from the booth, then along past the watchtower's ladder
+  [-13.4, 9.6, -14.2, 11.8], [-14.2, 11.8, -40.5, 11.8],
+  // south front, east of the barrier
+  [-.1, 8.9, 40, 8.9],
+  // east (behind the collapsed building), north (behind the water tower), west (behind the depot)
+  [40, 8.9, 40, -35.5], [40, -35.5, -40.5, -35.5], [-40.5, -35.5, -40.5, 11.8],
+  // approach road: the far verge, from the main road up to the barrier post
+  [-2.55, 9.35, -3.35, 13.15],
 ];
 // nobody squeezes between the booth and the barrier post: the barrier is the only way through the front
 export const PLUG = { x: -9.25, z: 9.35, r: .45 };
@@ -76,6 +75,7 @@ export async function createStationFences({ T, sc, SPR, circ, SH, FP }) {
   // clear plants and rocks off the fence lines (done afterwards, so the rest of the station stays as it was)
   for (let i = SPR.length - 1; i >= 0; i--) {
     const u = SPR[i].userData; if (!/^(fol_|rok_)/.test(u.key)) continue;
+    if (Math.abs(u.x) > 30 && u.z > 11.9) continue;      // the rubble blockading both ends of the main road stays
     if (fenceDist(u.x, u.z) > (/tree|sapling|banana/.test(u.key) ? 2.6 : .6 + u.w * .25)) continue;
     sc.remove(SPR[i]); SPR.splice(i, 1);
     for (const list of [circ, SH]) { const j = list.findIndex(c => c.x === u.x && c.z === u.z); if (j >= 0) list.splice(j, 1); }
