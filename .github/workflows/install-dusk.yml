@@ -1,0 +1,17 @@
+name: Install Dusk
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 install_dusk.py
+      - run: |
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git checkout -b aegis-dusk
+          git add src/station
+          git commit -m "Add Aegis Dusk preset"
+          git push origin aegis-dusk
