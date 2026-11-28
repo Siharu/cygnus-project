@@ -21,7 +21,9 @@ export function createLighting({ T, sc, SH, LT, glowTex, beaconPos, dl }) {
   const g = cv.getContext('2d');
   const tex = new T.CanvasTexture(cv); tex.minFilter = tex.magFilter = T.LinearFilter; tex.generateMipmaps = false;
   const shMesh = new T.Mesh(new T.PlaneGeometry(WORLD, WORLD).rotateX(-Math.PI / 2), new T.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, fog: false }));
-  shMesh.position.y = -.025; // keep the ground-only shadow layer behind billboard feet shMesh.renderOrder = -99; sc.add(shMesh);
+  shMesh.position.y = -.025; // ground-only layer; billboard sprites render afterwards
+  shMesh.renderOrder = -99;
+  sc.add(shMesh);
   const px = v => (v + HALF) * U;
   let baked = 9;
   function blob(x, z, along, across, ang, a0, a1) {   // soft ellipse: a0 at the centre, a1 at the rim
