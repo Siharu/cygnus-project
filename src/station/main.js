@@ -12,6 +12,7 @@ import { createCompass } from './compass.js';
 import { createWeather } from './weather.js';
 import { createLighting } from './lighting.js';
 import { createCompanion } from '../../assets/companion/companion.js';
+import { createBimo } from '../../assets/companion/bimo.js';
 // THREE comes from the <script> tag in index.html (global).
 /* ===== DRIFTER — WNCORE STATION 01 (HD-2D field build) =====
    Sections: 0 config/layout · 1 core · 2 assets · 3 ground bake · 4 world · 5 player (+ Shu, the companion) · 6 fx · 7 ui · 8 loop
@@ -225,8 +226,9 @@ const FC={idle:[0,1,2,3,4,5],walking:[0,1,2,3],running:[0,1,2,3,4,5,6,7],swingin
 for(const s in FC){FR[s]=[];for(let d=0;d<8;d++)FR[s].push(FC[s].map(c=>{const cv=document.createElement('canvas');cv.width=FW;cv.height=FH;const g=cv.getContext('2d');g.imageSmoothingEnabled=false;g.drawImage(({running:IM.player_run,idle:IM.player_idle,resting:IM.player_idle,swinging:IM.player_swing})[s]||IM.player,c*FW,d*FH,FW,FH,0,0,FW,FH);const t=new T.CanvasTexture(cv);t.magFilter=t.minFilter=T.NearestFilter;t.generateMipmaps=false;return t}))}
 // ---------- 5b. COMPANION: Shu the cat (src/station/companion.js) ----------
 // her frames load in the background (assets/companion/); she joins the game once they are ready
-let SHU=null;const SHUC={};
+let SHU=null,BIMO=null;const SHUC={};
 createCompanion({T,sc,pmat}).then(c=>{SHU=c}).catch(e=>console.warn('companion',e));
+createBimo({T,sc,pmat}).then(c=>{BIMO=c}).catch(e=>console.warn('Bimo scout dog',e));
 const shuElev=(x,z)=>MAP==1&&FST?FST.elev(x,z):0;
 function shuClamp(o){ // same walk limits as the player: current room, Silvan / city bounds, or the station
  if(IN>=0){o.x=Math.max(IX-IRX,Math.min(IX+IRX,o.x));o.z=Math.max(IZ-IRZ,Math.min(IZ+IRZ,o.z))}
@@ -343,7 +345,7 @@ function eat(q){const p=q.p;if(q.take)q.take();else{INT.take(p.id);IOB.splice(IO
 function vitTick(dt){VIT.food=Math.max(0,VIT.food-dt/420);VIT.water=Math.max(0,VIT.water-dt/300);
  for(const k of['food','water']){if(VIT[k]<.2&&!VIT.warn[k]){VIT.warn[k]=1;toast(k=='food'?'Your stomach is empty. There was food in the station.':'Your mouth is dry. There were drinks in the station.')}}}
 const vbar=v=>'▮'.repeat(Math.ceil(v*5))+'▯'.repeat(5-Math.ceil(v*5));
-function act(){if(st!=1||busy)return;if(open){closeP();return}if(!near)return;if(near.t=='s'){if(SHU&&SHU.pet(P))toast('Shu looks up at you and settles beside you.');return}if(near.t=='r'){bc();return}
+function act(){if(st!=1||busy)return;if(open){closeP();return}if(!near)return;if(near.t=='s'){if(SHU&&SHU.pet(P))toast('Shu looks up at you and settles beside you.');return}if(near.t=='dog'){if(BIMO&&BIMO.pet(P))toast('Bimo sits proudly beside you, ears up and watching.');return}if(near.t=='r'){bc();return}
  if(near.t=='x'){near.fn();return}if(near.t=='b'){record(near.b,near.src,near.note);BDOOR[near.b]={x:near.x+.8,z:near.z+.8};goB(near.b,near);return}if(near.t=='f'){travel(near.to);return}if(near.t=='d'){go(0);return}if(near.t=='g'){go(near.to);return}if(near.t=='n'){record(near.n+'|'+near.note,near.n,near.note);toast(near.note);return}if(near.t=='c'){eat(near);return}record(near,near.n,near.note);toast(near.note)}
 addEventListener('keydown',e=>{K[e.code]=1;if(e.code=='KeyE')act();if(e.code=='KeyM'){muted=!muted;if(aud.mg)aud.mg.gain.value=muted?0:.9}
  if(e.code=='Space'){e.preventDefault();if(st==1&&!open&&!e.repeat){P.swingStart=clock;P.swingUntil=clock+.62;P.resting=false}}
@@ -479,7 +481,8 @@ function upd(dt){clock+=dt;let ix=0,iz=0;
  if(IN>=0){P.x=Math.max(IX-IRX,Math.min(IX+IRX,P.x));P.z=Math.max(IZ-IRZ,Math.min(IZ+IRZ,P.z))}else if(MAP){const B=(MAP==1?FST:CITY).bounds;P.x=Math.max(B.x0,Math.min(B.x1,P.x));P.z=Math.max(B.z0,Math.min(B.z1,P.z))}else{P.x=Math.max(-BOUND,Math.min(BOUND,P.x));P.z=Math.max(-BOUND,Math.min(BOUND,P.z))}
  vitTick(dt);near=null;let bd=3;for(const q of (IN>=0?IOB:MAP==1?FOB:MAP==2?CITY.objects:OB)){const d=Math.hypot(q.x-P.x,q.z-P.z);if(d<bd){bd=d;near=q}}
  if(SHU){const s=SHU.state,sd=Math.hypot(s.x-P.x,s.z-P.z);if(sd<1.9&&sd<bd){bd=sd;near={x:s.x,z:s.z,n:'Shu',t:'s'}}}
- $('pr').textContent=(near&&!open&&!busy)?'[E] '+(near.t=='s'?'Pet Shu':near.t=='r'?'Tune the radio':(near.t=='d'||near.t=='g'||near.t=='f'||near.t=='x'||near.t=='b')?near.n:near.t=='c'?(near.p.water&&!near.p.food?'Drink ':'Eat ')+near.n:'Examine '+near.n.toLowerCase()):'';
+ if(BIMO){const b=BIMO.state,bdog=Math.hypot(b.x-P.x,b.z-P.z);if(bdog<2.35&&bdog<bd){bd=bdog;near={x:b.x,z:b.z,n:'Bimo',t:'dog'}}}
+ $('pr').textContent=(near&&!open&&!busy)?'[E] '+(near.t=='s'?'Pet Shu':near.t=='dog'?'Pet Bimo':near.t=='r'?'Tune the radio':(near.t=='d'||near.t=='g'||near.t=='f'||near.t=='x'||near.t=='b')?near.n:near.t=='c'?(near.p.water&&!near.p.food?'Drink ':'Eat ')+near.n:'Examine '+near.n.toLowerCase()):'';
  if(open=='b'){bt+=dt*26;const m=window.__bmsg;$('tx').textContent=m.slice(0,bt|0);const c=$('wv'),g=c.getContext('2d');g.clearRect(0,0,300,44);g.strokeStyle='#6fae5a';g.beginPath();for(let x=0;x<300;x+=3){const a=Math.abs(Math.sin(x*.05+clock*6))*Math.min(1,bt/20)*18*Math.random();g.moveTo(x,22-a);g.lineTo(x,22+a)}g.stroke()}
  $('dc').innerHTML='DISCOVERIES '+found.length+'/'+TOTAL+'<br><span style="font-size:18px;color:'+(VIT.food<.2?'#d9695a':'#b7aa8d')+'">FOOD '+vbar(VIT.food)+'</span> <span style="font-size:18px;color:'+(VIT.water<.2?'#d9695a':'#b7aa8d')+'">WATER '+vbar(VIT.water)+'</span><br><span style="font-size:18px;color:#b7aa8d">SHIFT RUN · SPACE SWING · R REST · N COMPASS · M MUTE</span>';
  $('st').innerHTML=(MAP==1?'NO SIGNAL<br>— — —':MAP==2?'???<br>88.7 FM ?':'WNCORE-01<br>88.7 FM')+(IN<0?'<br><span style="font-size:18px;color:#8a8570">'+WX.label+'</span>':'')}
@@ -514,6 +517,7 @@ function anim(dt,t){
  const fz=sm(24,10,dm)*3.2/.816+BIAS;const tx=IN>=0?IX-ICX:P.x-fz,tz=IN>=0?IZ-ICZ:P.z-fz;cp.x+=(tx-cp.x)*Math.min(1,dt*4);cp.z+=(tz-cp.z)*Math.min(1,dt*4);
  cam.position.set(cp.x+OFF.x,OFF.y,cp.z+OFF.z);cam.lookAt(cp.x,0,cp.z);ps.quaternion.copy(cam.quaternion);
  if(SHU){SHUC.P=P;SHUC.mv=mv;SHUC.swing=P.swingUntil>clock;SHUC.resting=P.resting;SHUC.zone=IN>=0?'i'+IN+':'+BQ:'m'+MAP;SHUC.col=col;SHUC.clamp=shuClamp;SHUC.elev=shuElev;SHUC.scale=IS;SHUC.shade=LGT.shade;SHUC.quat=cam.quaternion;SHU.update(t,dt,SHUC)}
+ if(BIMO)BIMO.update(t,dt,{P,mv,playerRun:!!(K.ShiftLeft||K.ShiftRight),swing:P.swingUntil>clock,resting:P.resting,zone:IN>=0?'i'+IN+':'+BQ:'m'+MAP,col,clamp:shuClamp,elev:shuElev,scale:IS,shade:LGT.shade,quat:cam.quaternion});
  NAV.update(P,{hud:st==1,mark:!busy&&!open});
  // cull + tint sprites
  const asp=innerWidth/innerHeight,hw=VH*asp,hh=VH,wam=outd?WX.amb:ONE,fl=outd?WX.flash*.3:0;
@@ -531,7 +535,7 @@ function anim(dt,t){
  for(const m of MIST){m.x+=m.v*dt;let rx=((m.x-cp.x)%80+120)%80-40,rz=((m.z-cp.z)%80+120)%80-40;m.s.position.set(cp.x+rx,m.y,cp.z+rz);m.s.material.opacity=m.o*WX.mist}}
 function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;if(st==1)upd(dt);anim(dt,now/1000);ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);ren.render(pS,pC)}
 if(DEBUG){const h=location.hash.slice(1).split(',').map(Number);if(h.length==2&&!isNaN(h[0])){P.x=h[0];P.z=h[1];cp.x=P.x;cp.z=P.z}}
-window.__W={get CITY(){return CITY},get SHU(){return SHU},NAV,CRIT,WX,LGT,P,start,travel,get FST(){return FST},get MAP(){return MAP},tp:(x,z)=>{P.x=x;P.z=z;cp.x=x-BIAS;cp.z=z-BIAS},BLD,SPR,get n(){return SPR.length},grass:GRASS.count,calls:()=>{ren.info.autoReset=false;ren.info.reset();ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);const c=ren.info.render.calls;ren.info.autoReset=true;return c},ground:()=>GB.cv.toDataURL('image/png'),cull:()=>SPR.filter(s=>s.visible).length};
+window.__W={get CITY(){return CITY},get SHU(){return SHU},get BIMO(){return BIMO},NAV,CRIT,WX,LGT,P,start,travel,get FST(){return FST},get MAP(){return MAP},tp:(x,z)=>{P.x=x;P.z=z;cp.x=x-BIAS;cp.z=z-BIAS},BLD,SPR,get n(){return SPR.length},grass:GRASS.count,calls:()=>{ren.info.autoReset=false;ren.info.reset();ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);const c=ren.info.render.calls;ren.info.autoReset=true;return c},ground:()=>GB.cv.toDataURL('image/png'),cull:()=>SPR.filter(s=>s.visible).length};
 requestAnimationFrame(loop);
 }
 
