@@ -78,7 +78,7 @@ rt.depthTexture.minFilter=rt.depthTexture.magFilter=T.NearestFilter;
 const pS=new T.Scene(),pC=new T.OrthographicCamera(-1,1,1,-1,0,1);
 const pu={
  t:{value:rt.texture},depthTex:{value:rt.depthTexture},
- invProjection:{value:cam.projectionMatrixInverse},cameraWorld:{value:cam.matrixWorld},cameraPos:{value:new T.Vector3()},
+ invProjection:{value:cam.projectionMatrixInverse},cameraWorld:{value:cam.matrixWorld},
  fogColor:{value:new T.Color(FOG)},fogDensity:{value:.0165},scatter:{value:0},rays:{value:1},
  sunUV:{value:new T.Vector2(.6,.7)},atmTime:{value:0},kd:{value:0},
  px:{value:new T.Vector2(1,1)},time:{value:0},wrong:{value:0},
@@ -251,9 +251,9 @@ const GB=bakeGround();bakeShadows(GB);
 let OUTER=null;
 const gtex=new T.CanvasTexture(GB.cv);gtex.anisotropy=Math.min(8,ren.capabilities.getMaxAnisotropy());gtex.minFilter=T.LinearMipmapLinearFilter;gtex.magFilter=T.LinearFilter;
 const gGeo=new T.PlaneGeometry(GN*GC,GN*GC);gGeo.rotateX(-Math.PI/2);
-const ground=new T.Mesh(gGeo,new T.MeshStandardMaterial({map:gtex,roughness:1,depthWrite:false,depthTest:false}));ground.renderOrder=-100;sc.add(ground);
+const ground=new T.Mesh(gGeo,new T.MeshStandardMaterial({map:gtex,roughness:1,depthWrite:true,depthTest:true}));ground.renderOrder=-100;sc.add(ground);
 {const t=new T.Texture(IM.tile_grass0);t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(60,60);t.anisotropy=4;t.needsUpdate=true;
- const o=new T.Mesh(new T.PlaneGeometry(420,420).rotateX(-Math.PI/2),new T.MeshStandardMaterial({map:t,roughness:1,color:0x80888c,depthWrite:false,depthTest:false}));o.position.y=-.05;o.renderOrder=-101;sc.add(o);OUTER=o}
+ const o=new T.Mesh(new T.PlaneGeometry(420,420).rotateX(-Math.PI/2),new T.MeshStandardMaterial({map:t,roughness:1,color:0x80888c,depthWrite:true,depthTest:true}));o.position.y=-.05;o.renderOrder=-101;sc.add(o);OUTER=o}
 const glowTex=(()=>{const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d'),gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.25,'rgba(255,255,255,.45)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(0,0,64,64);return new T.CanvasTexture(c)})();
 const GL=[];
 function glow(pos,size,color,I,ph){const m=new T.SpriteMaterial({map:glowTex,color,blending:T.AdditiveBlending,transparent:true,depthWrite:false,opacity:I,fog:false});const s=new T.Sprite(m);s.position.copy(pos);s.scale.set(size,size,1);s.frustumCulled=false;sc.add(s);GL.push({s,I,ph:ph||0});return s}
@@ -521,7 +521,7 @@ function anim(dt,t){
  const IS=IN>=0?1.4:1;ps.scale.setScalar(IS);const EL=MAP==1&&FST?FST.elev(P.x,P.z):0;ps.position.set(P.x,PH*IS/2+bob+EL,P.z);psh.position.set(P.x,.035+EL,P.z);psh.scale.set((1+Math.min(.18,mv*.025))*IS,IS,1);pL.position.set(P.x,2,P.z);
  // camera: follow + headroom, frame the mast near the station
  const fz=sm(24,10,dm)*3.2/.816+BIAS;const tx=IN>=0?IX-ICX:P.x-fz,tz=IN>=0?IZ-ICZ:P.z-fz;cp.x+=(tx-cp.x)*Math.min(1,dt*4);cp.z+=(tz-cp.z)*Math.min(1,dt*4);
- cam.position.set(cp.x+OFF.x,OFF.y,cp.z+OFF.z);cam.lookAt(cp.x,0,cp.z);cam.updateMatrixWorld(true);pu.cameraPos.value.copy(cam.position);ps.quaternion.copy(cam.quaternion);
+ cam.position.set(cp.x+OFF.x,OFF.y,cp.z+OFF.z);cam.lookAt(cp.x,0,cp.z);cam.updateMatrixWorld(true);ps.quaternion.copy(cam.quaternion);
  if(SHU){SHUC.P=P;SHUC.mv=mv;SHUC.swing=P.swingUntil>clock;SHUC.resting=P.resting;SHUC.zone=IN>=0?'i'+IN+':'+BQ:'m'+MAP;SHUC.col=col;SHUC.clamp=shuClamp;SHUC.elev=shuElev;SHUC.scale=IS;SHUC.shade=LGT.shade;SHUC.quat=cam.quaternion;SHU.update(t,dt,SHUC)}
  NAV.update(P,{hud:st==1,mark:!busy&&!open});
  // cull + tint sprites
