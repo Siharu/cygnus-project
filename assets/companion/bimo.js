@@ -218,6 +218,8 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
     let dx = targetX - c.x, dz = targetZ - c.z;
     let d = Math.hypot(dx, dz);
     const playerDistance = Math.hypot(P.x - c.x, P.z - c.z);
+    if (!playerMoving && playerDistance > 0.3) dir = dirOf(P.x - c.x, P.z - c.z);
+    const sideMirror = dir === 5 || dir === 6 || dir === 7;
     if (playerDistance > 20 || d > 18) {
       place(ctx);
       dx = targetX - c.x;
@@ -301,7 +303,7 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
           else if (act === 'down') {
             actT += dt;
             const down = frames.row[8];
-            pick = { f: down[1 + (Math.floor(actT * 1.4) % 4)], mirror: dir === 5 || dir === 6 || dir === 7, unit: rowUnit };
+            pick = { f: down[Math.floor(actT * 1.4) % down.length], mirror: sideMirror, unit: rowUnit };
             breathe = 1 + 0.012 * Math.sin(actT * 2.1);
           } else if (act === 'settle') {
             actT += dt;
@@ -311,7 +313,7 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
         } else if (act === 'wake') {
           actT += dt;
           const R = frames.row[5];
-          pick = { f: R[Math.max(0, R.length - 1 - Math.floor(actT / actDur * R.length))], mirror: false, unit: rowUnit };
+          pick = { f: R[Math.max(0, R.length - 1 - Math.floor(actT / actDur * R.length))], mirror: sideMirror, unit: rowUnit };
           if (actT > actDur) { setAct('look', 0.4); }
         } else if (act === 'alert') {
           actT += dt;
