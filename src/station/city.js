@@ -10,7 +10,7 @@
 import { CAT } from './city_catalog.js';
 import * as L from './city_layout.js';
 import { PROPS, PROP_SIZE } from './props.js';
-import { retouch, GLARE } from './city_shade.js';
+import { retouch, straighten, GLARE } from './city_shade.js';
 
 const OX = 0, OZ = 1000;            // far from the station (0,0) and Silvan (1000,0)
 const HALF = 75, PPU = 20;          // painted ground: 150 x 150 units
@@ -19,12 +19,6 @@ const HALF = 75, PPU = 20;          // painted ground: 150 x 150 units
 function dims(k) { const m = CAT[k], unit = L.HEIGHT[k] / m.h; return { m, unit, w: m.W * unit, h: m.H * unit }; }
 // a point on the art as drawn (fractions across, down) -> the same point on the corrected sprite
 function warped(k, u, v) { const m = CAT[k], [s, c, kk, e, f] = m.t; return [(s * u * m.w + e) / m.W, (c * u * m.w + kk * v * m.h + f) / m.H]; }
-// the correction itself: brings the art's ground lines to the 30 degrees the streets run at
-function straighten(src, k) {
-  const m = CAT[k], [s, c, kk, e, f] = m.t, cv = document.createElement('canvas'); cv.width = m.W; cv.height = m.H;
-  const g = cv.getContext('2d'); g.imageSmoothingQuality = 'high'; g.setTransform(s, c, 0, kk, e, f); g.drawImage(src, 0, 0); return cv;
-}
-
 function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 const url = p => new URL('../../assets/' + p, import.meta.url).href;
 const load = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('city asset ' + src.split('/').pop())); i.src = src; });

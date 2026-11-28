@@ -2,6 +2,7 @@
 // The POI sheet has the usual generated-art faults: gibberish lettering, melted geometry under roofs, pale cut-out
 // fringes and loose specks. The source PNGs are left alone; this repaints a copy of each one when the city loads.
 // All positions are fractions of the sprite (u across, v down), so mirrored copies follow automatically.
+import { CAT } from './city_catalog.js';
 
 // shadow patches: [u, v, radius u, radius v, strength]
 export const SHADE = {
@@ -23,7 +24,6 @@ export const SHADE = {
   p20: [[.20, .20, .18, .24, .65]],
   p23: [[.62, .63, .3, .25, .65], [.32, .66, .2, .22, .35]],
   p27: [[.34, .62, .11, .28, .8]],
-  p34: [[.30, .55, .11, .42, .5]],
   p42: [[.56, .68, .34, .2, .72]],
   p43: [[.35, .59, .24, .2, .82], [.62, .69, .26, .18, .7]],
   p44: [[.50, .62, .44, .19, .6]],
@@ -34,7 +34,7 @@ export const SHADE = {
   p64: [[.45, .64, .34, .22, .62], [.60, .82, .34, .15, .5]],
 };
 // parts that are cut off outright (loose brackets that join nothing): [u0, v0, u1, v1]
-export const CUT = { p38: [[.757, 0, 1, 1]] };
+export const CUT = { p34: [[0, 0, .263, 1]], p38: [[.757, 0, 1, 1]] };   // p34: a second, free-standing gate post
 
 // lights that pull the eye off what is wrong: [u, v, size, colour, opacity, flickers]
 export const GLARE = {
@@ -45,6 +45,12 @@ export const GLARE = {
   p43: [[.46, .65, 2.2, 0xffc080, .38]],
   p54: [[.52, .66, 2.4, 0xffb868, .48, 1]],
 };
+
+// the correction itself: brings the art's ground lines to the 30 degrees the streets run at
+export function straighten(src, k) {
+  const m = CAT[k], [s, c, kk, e, f] = m.t, cv = document.createElement('canvas'); cv.width = m.W; cv.height = m.H;
+  const g = cv.getContext('2d'); g.imageSmoothingQuality = 'high'; g.setTransform(s, c, 0, kk, e, f); g.drawImage(src, 0, 0); return cv;
+}
 
 const INK = '10,10,24';
 export function retouch(img, key) {

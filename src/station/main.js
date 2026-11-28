@@ -3,6 +3,7 @@ import { META } from './meta.js';
 import { createInterior } from './interior.js';
 import { LAYOUT } from './interior_layout.js';
 import { createCheckpoint } from './checkpoint.js';
+import { createStationFences } from './fences.js';
 import { createGrass, MEADOW } from './grassland.js';
 import { createBuildingInterior } from './interiors_hub.js';
 import { HUB } from './interiors_hub_layout.js';
@@ -205,6 +206,8 @@ const CG={x:32,z:33.5};
  for(let i=SPR.length-1;i>=0;i--){const u=SPR[i].userData;if(lane(u.x,u.z)||tree(u)){sc.remove(SPR[i]);SPR.splice(i,1);if(tree(u))for(const a of[circ,SH]){const j=a.findIndex(c=>c.x==u.x&&c.z==u.z);if(j>=0)a.splice(j,1)}}}
  for(const a of[circ,SH])for(let i=a.length-1;i>=0;i--)if(lane(a[i].x,a[i].z))a.splice(i,1);
  ZONES.push({m:'s',r:[30.4,22,33.6,36.5],soft:1.6,n:1.4})}
+// fences round the base and along the checkpoint approach (src/station/fences.js)
+try{await createStationFences({T,sc,SPR,circ,SH,FP})}catch(e){console.warn('station fences',e)}
 // ---------- 5. PLAYER (drifter_player walk atlas: 8 directions N,NE,E,SE,S,SW,W,NW x 4 frames, 64x96) ----------
 const P={x:-6.5,z:13.5,vx:0,vz:0,dr:1,resting:false,swingStart:-99,swingUntil:-99},K={};
 const blank=document.createElement('canvas');blank.width=blank.height=1;const bt0=new T.CanvasTexture(blank);bt0.magFilter=bt0.minFilter=T.NearestFilter;
