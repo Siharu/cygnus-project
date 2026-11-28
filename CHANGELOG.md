@@ -4,6 +4,17 @@ Notable changes to the **Drifter's Tale** field build, newest first.
 
 ---
 
+## [2026-11-28] — Station fences
+
+### Added
+- Chain-link fencing round the WNCORE base, open at the checkpoint and at west, north and east side gates.
+- Fences along both verges of the checkpoint approach road, each fitted to the angle of the road (`src/station/fences.js`).
+
+### Fixed
+- The ??? city's gate-bar fence no longer repeats a stray second post in every piece.
+
+---
+
 ## [2026-11-27] — The ??? city
 
 ### Fixed

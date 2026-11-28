@@ -25,7 +25,7 @@ BUILDINGS = list(range(1, 28)) + [37, 40, 41, 42, 43, 44, 45, 54]
 PLANES = {28: 'x', 29: 'x', 30: 'z', 31: 'x', 32: 'z', 33: 'x', 34: 'z', 35: 'x', 36: 'x', 38: 'z', 39: 'x', 75: 'x', 76: 'z'}
 POSTS = [28, 29, 30, 31, 34, 38]        # runs that end in a post at each side: joined post to post
 CORNERS = [32, 39]                      # walls with a visible depth: corrected like buildings
-CUT = {38: .757}                        # loose bracket cut off by city_shade.js (fraction of the width)
+CUT = {34: (0, .263), 38: (.757, 1)}    # columns cut off by city_shade.js (fractions of the width): p34 stray post, p38 bracket
 ISO = math.tan(math.radians(30))
 SHEET = (23.5, 25.5)                    # the sheet's usual ground angles: down-right, up-right
 
@@ -124,7 +124,7 @@ def main():
         im = Image.open(OUT / 'sign_unknown.png' if i == 33 else POI / ('SRC-%03d_MasterSheetA_Extract.png' % i)).convert('RGBA')
         w, h = im.size
         if i in CUT:
-            im.paste((0, 0, 0, 0), (int(CUT[i] * w), 0, w, h))
+            im.paste((0, 0, 0, 0), (int(CUT[i][0] * w), 0, int(round(CUT[i][1] * w)), h))
         arr = np.array(im)
         a1, a2 = ground_angles(arr)
         feet = None
