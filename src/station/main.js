@@ -11,6 +11,7 @@ import { createCritters } from './critters.js';
 import { createCompass } from './compass.js';
 import { createWeather } from './weather.js';
 import { createLighting } from './lighting.js';
+import { createDusk } from './dusk.js';
 import { createCompanion } from '../../assets/companion/companion.js';
 // THREE comes from the <script> tag in index.html (global).
 /* ===== DRIFTER — WNCORE STATION 01 (HD-2D field build) =====
@@ -87,6 +88,7 @@ function rs(){const w=innerWidth,h=innerHeight,v=VH=((h<560||(w<h&&ZM==1))?11:15
 addEventListener('resize',rs);rs();
 const hemi=new T.HemisphereLight(0x5a78a0,0x0c1014,.5);sc.add(hemi);
 const dl=new T.DirectionalLight(0x7090c0,.4);dl.position.set(-14,24,10);sc.add(dl);
+const DK=createDusk({T,hemi,dl});
 const WX=createWeather({T,sc,FXK}); // src/station/weather.js: state machine, rain, wind, lightning, sound
 const PL=(x,y,z,c,i,d)=>{const l=new T.PointLight(c,i,d,1.5);l.position.set(x,y,z);sc.add(l);return l};
 // ---------- 2. ASSETS ----------
@@ -103,7 +105,7 @@ function spr(key,x,z,h,o={}){
  const m=META[key],w=h*m.w/m.h,tree=/tree|sapling/.test(key),bld=key.startsWith('bld_');
  let ax=(tree||bld)?m.ax:.5;if(o.flip)ax=1-ax;
  const c=o.c!==undefined?o.c:.03;
- const mat=new T.SpriteMaterial({map:o.flip?ftex(key):stex(key),alphaTest:.4,transparent:false,fog:true});
+ const mat=new T.SpriteMaterial({map:o.flip?ftex(key):stex(key),alphaTest:.4,transparent:false,fog:true});mat.onBeforeCompile=DK.spriteShader(!!o.flip,IM[key]);
  const s=new T.Sprite(mat);s.scale.set(w,h,1);s.center.set(ax,c);s.position.set(x,0,z);s.frustumCulled=false;
  s.userData={x,z,w,h,c,ax,mat,key};sc.add(s);SPR.push(s);return s}
 function building(id){
@@ -213,6 +215,7 @@ try{await createStationFences({T,sc,SPR,circ,SH,FP})}catch(e){console.warn('stat
 const P={x:-6.5,z:13.5,vx:0,vz:0,dr:1,resting:false,swingStart:-99,swingUntil:-99},K={};
 const blank=document.createElement('canvas');blank.width=blank.height=1;const bt0=new T.CanvasTexture(blank);bt0.magFilter=bt0.minFilter=T.NearestFilter;
 const pmat=new T.MeshLambertMaterial({map:bt0,color:0xffffff,emissive:0x1c1814,emissiveIntensity:.55,alphaTest:.5,transparent:false,depthWrite:true,side:T.DoubleSide,fog:false}); // fog:false + neutral fill: the scene's teal fog/blue lights were washing the character cyan
+pmat.onBeforeCompile=DK.playerShader();
 const PH=2.215,PW=PH*64/96;
 const ps=new T.Mesh(new T.PlaneGeometry(PW,PH),pmat);ps.frustumCulled=false;ps.renderOrder=2;
 const psc=document.createElement('canvas');psc.width=psc.height=64;{const g=psc.getContext('2d'),gr=g.createRadialGradient(32,32,2,32,32,32);gr.addColorStop(0,'rgba(1,3,7,.52)');gr.addColorStop(.38,'rgba(1,3,7,.34)');gr.addColorStop(.72,'rgba(1,3,7,.12)');gr.addColorStop(1,'rgba(1,3,7,0)');g.fillStyle=gr;g.fillRect(0,0,64,64)}
@@ -487,21 +490,21 @@ function anim(dt,t){
  const outd=IN<0,asp0=innerWidth/innerHeight;
  // weather: state machine, rain, wind, lightning; then push the smoothed values into fog / lights
  WX.update(dt,t,{cx:cp.x,cz:cp.z,hw:VH*asp0,hh:VH,ppu:innerHeight*ren.getPixelRatio()/(2*VH),out:outd});
- if(outd){const Z=MAP==1?FST:MAP==2?CITY:null,base=Z?Z.fog:FOG,fd=Z?Z.fogD:FOGD0,w=WX.fogW;wxc.set(base);
-  wxc.r+=(WX.fogT[0]-wxc.r)*w+WX.flash*.22;wxc.g+=(WX.fogT[1]-wxc.g)*w+WX.flash*.25;wxc.b+=(WX.fogT[2]-wxc.b)*w+WX.flash*.3;
+ if(outd){const Z=MAP==1?FST:MAP==2?CITY:null,base=Z?Z.fog:DK.fogHex,fd=Z?Z.fogD:DK.fogD,w=WX.fogW,ft=DK.fogT(WX.fogT);wxc.set(base);
+  wxc.r+=(ft[0]-wxc.r)*w+WX.flash*.22;wxc.g+=(ft[1]-wxc.g)*w+WX.flash*.25;wxc.b+=(ft[2]-wxc.b)*w+WX.flash*.3;
   sc.fog.color.copy(wxc);sc.background.copy(wxc);sc.fog.density=fd*WX.fogM;
-  hemi.intensity=.5*WX.hemi+WX.flash*1.1;dl.intensity=.4*WX.sun+WX.flash*.6}
- else{hemi.intensity=.5;dl.intensity=.4}
- const wild=[AMB[0]*WX.amb[0]+WX.flash*.3,AMB[1]*WX.amb[1]+WX.flash*.3,AMB[2]*WX.amb[2]+WX.flash*.3];
+  hemi.intensity=DK.hemiI*WX.hemi+WX.flash*1.1;dl.intensity=DK.keyI*WX.sun+WX.flash*.6}
+ else{hemi.intensity=DK.hemiI;dl.intensity=DK.keyI}
+ const AM=DK.mixAmb(AMB),wild=[AM[0]*WX.amb[0]+WX.flash*.3,AM[1]*WX.amb[1]+WX.flash*.3,AM[2]*WX.amb[2]+WX.flash*.3];
  CRIT.forEach((c,i)=>{if(!c)return;c.setVisible(outd&&MAP==i);if(outd&&MAP==i)c.update(t,dt,{P,rain:WX.rain,hush:i==0&&wrong>.35,tint:wild})});
- INT.update(t);BI.update(t);if(MAP==1&&FST)FST.update(t);if(MAP==2&&CITY)CITY.update(t,dt,P);GRASS.update(t,MAP==0&&IN<0,P,WX.windNow,WX.amb[0]*(1-.12*WX.wet),WX.amb[1]*(1-.12*WX.wet),WX.amb[2]*(1-.12*WX.wet));
+ INT.update(t);BI.update(t);if(MAP==1&&FST)FST.update(t);if(MAP==2&&CITY)CITY.update(t,dt,P);GRASS.update(t,MAP==0&&IN<0,P,WX.windNow,WX.amb[0]*(1-.12*WX.wet)*DK.ratio[0],WX.amb[1]*(1-.12*WX.wet)*DK.ratio[1],WX.amb[2]*(1-.12*WX.wet)*DK.ratio[2]);
  if(aud.river)aud.river.gain.value=(muted||MAP!=1)?0:.02+.12*sm(20,2,FST.riverDist(P.x,P.z));
  // signal bursts + proximity to the mast
  const dm=IN>=0?6:dsq(P.x-bs.x,P.z-bs.z);let base=MAP==2&&IN<0?CITY.wrong(P):.1*sm(16,5,dm);burstT-=dt;if(burstT<0){burstU=.5;burstT=22+Math.random()*30}burstU=Math.max(0,burstU-dt);
  wrong+=((base+(burstU>0?.8*Math.min(1,burstU*3):0))-wrong)*Math.min(1,dt*8);pu.wrong.value=wrong;pu.time.value=t;
  const on=burstU>0?Math.random()<.4:Math.sin(t*2.4)>-.1;
  const bl=on?1+.1*Math.sin(t*20):.12;beaconLT.cur=on?1:.05;beaconL.intensity=on?1.6:.1;bs.beacon.material.opacity=on?1:.08;bs.beacon.scale.setScalar(on?2.6+Math.sin(t*3)*.3:1.2);
- LGT.update(t,dt,{vis:outd&&MAP==0,WX,bOn:on,ground:MAP==1&&FST&&FST.ground?FST.ground:MAP==2&&CITY?CITY.ground:ground,outer:MAP==0?OUTER:null});psh.material.opacity=.82*LGT.shade;
+ LGT.update(t,dt,{vis:outd&&MAP==0,k:DK.cur,WX,bOn:on,ground:MAP==1&&FST&&FST.ground?FST.ground:MAP==2&&CITY?CITY.ground:ground,outer:MAP==0?OUTER:null});psh.material.opacity=.82*LGT.shade;psh.material.color.setRGB(DK.shRGB[0],DK.shRGB[1],DK.shRGB[2]);DK.light(dl.position);
  for(const g of GL){if(g.s===bs.beacon)continue;g.s.material.opacity=g.I*(.85+.15*Math.sin(t*3+g.ph)+(Math.random()<.01?-.3:0))}
  if(aud.hum){const hv=.1+.9*sm(30,6,dm);aud.hum.gain.value=muted?0:.05*hv;aud.wind.gain.value=(.1+.04*Math.sin(t*.3))*WX.wa;if(open!='b')aud.stat.gain.value=burstU>0?.06:0;if(Math.random()<dt*.9)aud.cr()}
  const mv=Math.hypot(P.vx,P.vz);let an='idle',fr=0,bob=0;const run=K.ShiftLeft||K.ShiftRight;
@@ -523,7 +526,7 @@ function anim(dt,t){
   let r=AMB[0]*wam[0]+fl,g=AMB[1]*wam[1]+fl,b=AMB[2]*wam[2]+fl;
   for(const L of (u.flat?[]:LT)){const d=Math.hypot(u.x-L.x,u.z-L.z),R=L.R;if(d<R){const f=1-d/R,k=f*f*L.I*(L.dyn?L.cur:(L.fm||1))*.6;r+=L.cc[0]*k;g+=L.cc[1]*k;b+=L.cc[2]*k}}
   const dep=sm(-30,24,-(dx+dz)*.5)*0+0;u.mat.color.setRGB(Math.min(1.5,r),Math.min(1.5,g),Math.min(1.5,b))}
- for(const q of SHAFT)q.s.material.opacity=q.b*(.65+.35*Math.sin(t*.5+q.ph))*WX.shaft;ff.material.opacity=1-Math.min(1,WX.rain*1.6);
+ for(const q of SHAFT){const m=q.s.material;m.opacity=q.b*(.65+.35*Math.sin(t*.5+q.ph))*WX.shaft*(q.m?DK.shaftMul:1);if(q.m){m.color.copy(DK.shaftC);m.rotation=DK.shaftRot}}ff.material.color.copy(DK.moteC);ff.material.opacity=(1-Math.min(1,WX.rain*1.6))*(1-.3*DK.cur);
  // fireflies, mist
  for(let i=0;i<FFN;i++){const s=ffS[i];ffP[i*3]=cp.x+((s[3]+t*.4*s[2])%52)-26+Math.sin(t*s[2]+s[0])*2;ffP[i*3+1]=.8+Math.abs(Math.sin(t*s[2]*1.3+s[1]))*1.8+(i%5)*.25;ffP[i*3+2]=cp.z+((s[4]-t*.3*s[2]+520)%52)-26+Math.cos(t*s[2]+s[1])*2}
  ffG.attributes.position.needsUpdate=true;
