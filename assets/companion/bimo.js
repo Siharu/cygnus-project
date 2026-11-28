@@ -69,9 +69,6 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
   // and reuse it for run, preventing zoom/popping on direction or gait changes.
   const reference = frames.row[1][5] || frames.row[1][0] || frames.walk[4][0];
   const rowUnit = BODY_HEIGHT / Math.max(1, reference.boxH);
-  const moveUnits = directions.map((_, di) =>
-    BODY_HEIGHT / Math.max(1, median(frames.walk[di].map(f => f.boxH)))
-  );
 
   const c = { x: 0, z: 0 };
   const tmp = { x: 0, z: 0 };
@@ -98,7 +95,12 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
     else if (next === 'alert') actDur = 0.72;
     else if (next === 'trot') actDur = 1.35 + rnd() * 0.45;
     else if (next === 'burst') actDur = 1.25;
-    if (next === 'burst') { const sign = rnd() < .5 ? -1 : 1; burstX = sign; burstZ = -sign; dir = sign > 0 ? 2 : 6; }
+    if (next === 'burst' || next === 'trot') {
+      const sign = rnd() < .5 ? -1 : 1;
+      burstX = sign * Math.SQRT1_2;
+      burstZ = -sign * Math.SQRT1_2;
+      dir = sign > 0 ? 2 : 6;
+    }
     if (next !== 'look') lastAct = next;
   }
 
@@ -247,7 +249,7 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
       : d > IDLE_GAP;
 
     let hop = 0, breathe = 1, pick = null;
-    if (wantsMove && (!ctx.resting) && act !== 'alert' && act !== 'wake' && act !== 'settle' && act !== 'burst') {
+    if (wantsMove && (!ctx.resting) && act !== 'alert' && act !== 'wake' && act !== 'settle' && act !== 'burst' && act !== 'trot') {
       mode = 'move';
       idleClock = 0;
       const ux0 = d > 1e-4 ? dx / d : 0;
@@ -288,7 +290,10 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
       // All eight direction folders are used for both gaits, including left/right.
       // The original profile atlas rows are preserved for their separate trot/burst behaviours.
       const set = running ? frames.run : frames.walk;
-      pick = { f: set[dir][Math.floor(phase) % 8], mirror: false, unit: moveUnits[dir] };
+      const f = set[dir][Math.floor(phase) % 8];
+      // Per-frame alpha height normalization keeps Bimo's visible body size stable
+      // across directions and between the walk and run sheets.
+      pick = { f, mirror: false, unit: BODY_HEIGHT / Math.max(1, f.boxH) };
       hop = Math.abs(Math.sin(phase * Math.PI / 4)) * (running ? 0.035 : 0.018);
     } else {
       mode = 'idle';
@@ -336,7 +341,10 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
           // Use all six original side-walk poses, including the final front-facing check-in.
           const R = frames.row[2];
           const i = Math.min(R.length - 1, Math.floor(actT / actDur * R.length));
-          pick = { f: R[i], mirror: sideMirror, unit: rowUnit };
+          speed = .72 * Math.max(0, 1 - actT / actDur);
+          dir = burstX > 0 ? 2 : 6;
+          step(ctx, burstX, burstZ, dt);
+          pick = { f: R[i], mirror: burstX < 0, unit: rowUnit };
           if (actT > actDur) nextIdle(ctx);
         } else if (act === 'burst') {
           actT += dt;
