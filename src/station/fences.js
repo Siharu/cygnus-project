@@ -11,13 +11,14 @@ import { retouch, straighten } from './city_shade.js';
 
 // [x0, z0, x1, z1]. The checkpoint opening is x=-22.8..1.25 at z=12.8.
 // Nearest building clearances: depot 3.5u (west), water tower 4.1u (north),
-// ruined building 4.5u (east), checkpoint booth 1.1u (south).
+// cottage 2.5u (east). The far-east ruin remains outside the base enclosure;
+// the checkpoint booth is outside the south-west run's x span by over 2u.
 export const BASE_FENCE_RUNS = [
-  [-42.5, -36.5,  40.5, -36.5],  // north / rear boundary
-  [ 40.5, -36.5,  40.5,  12.8],  // east boundary
+  [-42.5, -36.5,  21.5, -36.5],  // north / rear boundary
+  [ 21.5, -36.5,  21.5,  12.8],  // east boundary
   [-42.5, -36.5, -42.5,  12.8],  // west boundary
   [-42.5,  12.8, -22.8,  12.8],  // south-west, ending before the checkpoint booth
-  [  1.25, 12.8,  40.5,  12.8]   // south-east, starting beyond the barrier jersey
+  [  1.25, 12.8,  21.5,  12.8]   // south-east, starting beyond the barrier jersey
 ];
 
 export const RUNS = BASE_FENCE_RUNS;
