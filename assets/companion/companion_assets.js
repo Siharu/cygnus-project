@@ -3,8 +3,8 @@
 // The complete source pack is preserved at assets/companion/SHU_BIMO_sprite_pack/.
 // Runtime frames are loaded directly from its shu/ folder; no ZIP fetch or JSZip CDN.
 //
-//   walk/<dir>/frame_00..07.png   8-direction walk cycle   (144x160 canvas, feet on y=152)
-//   run/<dir>/frame_00..07.png    8-direction run cycle    (same canvas)
+//   walk/<dir>/frame_00..07.png   8-direction walk cycle   (144x160 canvas, per-frame foot anchor)
+//   run/<dir>/frame_00..07.png    8-direction run cycle    (same canvas, per-frame foot anchor)
 //   previous_atlas/frames/row_01..09/frame_01..N.png   hand-drawn poses, cropped individually
 //
 // Returns  { walk[dir][0..7], run[dir][0..7], row[1..9][0..n-1] } where each frame is
