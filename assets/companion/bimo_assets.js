@@ -90,15 +90,14 @@ export async function loadBimoFrames(T, onProgress = () => {}) {
     await Promise.all(jobs.slice(start, start + CHUNK).map(async job => {
       const source = await loadImage(ROOT + job.path);
       const frame = makeFrame(T, source);
-      if (job.kind === 'row') frames.row[job.group].push(frame);
-      else frames[job.kind][job.group].push(frame);
+      if (job.kind === 'row') frames.row[job.group][job.index] = frame;
+      else frames[job.kind][job.group][job.index] = frame;
       completed++;
     }));
     onProgress(completed / jobs.length, 'Bimo: ' + completed + '/' + jobs.length);
     await new Promise(resolve => setTimeout(resolve, 0));
   }
 
-  // Image loading is concurrent, so sort each row back into the exact numeric order.
-  for (const kind of ['walk', 'run']) for (const group of frames[kind]) group.sort((a, b) => a.index - b.index);
+  // Frames are written into their numeric slots, so completion order cannot shuffle a cycle.
   return frames;
 }
