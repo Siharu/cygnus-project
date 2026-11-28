@@ -8,9 +8,9 @@
 //      BIMO.update(t, dt, ctx) once per frame after player movement
 //      BIMO.pet(P) when the player interacts nearby
 //
-// Scale is derived from visible alpha bounds, not transparent 224x176 canvases. The
-// directional frames are normalized per direction to the standing reference height,
-// so Bimo stays the same size when turning, running, sniffing, sitting or lying down.
+// Scale is derived from visible alpha bounds, not transparent 224x176 canvases. Every
+// directional movement frame is normalized to the same visible body height; original
+// pose rows keep their natural crouch/sit/lie proportions.
 
 import { loadBimoFrames } from './bimo_assets.js';
 
@@ -21,14 +21,9 @@ const IDLE_GAP = 1.55;
 const MAX_SPEED = 7.8;
 const RUN_ON = 5.0, RUN_OFF = 4.2;
 
-const directions = ['up', 'up_right', 'right', 'down_right', 'down', 'down_left', 'left', 'up_left'];
 const dirOf = (dx, dz) => {
   const sx = dx - dz, sy = -(dx + dz) * 0.577;
   return (Math.round(Math.atan2(sx, sy) / (Math.PI / 4)) + 8) % 8;
-};
-const median = values => {
-  const a = values.filter(Number.isFinite).sort((x, y) => x - y);
-  return a.length ? a[Math.floor(a.length / 2)] : 1;
 };
 
 export async function createBimo(opts) {
@@ -64,9 +59,8 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
   shadow.visible = false;
   sc.add(shadow, mesh);
 
-  // Use an upright front-facing source pose as the atlas reference. For the generated
-  // directional sheets, compute one scale per direction from the median walk silhouette
-  // and reuse it for run, preventing zoom/popping on direction or gait changes.
+  // Use an upright front-facing source pose as the reference for the original atlas
+  // actions. Directional movement frames receive their own alpha-height scale below.
   const reference = frames.row[1][5] || frames.row[1][0] || frames.walk[4][0];
   const rowUnit = BODY_HEIGHT / Math.max(1, reference.boxH);
 
@@ -324,7 +318,7 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
         } else if (act === 'look') {
           actT += dt;
           const R = frames.row[1];
-          pick = { f: R[Math.min(R.length - 1, Math.floor(actT / actDur * R.length))], mirror: false, unit: rowUnit };
+          pick = { f: R[Math.min(R.length - 1, Math.floor(actT / actDur * R.length))], mirror: sideMirror, unit: rowUnit };
           if (actT > actDur) nextIdle(ctx);
         } else if (act === 'sniff') {
           actT += dt;
