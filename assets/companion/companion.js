@@ -32,7 +32,7 @@ const RADIUS = 0.28;      // collision radius
 const FOLLOW_GAP = 1.5;   // she aims to stop about this far from you
 const START_GAP = 2.9;    // you are this far away and standing still: she comes over
 const TRAIL_GAP = 2.2;    // you are walking and she is this far behind: she follows
-const MAX_SPEED = 8.2;    // a touch faster than the player's run (7.2) so she can catch up
+const MAX_SPEED = 7.2;    // never outrun the player's maximum run speed
 const RUN_ON = 5.7, RUN_OFF = 4.9; // speed thresholds for the run cycle (hysteresis)
 
 const SIT_ROWS = [4, 1, 7, 8, 2];            // the sitting variants
@@ -129,6 +129,24 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
     setAct('startle');
   }
 
+  // Called when the player presses E beside Shu. She stops, turns toward them and settles.
+  // This uses the existing sitting poses; there is no separate petting animation in the source pack.
+  function pet(P) {
+    const dx = P.x - c.x, dz = P.z - c.z;
+    if (Math.hypot(dx, dz) > 2.15) return false;
+    faceRight = playerRight(P);
+    viewDir = dir = dirOf(dx, dz);
+    turnAcc = 0;
+    detour = null;
+    blockedT = stuckT = 0;
+    sp = 0;
+    running = false;
+    setAct('sit');
+    actDur = 3.8;
+    idleT = 0;
+    return true;
+  }
+
   // one collision-aware step; returns how far we actually got along (ux,uz)
   function step(ctx, ux, uz, speed, dt) {
     tmp.x = c.x + ux * speed * dt; tmp.z = c.z + uz * speed * dt;
@@ -194,7 +212,7 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
 
       if (sp > 0.4) { hx += (ux - hx) * Math.min(1, dt * 10); hz += (uz - hz) * Math.min(1, dt * 10); dir = dirOf(hx, hz); }
       if (!running && sp > RUN_ON) running = true; else if (running && sp < RUN_OFF) running = false;
-      phase += dt * (2.6 + sp * 1.35);
+      phase += dt * (running ? 12 : 8.5); // steady gait cadence: 12 fps run, 8.5 fps walk
       pick = { f: (running ? frames.run : frames.walk)[dir][Math.floor(phase) % 8], mirror: false };
 
       if (!pMoving && d < TRAIL_GAP + 0.1 && sp < 0.5) { viewDir = dir; turnAcc = 0; setAct('sit'); actDur = 3 + rnd() * 2; }
@@ -278,6 +296,7 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
   return {
     update,
     mesh,
+    pet,
     get state() { return { mode, act, x: c.x, z: c.z, dir, running, sp }; },
   };
 }
