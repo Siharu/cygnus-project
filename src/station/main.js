@@ -70,19 +70,25 @@ const ren=new T.WebGLRenderer({antialias:false});
 ren.setPixelRatio(Math.min(devicePixelRatio,1.5));document.body.prepend(ren.domElement);
 const FOG=0x182836,sc=new T.Scene();sc.background=new T.Color(FOG);sc.fog=new T.FogExp2(FOG,.0165);
 const cam=new T.OrthographicCamera(-1,1,1,-1,.1,400),OFF=new T.Vector3(22,22,22);
-const rt=new T.WebGLMultisampleRenderTarget(4,4),pS=new T.Scene(),pC=new T.OrthographicCamera(-1,1,1,-1,0,1);
-const pu={t:{value:rt.texture},px:{value:new T.Vector2(1,1)},time:{value:0},wrong:{value:0},kb:{value:FXK.kb},kg:{value:FXK.kg},kn:{value:FXK.kn},kt:{value:FXK.kt}};
-pS.add(new T.Mesh(new T.PlaneGeometry(2,2),new T.ShaderMaterial({uniforms:pu,vertexShader:'varying vec2 u;void main(){u=uv;gl_Position=vec4(position.xy,0.,1.);}',fragmentShader:`uniform sampler2D t;uniform vec2 px;uniform float time,wrong,kb,kg,kn,kt;varying vec2 u;
-float h1(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
-void main(){vec2 uv=u;float ln=floor(u.y*70.);float tear=step(.975,h1(vec2(ln,floor(time*14.))))*wrong;uv.x+=tear*.03*(h1(vec2(ln,floor(time*14.)+3.))-.5);
-float b=smoothstep(.16,.5,abs(u.y-.5))*kt;vec3 c=vec3(0.),l=vec3(0.);
-for(int i=-2;i<=2;i++)for(int j=-2;j<=2;j++){vec2 o=vec2(float(i),float(j));c+=texture2D(t,uv+o*px*b).rgb;l+=max(texture2D(t,uv+o*px*4.).rgb-.42,0.);}
-c/=25.;l/=25.;c+=l*kb;
-vec3 wg=vec3(0.);for(int k=0;k<8;k++){float a=float(k)*.7854;vec2 d=vec2(cos(a),sin(a));wg+=max(texture2D(t,uv+d*px*18.).rgb-.3,0.)+max(texture2D(t,uv+d*px*40.).rgb-.3,0.);}c+=wg/16.*kg*vec3(1.,.95,.9);
-float ca=(.0002+wrong*.004)*(.4+length(u-.5)*2.);c.r=mix(c.r,texture2D(t,uv+vec2(ca,0.)).r,.8);c.b=mix(c.b,texture2D(t,uv-vec2(ca,0.)).b,.8);
-c*=.4+.6*(1.-smoothstep(.35,.95,length(u-.5)*1.25));
-float lu=dot(c,vec3(.3,.59,.11));c=mix(vec3(lu),c,.92-wrong*.4);c+=vec3(-.012,.014,.026)*(1.-lu)*2.;c+=vec3(.03,.012,-.01)*smoothstep(.45,1.,lu);c=c*.93+vec3(.028,.042,.052);
-c+=(h1(u*vec2(1731.,911.)+time)-.5)*kn;c+=wrong*.04*h1(vec2(ln,time));gl_FragColor=vec4(c,1.);}`})));
+// A depth texture is required by the atmospheric ray integration below. Multisampled
+// render targets in this Three.js revision cannot provide a usable depth texture.
+const rt=new T.WebGLRenderTarget(4,4,{minFilter:T.LinearFilter,magFilter:T.LinearFilter,format:T.RGBAFormat,depthBuffer:true,stencilBuffer:false});
+rt.depthTexture=new T.DepthTexture(4,4,T.UnsignedIntType);
+rt.depthTexture.minFilter=rt.depthTexture.magFilter=T.NearestFilter;
+const pS=new T.Scene(),pC=new T.OrthographicCamera(-1,1,1,-1,0,1);
+const pu={
+ t:{value:rt.texture},depthTex:{value:rt.depthTexture},
+ invProjection:{value:cam.projectionMatrixInverse},cameraWorld:{value:cam.matrixWorld},cameraPos:{value:new T.Vector3()},
+ fogColor:{value:new T.Color(FOG)},fogDensity:{value:.0165},scatter:{value:0},rays:{value:1},
+ sunUV:{value:new T.Vector2(.6,.7)},atmTime:{value:0},kd:{value:0},
+ px:{value:new T.Vector2(1,1)},time:{value:0},wrong:{value:0},
+ kb:{value:FXK.kb},kg:{value:FXK.kg},kn:{value:FXK.kn},kt:{value:FXK.kt}
+};
+pS.add(new T.Mesh(new T.PlaneGeometry(2,2),new T.ShaderMaterial({
+ uniforms:pu,
+ vertexShader:'varying vec2 u;void main(){u=uv;gl_Position=vec4(position.xy,0.,1.);}',
+ fragmentShader:"uniform sampler2D t;\nuniform sampler2D depthTex;\nuniform vec2 px;\nuniform vec2 sunUV;\nuniform mat4 invProjection;\nuniform mat4 cameraWorld;\nuniform vec3 cameraPos;\nuniform vec3 fogColor;\nuniform float time,wrong,kb,kg,kn,kt,kd;\nuniform float fogDensity,scatter,rays,atmTime;\nvarying vec2 u;\nfloat h1(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}\nfloat h3(vec3 p){return fract(sin(dot(p,vec3(127.1,311.7,74.7)))*43758.5453);}\nvoid main(){\n vec2 uv=u;\n float ln=floor(u.y*70.);\n float tear=step(.975,h1(vec2(ln,floor(time*14.))))*wrong;\n uv.x+=tear*.03*(h1(vec2(ln,floor(time*14.)+3.))-.5);\n float b=smoothstep(.16,.5,abs(u.y-.5))*kt;\n vec3 c=vec3(0.),l=vec3(0.);\n float bt=.42-.12*kd;\n if(b>.03){\n  for(int i=-2;i<=2;i++)for(int j=-2;j<=2;j++){\n   vec2 o=vec2(float(i),float(j));\n   c+=texture2D(t,uv+o*px*b).rgb;\n  }\n }else{\n  c=texture2D(t,uv).rgb*25.;\n }\n for(int i=-2;i<=2;i++)for(int j=-2;j<=2;j++){\n  vec2 o=vec2(float(i),float(j));\n  l+=max(texture2D(t,uv+o*px*4.).rgb-bt,0.);\n }\n c/=25.;\n l/=25.;\n c+=l*kb;\n vec3 wg=vec3(0.);\n for(int k=0;k<8;k++){\n  float a=float(k)*.7854;\n  vec2 d=vec2(cos(a),sin(a));\n  wg+=max(texture2D(t,uv+d*px*18.).rgb-.3,0.)+max(texture2D(t,uv+d*px*40.).rgb-.3,0.);\n }\n c+=wg/16.*kg*vec3(1.,.95,.9);\n float ca=(.0002+wrong*.004)*(.4+length(u-.5)*2.);\n c.r=mix(c.r,texture2D(t,uv+vec2(ca,0.)).r,.8);\n c.b=mix(c.b,texture2D(t,uv-vec2(ca,0.)).b,.8);\n c*=.4+.6*(1.-smoothstep(.35,.95,length(u-.5)*1.25));\n float lu=dot(c,vec3(.3,.59,.11));\n c=mix(vec3(lu),c,.92+.22*kd-wrong*.4);\n c+=mix(vec3(-.012,.014,.026),vec3(.03,-.006,.05),kd)*(1.-lu)*2.;\n c+=mix(vec3(.03,.012,-.01),vec3(.075,.034,-.022),kd)*smoothstep(.45-.12*kd,1.,lu);\n c=c*.93+mix(vec3(.028,.042,.052),vec3(.045,.026,.065),kd);\n c+=vec3(1.,.6,.3)*pow(max(0.,1.-length((uv-vec2(.9,.92))*vec2(1.,.75))*1.1),2.2)*.2*kd;\n\n // Depth-aware atmospheric integration along the orthographic camera ray.\n float sceneDepth=texture2D(depthTex,uv).r;\n float surfaceMask=1.-smoothstep(.9995,.99999,sceneDepth);\n vec4 nearView=invProjection*vec4(uv*2.-1.,-1.,1.);\n nearView/=max(nearView.w,.00001);\n vec4 endView=invProjection*vec4(uv*2.-1.,sceneDepth*2.-1.,1.);\n endView/=max(endView.w,.00001);\n vec3 rayStart=(cameraWorld*vec4(nearView.xyz,1.)).xyz;\n vec3 rayEnd=(cameraWorld*vec4(endView.xyz,1.)).xyz;\n vec3 rayVec=rayEnd-rayStart;\n float rawLength=length(rayVec);\n float rayLength=min(rawLength,75.);\n vec3 limitedRay=rayVec*min(1.,75./max(rawLength,.0001));\n float densitySum=0.;\n for(int s=0;s<8;s++){\n  float f=(float(s)+.5)/8.;\n  vec3 p=rayStart+limitedRay*f;\n  float n=h3(floor(p*.24+vec3(atmTime*.012,0.,atmTime*.008)));\n  float wave=.5+.5*sin(p.x*.085+p.z*.07+atmTime*.018)*cos(p.z*.11-p.y*.16-atmTime*.012);\n  float groundHaze=1.-smoothstep(1.5,13.,p.y);\n  densitySum+=(.45+.55*n)*(.72+.28*wave)*(.36+.64*groundHaze);\n }\n float mediumDensity=.0009+fogDensity*.08+scatter*.0022;\n float volumeFog=(1.-exp(-rayLength*mediumDensity*(densitySum/8.)))*surfaceMask;\n volumeFog*=.32+scatter*.45;\n volumeFog=clamp(volumeFog,0.,.18);\n c=mix(c,fogColor,volumeFog);\n\n // Screen-space light shafts: depth-one pixels are sky openings; foreground depth masks the receiver.\n vec2 lightUV=clamp(vec2(.5)+normalize(sunUV)*.62,vec2(0.),vec2(1.));\n float skySamples=0.;\n for(int s=0;s<12;s++){\n  float f=(float(s)+.5)/12.;\n  vec2 sampleUV=mix(uv,lightUV,f);\n  float sampleDepth=texture2D(depthTex,sampleUV).r;\n  float skyGap=smoothstep(.992,.9998,sampleDepth);\n  skySamples+=skyGap*(1.-.38*f);\n }\n float receiver=1.-smoothstep(.992,.9995,sceneDepth);\n float shaftAmount=(skySamples/12.)*(.025+scatter*.055)*rays*receiver;\n vec3 shaftTint=mix(vec3(.52,.68,.94),vec3(1.,.68,.42),kd);\n c+=shaftTint*shaftAmount*(.92+.08*sin(atmTime*.7+uv.x*17.));\n\n c+=(h1(u*vec2(1731.,911.)+time)-.5)*kn;\n c+=wrong*.04*h1(vec2(ln,time));\n gl_FragColor=vec4(c,1.);\n}"
+})));
 let VH=15,ZM=1; // ZM: view zoom (tighter inside the tower). rs() also zooms in on phones (landscape and portrait)
 function rs(){const w=innerWidth,h=innerHeight,v=VH=((h<560||(w<h&&ZM==1))?11:15)*ZM,a=w/h;cam.left=-v*a;cam.right=v*a;cam.top=v;cam.bottom=-v;cam.updateProjectionMatrix();ren.setSize(w,h);const q=ren.getPixelRatio();rt.setSize(w*q,h*q);pu.px.value.set(1/(w*q),1/(h*q))}
 addEventListener('resize',rs);rs();
@@ -277,7 +283,7 @@ const ff=new T.Points(ffG,new T.PointsMaterial({color:0xd8ff90,size:3,sizeAttenu
 const mistTex=(()=>{const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d'),gr=g.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,'rgba(170,190,205,.9)');gr.addColorStop(.5,'rgba(150,170,190,.35)');gr.addColorStop(1,'rgba(140,160,180,0)');g.fillStyle=gr;g.fillRect(0,0,128,128);return new T.CanvasTexture(c)})();
 const MIST=[...Array(FXK.mist)].map(()=>{const s=new T.Sprite(new T.SpriteMaterial({map:mistTex,transparent:true,opacity:.09+Math.random()*.09,depthWrite:false,fog:false}));const z=16+Math.random()*16;s.scale.set(z*1.7,z*.6,1);s.frustumCulled=false;sc.add(s);return {s,o:s.material.opacity,x:Math.random()*80-40,z:Math.random()*80-40,v:.15+Math.random()*.25,y:.8+Math.random()*5}});
 const shaftTex=(()=>{const c=document.createElement('canvas');c.width=64;c.height=256;const g=c.getContext('2d');const gh=g.createLinearGradient(0,0,64,0);gh.addColorStop(0,'rgba(255,255,255,0)');gh.addColorStop(.5,'rgba(255,255,255,1)');gh.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gh;g.fillRect(0,0,64,256);g.globalCompositeOperation='destination-in';const gv=g.createLinearGradient(0,0,0,256);gv.addColorStop(0,'rgba(0,0,0,0)');gv.addColorStop(.25,'rgba(0,0,0,1)');gv.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gv;g.fillRect(0,0,64,256);return new T.CanvasTexture(c)})();
-const SHAFT=[];{const r=mulberry(909);for(let i=0;i<FXK.shaft;i++){const a=r()*6.28,d=22+r()*22,m=new T.SpriteMaterial({map:shaftTex,color:0xaac8e0,blending:T.AdditiveBlending,transparent:true,depthWrite:false,opacity:.05,fog:false});m.rotation=-.5;const s=new T.Sprite(m);const w=2+r()*4;s.scale.set(w,22+r()*8,1);s.center.set(.5,.2);s.position.set(-10+Math.cos(a)*d,0,-8+Math.sin(a)*d);s.frustumCulled=false;sc.add(s);SHAFT.push({s,ph:r()*9,b:.045+r()*.05})}}
+const SHAFT=[];{const r=mulberry(909);for(let i=0;i<FXK.shaft;i++){const a=r()*6.28,d=22+r()*22,m=new T.SpriteMaterial({map:shaftTex,color:0xaac8e0,blending:T.AdditiveBlending,transparent:true,depthWrite:false,opacity:.05,fog:false});m.rotation=-.5;const s=new T.Sprite(m);const w=2+r()*4;s.scale.set(w,22+r()*8,1);s.center.set(.5,.2);s.position.set(-10+Math.cos(a)*d,0,-8+Math.sin(a)*d);s.frustumCulled=false;sc.add(s);SHAFT.push({s,ph:r()*9,b:.045+r()*.05,m:1})}}
 // grassland + loose animated tufts (src/station/grassland.js); built here because it bakes in the static lights
 const GRASS=createGrass({T,sc,IM,LT,AMB,OFF,rnd:mulberry(0x6A55),noise:fbm,clear:(x,z)=>{const w=zoneW(x,z,0);return w[0]+w[1]+w[2]<=.12&&free(x,z,.4,.2)}});
 // audio (procedural, starts on first click)
@@ -490,6 +496,7 @@ function anim(dt,t){
  const outd=IN<0,asp0=innerWidth/innerHeight;
  // weather: state machine, rain, wind, lightning; then push the smoothed values into fog / lights
  WX.update(dt,t,{cx:cp.x,cz:cp.z,hw:VH*asp0,hh:VH,ppu:innerHeight*ren.getPixelRatio()/(2*VH),out:outd});
+ DK.update(outd&&MAP==0,WX);pu.kd.value=DK.cur;
  if(outd){const Z=MAP==1?FST:MAP==2?CITY:null,base=Z?Z.fog:DK.fogHex,fd=Z?Z.fogD:DK.fogD,w=WX.fogW,ft=DK.fogT(WX.fogT);wxc.set(base);
   wxc.r+=(ft[0]-wxc.r)*w+WX.flash*.22;wxc.g+=(ft[1]-wxc.g)*w+WX.flash*.25;wxc.b+=(ft[2]-wxc.b)*w+WX.flash*.3;
   sc.fog.color.copy(wxc);sc.background.copy(wxc);sc.fog.density=fd*WX.fogM;
@@ -504,7 +511,7 @@ function anim(dt,t){
  wrong+=((base+(burstU>0?.8*Math.min(1,burstU*3):0))-wrong)*Math.min(1,dt*8);pu.wrong.value=wrong;pu.time.value=t;
  const on=burstU>0?Math.random()<.4:Math.sin(t*2.4)>-.1;
  const bl=on?1+.1*Math.sin(t*20):.12;beaconLT.cur=on?1:.05;beaconL.intensity=on?1.6:.1;bs.beacon.material.opacity=on?1:.08;bs.beacon.scale.setScalar(on?2.6+Math.sin(t*3)*.3:1.2);
- LGT.update(t,dt,{vis:outd&&MAP==0,k:DK.cur,WX,bOn:on,ground:MAP==1&&FST&&FST.ground?FST.ground:MAP==2&&CITY?CITY.ground:ground,outer:MAP==0?OUTER:null});psh.material.opacity=.82*LGT.shade;psh.material.color.setRGB(DK.shRGB[0],DK.shRGB[1],DK.shRGB[2]);DK.light(dl.position);
+ LGT.update(t,dt,{vis:outd&&MAP==0,k:DK.cur,WX,bOn:on,ground:MAP==1&&FST&&FST.ground?FST.ground:MAP==2&&CITY?CITY.ground:ground,outer:MAP==0?OUTER:null});psh.material.opacity=.82*LGT.shade;psh.material.color.setRGB(DK.shRGB[0],DK.shRGB[1],DK.shRGB[2]);DK.light(dl.position);pu.sunUV.value.copy(DK.sunUV);pu.fogColor.value.copy(sc.fog.color);pu.fogDensity.value=outd&&MAP==0?sc.fog.density:0;pu.scatter.value=outd&&MAP==0?WX.scatter:0;pu.rays.value=outd&&MAP==0?WX.shaft:0;pu.atmTime.value=t;
  for(const g of GL){if(g.s===bs.beacon)continue;g.s.material.opacity=g.I*(.85+.15*Math.sin(t*3+g.ph)+(Math.random()<.01?-.3:0))}
  if(aud.hum){const hv=.1+.9*sm(30,6,dm);aud.hum.gain.value=muted?0:.05*hv;aud.wind.gain.value=(.1+.04*Math.sin(t*.3))*WX.wa;if(open!='b')aud.stat.gain.value=burstU>0?.06:0;if(Math.random()<dt*.9)aud.cr()}
  const mv=Math.hypot(P.vx,P.vz);let an='idle',fr=0,bob=0;const run=K.ShiftLeft||K.ShiftRight;
@@ -514,7 +521,7 @@ function anim(dt,t){
  const IS=IN>=0?1.4:1;ps.scale.setScalar(IS);const EL=MAP==1&&FST?FST.elev(P.x,P.z):0;ps.position.set(P.x,PH*IS/2+bob+EL,P.z);psh.position.set(P.x,.035+EL,P.z);psh.scale.set((1+Math.min(.18,mv*.025))*IS,IS,1);pL.position.set(P.x,2,P.z);
  // camera: follow + headroom, frame the mast near the station
  const fz=sm(24,10,dm)*3.2/.816+BIAS;const tx=IN>=0?IX-ICX:P.x-fz,tz=IN>=0?IZ-ICZ:P.z-fz;cp.x+=(tx-cp.x)*Math.min(1,dt*4);cp.z+=(tz-cp.z)*Math.min(1,dt*4);
- cam.position.set(cp.x+OFF.x,OFF.y,cp.z+OFF.z);cam.lookAt(cp.x,0,cp.z);ps.quaternion.copy(cam.quaternion);
+ cam.position.set(cp.x+OFF.x,OFF.y,cp.z+OFF.z);cam.lookAt(cp.x,0,cp.z);cam.updateMatrixWorld(true);pu.cameraPos.value.copy(cam.position);ps.quaternion.copy(cam.quaternion);
  if(SHU){SHUC.P=P;SHUC.mv=mv;SHUC.swing=P.swingUntil>clock;SHUC.resting=P.resting;SHUC.zone=IN>=0?'i'+IN+':'+BQ:'m'+MAP;SHUC.col=col;SHUC.clamp=shuClamp;SHUC.elev=shuElev;SHUC.scale=IS;SHUC.shade=LGT.shade;SHUC.quat=cam.quaternion;SHU.update(t,dt,SHUC)}
  NAV.update(P,{hud:st==1,mark:!busy&&!open});
  // cull + tint sprites

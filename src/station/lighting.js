@@ -11,7 +11,7 @@
 
 import { NIGHT as SN, DUSK as SD } from './dusk.js';
 
-const U = 6, WORLD = 98, HALF = 49;       // shadow layer: pixels per world unit, ground size
+const U = 12, WORLD = 98, HALF = 49;       // shadow layer: pixels per world unit, ground size
 const A0 = .12, AMP = .5, PERIOD = 720;   // moon azimuth: centre, swing (radians) and period (seconds)
 const A0D = 2.66, AMPD = .18;             // dusk: low sun in the upper right of the screen, barely drifting
 let SHADOW = SN.shadow.join(','), LK = 1; // shadow colour (follows the dusk blend) and shadow-length factor
@@ -39,16 +39,19 @@ export function createLighting({ T, sc, SH, LT, glowTex, beaconPos, dl }) {
     const dx = Math.cos(a), dz = Math.sin(a);
     for (const s of SH) {
       const ht = s.ht || 3;
-      if (s.rect) {                                    // building: footprint swept along the shadow direction
-        const len = Math.min(11 * LK, ht * .34 * LK), steps = 9;
-        for (let i = 0; i <= steps; i++) {
-          const f = i / steps, taper = 1 - .35 * f, al = s.a * .15 * (1 - f * .8);
-          for (const kk of [1.18, 1, .82]) {
-            g.fillStyle = `rgba(${SHADOW},${al / 2})`;
-            const hx = s.rx * taper * kk, hz = s.rz * taper * kk;
-            g.fillRect(px(s.x + dx * len * f - hx), px(s.z + dz * len * f - hz), hx * 2 * U, hz * 2 * U);
-          }
-        }
+      if (s.rect) {                                    // building: soft swept footprint with a feathered penumbra
+        const len = Math.min(11 * LK, ht * .34 * LK), ox = dx * len, oz = dz * len;
+        const corners = [[-s.rx,-s.rz],[s.rx,-s.rz],[s.rx,s.rz],[-s.rx,s.rz]];
+        const grad = g.createLinearGradient(px(s.x),px(s.z),px(s.x+ox),px(s.z+oz));
+        grad.addColorStop(0,`rgba(${SHADOW},${s.a*.34})`);
+        grad.addColorStop(.42,`rgba(${SHADOW},${s.a*.22})`);
+        grad.addColorStop(1,`rgba(${SHADOW},0)`);
+        g.save();g.fillStyle=grad;g.shadowColor=`rgba(${SHADOW},${s.a*.24})`;g.shadowBlur=U*.9;
+        g.beginPath();
+        corners.forEach((p,i)=>{const x=px(s.x+p[0]),z=px(s.z+p[1]);if(i)g.lineTo(x,z);else g.moveTo(x,z)});
+        for(let i=3;i>=0;i--){const p=corners[i];g.lineTo(px(s.x+ox+p[0]*.72),px(s.z+oz+p[1]*.72))}
+        g.closePath();g.fill();g.restore();
+        blob(s.x,s.z,Math.max(s.rx*.8,.6),Math.max(s.rz*.7,.5),0,s.a*.52,0);
       } else {                                         // tree / bush / rock: stretched blob + contact shadow
         const len = Math.min(10 * LK, ht * .3 * LK), along = Math.max(s.rx * 1.3, len * .75), across = Math.max(s.rx * .8, .45);
         blob(s.x + dx * len * .55, s.z + dz * len * .55, along, across, a, s.a * .8, 0);
