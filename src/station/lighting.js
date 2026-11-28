@@ -9,9 +9,12 @@
 //
 // ctx = { T, sc, SH, LT, glowTex, beaconPos, dl }   SH entries: { x, z, rx, rz, a, ht, rect }
 
+import { NIGHT as SN, DUSK as SD } from './dusk.js';
+
 const U = 6, WORLD = 98, HALF = 49;       // shadow layer: pixels per world unit, ground size
 const A0 = .12, AMP = .5, PERIOD = 720;   // moon azimuth: centre, swing (radians) and period (seconds)
-const SHADOW = '3,6,10';
+const A0D = 2.66, AMPD = .18;             // dusk: low sun in the upper right of the screen, barely drifting
+let SHADOW = SN.shadow.join(','), LK = 1; // shadow colour (follows the dusk blend) and shadow-length factor
 
 export function createLighting({ T, sc, SH, LT, glowTex, beaconPos, dl }) {
   const L = { dir: { x: 1, z: 0 }, ang2: 0, shade: 1 };
@@ -23,20 +26,21 @@ export function createLighting({ T, sc, SH, LT, glowTex, beaconPos, dl }) {
   const shMesh = new T.Mesh(new T.PlaneGeometry(WORLD, WORLD).rotateX(-Math.PI / 2), new T.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, fog: false }));
   shMesh.position.y = .02; shMesh.renderOrder = -99; sc.add(shMesh);
   const px = v => (v + HALF) * U;
-  let baked = 9;
+  let baked = 9, bakedK = 0;
   function blob(x, z, along, across, ang, a0, a1) {   // soft ellipse: a0 at the centre, a1 at the rim
     g.save(); g.translate(px(x), px(z)); g.rotate(ang); g.scale(along * U, across * U);
     const gr = g.createRadialGradient(0, 0, 0, 0, 0, 1);
     gr.addColorStop(0, `rgba(${SHADOW},${a0})`); gr.addColorStop(.55, `rgba(${SHADOW},${a0 * .5})`); gr.addColorStop(1, `rgba(${SHADOW},${a1})`);
     g.fillStyle = gr; g.fillRect(-1, -1, 2, 2); g.restore();
   }
-  function bake(a) {
-    baked = a; g.clearRect(0, 0, SZ, SZ);
+  function bake(a, k = 0) {
+    baked = a; bakedK = k; g.clearRect(0, 0, SZ, SZ);
+    SHADOW = SN.shadow.map((v, i) => Math.round(v + (SD.shadow[i] - v) * k)).join(','); LK = 1 + .55 * k;
     const dx = Math.cos(a), dz = Math.sin(a);
     for (const s of SH) {
       const ht = s.ht || 3;
       if (s.rect) {                                    // building: footprint swept along the shadow direction
-        const len = Math.min(11, ht * .34), steps = 9;
+        const len = Math.min(11 * LK, ht * .34 * LK), steps = 9;
         for (let i = 0; i <= steps; i++) {
           const f = i / steps, taper = 1 - .35 * f, al = s.a * .15 * (1 - f * .8);
           for (const kk of [1.18, 1, .82]) {
@@ -46,14 +50,14 @@ export function createLighting({ T, sc, SH, LT, glowTex, beaconPos, dl }) {
           }
         }
       } else {                                         // tree / bush / rock: stretched blob + contact shadow
-        const len = Math.min(10, ht * .3), along = Math.max(s.rx * 1.3, len * .75), across = Math.max(s.rx * .8, .45);
+        const len = Math.min(10 * LK, ht * .3 * LK), along = Math.max(s.rx * 1.3, len * .75), across = Math.max(s.rx * .8, .45);
         blob(s.x + dx * len * .55, s.z + dz * len * .55, along, across, a, s.a * .8, 0);
         blob(s.x, s.z, Math.max(s.rx * .75, .5), Math.max(s.rz * .6, .4), 0, s.a * .55, 0);
       }
     }
     tex.needsUpdate = true;
   }
-  bake(A0);
+  bake(A0, 0);
 
   // ---- volumetric light: halos, cone, wet reflections, beacon halo ----
   const grp = new T.Group(); sc.add(grp);
@@ -86,10 +90,10 @@ export function createLighting({ T, sc, SH, LT, glowTex, beaconPos, dl }) {
   L.update = (t, dt, e) => {
     const W = e.WX;
     // moon azimuth swings slowly; shadows re-bake only when it has moved a few degrees
-    const a = A0 + AMP * Math.sin(t * 2 * Math.PI / PERIOD);
+    const k = e.k || 0, a = A0 + (A0D - A0) * k + (AMP + (AMPD - AMP) * k) * Math.sin(t * 2 * Math.PI / PERIOD);
     L.dir.x = Math.cos(a); L.dir.z = Math.sin(a); L.ang2 = Math.atan2(-L.dir.z, L.dir.x);
-    dl.position.set(-L.dir.x * 26, 24, -L.dir.z * 26);
-    if (e.vis && Math.abs(a - baked) > .045) bake(a);
+    dl.position.set(-L.dir.x * 26, 24 - 8 * k, -L.dir.z * 26);
+    if (e.vis && (Math.abs(a - baked) > .045 || Math.abs(k - bakedK) > .03)) bake(a, k);
     const shade = Math.min(1, .12 + .88 * W.sun + W.flash * .5);
     shMesh.visible = e.vis; shMesh.material.opacity = shade; L.shade = e.vis ? shade : 1;
     grp.visible = e.vis;

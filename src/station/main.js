@@ -11,6 +11,7 @@ import { createCritters } from './critters.js';
 import { createCompass } from './compass.js';
 import { createWeather } from './weather.js';
 import { createLighting } from './lighting.js';
+import { createDusk } from './dusk.js';
 // THREE comes from the <script> tag in index.html (global).
 /* ===== DRIFTER — WNCORE STATION 01 (HD-2D field build) =====
    Sections: 0 config/layout · 1 core · 2 assets · 3 ground bake · 4 world · 5 player · 6 fx · 7 ui · 8 loop
@@ -61,7 +62,7 @@ function zoneW(x,z,noise){ // -> [soil,asphalt,pave]
   if(noise)d+=(fbm(x*.35,z*.35)-.5)*2*q.n;
   const w=1-sm(-q.soft,q.soft,d);
   cur.g*=1-w;cur.s*=1-w;cur.a*=1-w;cur.p*=1-w;cur[q.m]+=w}
- if(noise){const nz=sm(.6,.72,fbm(x*.07+40,z*.07+11))*sm(20,32,Math.hypot(x+10,z+8))*.0+sm(.64,.74,fbm(x*.09+3,z*.09+8))*.85*sm(0,2.5,Math.max(MEADOW.x0-x,x-MEADOW.x1,MEADOW.z0-z,z-MEADOW.z1));const t=cur.g*nz;cur.g-=t;cur.s+=t}
+ if(noise){const nz=sm(.64,.74,fbm(x*.09+3,z*.09+8))*.85*sm(0,2.5,Math.max(MEADOW.x0-x,x-MEADOW.x1,MEADOW.z0-z,z-MEADOW.z1));const t=cur.g*nz;cur.g-=t;cur.s+=t}
  return [cur.s,cur.a,cur.p]}
 // ---------- 1. CORE ----------
 const ren=new T.WebGLRenderer({antialias:false});
@@ -69,23 +70,27 @@ ren.setPixelRatio(Math.min(devicePixelRatio,1.5));document.body.prepend(ren.domE
 const FOG=0x182836,sc=new T.Scene();sc.background=new T.Color(FOG);sc.fog=new T.FogExp2(FOG,.0165);
 const cam=new T.OrthographicCamera(-1,1,1,-1,.1,400),OFF=new T.Vector3(22,22,22);
 const rt=new T.WebGLMultisampleRenderTarget(4,4),pS=new T.Scene(),pC=new T.OrthographicCamera(-1,1,1,-1,0,1);
-const pu={t:{value:rt.texture},px:{value:new T.Vector2(1,1)},time:{value:0},wrong:{value:0},kb:{value:FXK.kb},kg:{value:FXK.kg},kn:{value:FXK.kn},kt:{value:FXK.kt}};
-pS.add(new T.Mesh(new T.PlaneGeometry(2,2),new T.ShaderMaterial({uniforms:pu,vertexShader:'varying vec2 u;void main(){u=uv;gl_Position=vec4(position.xy,0.,1.);}',fragmentShader:`uniform sampler2D t;uniform vec2 px;uniform float time,wrong,kb,kg,kn,kt;varying vec2 u;
+const pu={t:{value:rt.texture},px:{value:new T.Vector2(1,1)},time:{value:0},wrong:{value:0},kb:{value:FXK.kb},kg:{value:FXK.kg},kn:{value:FXK.kn},kt:{value:FXK.kt},kd:{value:0}};
+pS.add(new T.Mesh(new T.PlaneGeometry(2,2),new T.ShaderMaterial({uniforms:pu,vertexShader:'varying vec2 u;void main(){u=uv;gl_Position=vec4(position.xy,0.,1.);}',fragmentShader:`uniform sampler2D t;uniform vec2 px;uniform float time,wrong,kb,kg,kn,kt,kd;varying vec2 u;
 float h1(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
 void main(){vec2 uv=u;float ln=floor(u.y*70.);float tear=step(.975,h1(vec2(ln,floor(time*14.))))*wrong;uv.x+=tear*.03*(h1(vec2(ln,floor(time*14.)+3.))-.5);
 float b=smoothstep(.16,.5,abs(u.y-.5))*kt;vec3 c=vec3(0.),l=vec3(0.);
-for(int i=-2;i<=2;i++)for(int j=-2;j<=2;j++){vec2 o=vec2(float(i),float(j));c+=texture2D(t,uv+o*px*b).rgb;l+=max(texture2D(t,uv+o*px*4.).rgb-.42,0.);}
+float bt=.42-.12*kd;
+if(b>.03){for(int i=-2;i<=2;i++)for(int j=-2;j<=2;j++){c+=texture2D(t,uv+vec2(float(i),float(j))*px*b).rgb;}}else{c=texture2D(t,uv).rgb*25.;}
+for(int i=-2;i<=2;i++)for(int j=-2;j<=2;j++){l+=max(texture2D(t,uv+vec2(float(i),float(j))*px*4.).rgb-bt,0.);}
 c/=25.;l/=25.;c+=l*kb;
 vec3 wg=vec3(0.);for(int k=0;k<8;k++){float a=float(k)*.7854;vec2 d=vec2(cos(a),sin(a));wg+=max(texture2D(t,uv+d*px*18.).rgb-.3,0.)+max(texture2D(t,uv+d*px*40.).rgb-.3,0.);}c+=wg/16.*kg*vec3(1.,.95,.9);
 float ca=(.0002+wrong*.004)*(.4+length(u-.5)*2.);c.r=mix(c.r,texture2D(t,uv+vec2(ca,0.)).r,.8);c.b=mix(c.b,texture2D(t,uv-vec2(ca,0.)).b,.8);
 c*=.4+.6*(1.-smoothstep(.35,.95,length(u-.5)*1.25));
-float lu=dot(c,vec3(.3,.59,.11));c=mix(vec3(lu),c,.92-wrong*.4);c+=vec3(-.012,.014,.026)*(1.-lu)*2.;c+=vec3(.03,.012,-.01)*smoothstep(.45,1.,lu);c=c*.93+vec3(.028,.042,.052);
+float lu=dot(c,vec3(.3,.59,.11));c=mix(vec3(lu),c,.92+.22*kd-wrong*.4);c+=mix(vec3(-.012,.014,.026),vec3(.03,-.006,.05),kd)*(1.-lu)*2.;c+=mix(vec3(.03,.012,-.01),vec3(.075,.034,-.022),kd)*smoothstep(.45-.12*kd,1.,lu);c=c*.93+mix(vec3(.028,.042,.052),vec3(.045,.026,.065),kd);
+c+=vec3(1.,.6,.3)*pow(max(0.,1.-length((u-vec2(.9,.92))*vec2(1.,.75))*1.1),2.2)*.2*kd;
 c+=(h1(u*vec2(1731.,911.)+time)-.5)*kn;c+=wrong*.04*h1(vec2(ln,time));gl_FragColor=vec4(c,1.);}`})));
 let VH=15,ZM=1; // ZM: view zoom (tighter inside the tower). rs() also zooms in on phones (landscape and portrait)
 function rs(){const w=innerWidth,h=innerHeight,v=VH=((h<560||(w<h&&ZM==1))?11:15)*ZM,a=w/h;cam.left=-v*a;cam.right=v*a;cam.top=v;cam.bottom=-v;cam.updateProjectionMatrix();ren.setSize(w,h);const q=ren.getPixelRatio();rt.setSize(w*q,h*q);pu.px.value.set(1/(w*q),1/(h*q))}
 addEventListener('resize',rs);rs();
 const hemi=new T.HemisphereLight(0x5a78a0,0x0c1014,.5);sc.add(hemi);
 const dl=new T.DirectionalLight(0x7090c0,.4);dl.position.set(-14,24,10);sc.add(dl);
+const DK=createDusk({T,hemi,dl}); // src/station/dusk.js: night <-> dusk blend. ?tod=night|dusk, ?tune adds a slider
 const WX=createWeather({T,sc,FXK}); // src/station/weather.js: state machine, rain, wind, lightning, sound
 const PL=(x,y,z,c,i,d)=>{const l=new T.PointLight(c,i,d,1.5);l.position.set(x,y,z);sc.add(l);return l};
 // ---------- 2. ASSETS ----------
@@ -102,7 +107,7 @@ function spr(key,x,z,h,o={}){
  const m=META[key],w=h*m.w/m.h,tree=/tree|sapling/.test(key),bld=key.startsWith('bld_');
  let ax=(tree||bld)?m.ax:.5;if(o.flip)ax=1-ax;
  const c=o.c!==undefined?o.c:.03;
- const mat=new T.SpriteMaterial({map:o.flip?ftex(key):stex(key),alphaTest:.4,transparent:false,fog:true});
+ const mat=new T.SpriteMaterial({map:o.flip?ftex(key):stex(key),alphaTest:.4,transparent:false,fog:true});mat.onBeforeCompile=DK.spriteShader(!!o.flip,IM[key]);
  const s=new T.Sprite(mat);s.scale.set(w,h,1);s.center.set(ax,c);s.position.set(x,0,z);s.frustumCulled=false;
  s.userData={x,z,w,h,c,ax,mat,key};sc.add(s);SPR.push(s);return s}
 function building(id){
@@ -212,10 +217,11 @@ try{await createStationFences({T,sc,SPR,circ,SH,FP})}catch(e){console.warn('stat
 const P={x:-6.5,z:13.5,vx:0,vz:0,dr:1,resting:false,swingStart:-99,swingUntil:-99},K={};
 const blank=document.createElement('canvas');blank.width=blank.height=1;const bt0=new T.CanvasTexture(blank);bt0.magFilter=bt0.minFilter=T.NearestFilter;
 const pmat=new T.MeshLambertMaterial({map:bt0,color:0xffffff,emissive:0x1c1814,emissiveIntensity:.55,alphaTest:.5,transparent:false,depthWrite:true,side:T.DoubleSide,fog:false}); // fog:false + neutral fill: the scene's teal fog/blue lights were washing the character cyan
+pmat.onBeforeCompile=DK.playerShader();
 const PH=2.215,PW=PH*64/96;
 const ps=new T.Mesh(new T.PlaneGeometry(PW,PH),pmat);ps.frustumCulled=false;ps.renderOrder=2;
-const psc=document.createElement('canvas');psc.width=psc.height=64;{const g=psc.getContext('2d'),gr=g.createRadialGradient(32,32,2,32,32,32);gr.addColorStop(0,'rgba(1,3,7,.52)');gr.addColorStop(.38,'rgba(1,3,7,.34)');gr.addColorStop(.72,'rgba(1,3,7,.12)');gr.addColorStop(1,'rgba(1,3,7,0)');g.fillStyle=gr;g.fillRect(0,0,64,64)}
-const psh=new T.Mesh(new T.PlaneGeometry(1.9,1.08),new T.MeshBasicMaterial({map:new T.CanvasTexture(psc),transparent:true,opacity:.82,depthWrite:false,fog:true}));
+const psc=document.createElement('canvas');psc.width=psc.height=64;{const g=psc.getContext('2d'),gr=g.createRadialGradient(32,32,2,32,32,32);gr.addColorStop(0,'rgba(255,255,255,.52)');gr.addColorStop(.38,'rgba(255,255,255,.34)');gr.addColorStop(.72,'rgba(255,255,255,.12)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(0,0,64,64)}
+const psh=new T.Mesh(new T.PlaneGeometry(1.9,1.08),new T.MeshBasicMaterial({map:new T.CanvasTexture(psc),color:0x010307,transparent:true,opacity:.82,depthWrite:false,fog:true}));
 psh.rotation.x=-Math.PI/2;psh.position.y=.035;psh.renderOrder=1;sc.add(psh,ps);
 const pL=PL(0,2,0,0xffd6a0,.8,8);
 const FW=64,FH=96,FR={};
@@ -264,7 +270,7 @@ const ff=new T.Points(ffG,new T.PointsMaterial({color:0xd8ff90,size:3,sizeAttenu
 const mistTex=(()=>{const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d'),gr=g.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,'rgba(170,190,205,.9)');gr.addColorStop(.5,'rgba(150,170,190,.35)');gr.addColorStop(1,'rgba(140,160,180,0)');g.fillStyle=gr;g.fillRect(0,0,128,128);return new T.CanvasTexture(c)})();
 const MIST=[...Array(FXK.mist)].map(()=>{const s=new T.Sprite(new T.SpriteMaterial({map:mistTex,transparent:true,opacity:.09+Math.random()*.09,depthWrite:false,fog:false}));const z=16+Math.random()*16;s.scale.set(z*1.7,z*.6,1);s.frustumCulled=false;sc.add(s);return {s,o:s.material.opacity,x:Math.random()*80-40,z:Math.random()*80-40,v:.15+Math.random()*.25,y:.8+Math.random()*5}});
 const shaftTex=(()=>{const c=document.createElement('canvas');c.width=64;c.height=256;const g=c.getContext('2d');const gh=g.createLinearGradient(0,0,64,0);gh.addColorStop(0,'rgba(255,255,255,0)');gh.addColorStop(.5,'rgba(255,255,255,1)');gh.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gh;g.fillRect(0,0,64,256);g.globalCompositeOperation='destination-in';const gv=g.createLinearGradient(0,0,0,256);gv.addColorStop(0,'rgba(0,0,0,0)');gv.addColorStop(.25,'rgba(0,0,0,1)');gv.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gv;g.fillRect(0,0,64,256);return new T.CanvasTexture(c)})();
-const SHAFT=[];{const r=mulberry(909);for(let i=0;i<FXK.shaft;i++){const a=r()*6.28,d=22+r()*22,m=new T.SpriteMaterial({map:shaftTex,color:0xaac8e0,blending:T.AdditiveBlending,transparent:true,depthWrite:false,opacity:.05,fog:false});m.rotation=-.5;const s=new T.Sprite(m);const w=2+r()*4;s.scale.set(w,22+r()*8,1);s.center.set(.5,.2);s.position.set(-10+Math.cos(a)*d,0,-8+Math.sin(a)*d);s.frustumCulled=false;sc.add(s);SHAFT.push({s,ph:r()*9,b:.045+r()*.05})}}
+const SHAFT=[];{const r=mulberry(909);for(let i=0;i<FXK.shaft;i++){const a=r()*6.28,d=22+r()*22,m=new T.SpriteMaterial({map:shaftTex,color:0xaac8e0,blending:T.AdditiveBlending,transparent:true,depthWrite:false,opacity:.05,fog:false});m.rotation=-.5;const s=new T.Sprite(m);const w=2+r()*4;s.scale.set(w,22+r()*8,1);s.center.set(.5,.2);s.position.set(-10+Math.cos(a)*d,0,-8+Math.sin(a)*d);s.frustumCulled=false;sc.add(s);SHAFT.push({s,ph:r()*9,b:.045+r()*.05,m:1})}}
 // grassland + loose animated tufts (src/station/grassland.js); built here because it bakes in the static lights
 const GRASS=createGrass({T,sc,IM,LT,AMB,OFF,rnd:mulberry(0x6A55),noise:fbm,clear:(x,z)=>{const w=zoneW(x,z,0);return w[0]+w[1]+w[2]<=.12&&free(x,z,.4,.2)}});
 // audio (procedural, starts on first click)
@@ -349,7 +355,7 @@ $('ov').addEventListener('click',start);
 {const key=(c,t='keydown')=>dispatchEvent(new KeyboardEvent(t,{code:c,bubbles:true}));
  let L=null,Rr=null,lastTap=0;const dirs=['KeyW','KeyA','KeyS','KeyD','ShiftLeft'];
  const clr=()=>dirs.forEach(c=>K[c]=0);
- addEventListener('pointerdown',e=>{if(e.pointerType!='touch'||st!=1)return;if(e.target.closest&&e.target.closest('#pn,#ov,#nav-hud'))return;
+ addEventListener('pointerdown',e=>{if(e.pointerType!='touch'||st!=1)return;if(e.target.closest&&e.target.closest('#pn,#ov,#nav-hud,#tune'))return;
   if(e.clientX>innerWidth*.7&&e.clientY<innerHeight*.16){key('Tab');return}
   if(e.clientX<innerWidth/2){if(!L)L={id:e.pointerId,ox:e.clientX,oy:e.clientY,t:performance.now(),mv:0}}
   else if(!Rr){Rr={id:e.pointerId,x:e.clientX,y:e.clientY,t:performance.now(),sw:false,tm:setTimeout(()=>{if(Rr&&!Rr.sw){Rr.sw=true;key('Space')}},380)}}},{passive:true});
@@ -477,21 +483,22 @@ function anim(dt,t){
  const outd=IN<0,asp0=innerWidth/innerHeight;
  // weather: state machine, rain, wind, lightning; then push the smoothed values into fog / lights
  WX.update(dt,t,{cx:cp.x,cz:cp.z,hw:VH*asp0,hh:VH,ppu:innerHeight*ren.getPixelRatio()/(2*VH),out:outd});
- if(outd){const Z=MAP==1?FST:MAP==2?CITY:null,base=Z?Z.fog:FOG,fd=Z?Z.fogD:FOGD0,w=WX.fogW;wxc.set(base);
-  wxc.r+=(WX.fogT[0]-wxc.r)*w+WX.flash*.22;wxc.g+=(WX.fogT[1]-wxc.g)*w+WX.flash*.25;wxc.b+=(WX.fogT[2]-wxc.b)*w+WX.flash*.3;
+ DK.update(outd&&MAP==0,WX);pu.kd.value=DK.cur;
+ if(outd){const Z=MAP==1?FST:MAP==2?CITY:null,base=Z?Z.fog:DK.fogHex,fd=Z?Z.fogD:DK.fogD,w=WX.fogW,ft=DK.fogT(WX.fogT);wxc.set(base);
+  wxc.r+=(ft[0]-wxc.r)*w+WX.flash*.22;wxc.g+=(ft[1]-wxc.g)*w+WX.flash*.25;wxc.b+=(ft[2]-wxc.b)*w+WX.flash*.3;
   sc.fog.color.copy(wxc);sc.background.copy(wxc);sc.fog.density=fd*WX.fogM;
-  hemi.intensity=.5*WX.hemi+WX.flash*1.1;dl.intensity=.4*WX.sun+WX.flash*.6}
+  hemi.intensity=DK.hemiI*WX.hemi+WX.flash*1.1;dl.intensity=DK.keyI*WX.sun+WX.flash*.6}
  else{hemi.intensity=.5;dl.intensity=.4}
- const wild=[AMB[0]*WX.amb[0]+WX.flash*.3,AMB[1]*WX.amb[1]+WX.flash*.3,AMB[2]*WX.amb[2]+WX.flash*.3];
+ const AM=DK.mixAmb(AMB),wild=[AM[0]*WX.amb[0]+WX.flash*.3,AM[1]*WX.amb[1]+WX.flash*.3,AM[2]*WX.amb[2]+WX.flash*.3];
  CRIT.forEach((c,i)=>{if(!c)return;c.setVisible(outd&&MAP==i);if(outd&&MAP==i)c.update(t,dt,{P,rain:WX.rain,hush:i==0&&wrong>.35,tint:wild})});
- INT.update(t);BI.update(t);if(MAP==1&&FST)FST.update(t);if(MAP==2&&CITY)CITY.update(t,dt,P);GRASS.update(t,MAP==0&&IN<0,P,WX.windNow,WX.amb[0]*(1-.12*WX.wet),WX.amb[1]*(1-.12*WX.wet),WX.amb[2]*(1-.12*WX.wet));
+ INT.update(t);BI.update(t);if(MAP==1&&FST)FST.update(t);if(MAP==2&&CITY)CITY.update(t,dt,P);GRASS.update(t,MAP==0&&IN<0,P,WX.windNow,WX.amb[0]*(1-.12*WX.wet)*DK.ratio[0],WX.amb[1]*(1-.12*WX.wet)*DK.ratio[1],WX.amb[2]*(1-.12*WX.wet)*DK.ratio[2]);
  if(aud.river)aud.river.gain.value=(muted||MAP!=1)?0:.02+.12*sm(20,2,FST.riverDist(P.x,P.z));
  // signal bursts + proximity to the mast
  const dm=IN>=0?6:dsq(P.x-bs.x,P.z-bs.z);let base=MAP==2&&IN<0?CITY.wrong(P):.1*sm(16,5,dm);burstT-=dt;if(burstT<0){burstU=.5;burstT=22+Math.random()*30}burstU=Math.max(0,burstU-dt);
  wrong+=((base+(burstU>0?.8*Math.min(1,burstU*3):0))-wrong)*Math.min(1,dt*8);pu.wrong.value=wrong;pu.time.value=t;
  const on=burstU>0?Math.random()<.4:Math.sin(t*2.4)>-.1;
  const bl=on?1+.1*Math.sin(t*20):.12;beaconLT.cur=on?1:.05;beaconL.intensity=on?1.6:.1;bs.beacon.material.opacity=on?1:.08;bs.beacon.scale.setScalar(on?2.6+Math.sin(t*3)*.3:1.2);
- LGT.update(t,dt,{vis:outd&&MAP==0,WX,bOn:on,ground:MAP==1&&FST&&FST.ground?FST.ground:MAP==2&&CITY?CITY.ground:ground,outer:MAP==0?OUTER:null});psh.material.opacity=.82*LGT.shade;
+ LGT.update(t,dt,{vis:outd&&MAP==0,k:DK.cur,WX,bOn:on,ground:MAP==1&&FST&&FST.ground?FST.ground:MAP==2&&CITY?CITY.ground:ground,outer:MAP==0?OUTER:null});psh.material.opacity=.82*LGT.shade;psh.material.color.setRGB(DK.shRGB[0],DK.shRGB[1],DK.shRGB[2]);DK.light(dl.position);
  for(const g of GL){if(g.s===bs.beacon)continue;g.s.material.opacity=g.I*(.85+.15*Math.sin(t*3+g.ph)+(Math.random()<.01?-.3:0))}
  if(aud.hum){const hv=.1+.9*sm(30,6,dm);aud.hum.gain.value=muted?0:.05*hv;aud.wind.gain.value=(.1+.04*Math.sin(t*.3))*WX.wa;if(open!='b')aud.stat.gain.value=burstU>0?.06:0;if(Math.random()<dt*.9)aud.cr()}
  const mv=Math.hypot(P.vx,P.vz);let an='idle',fr=0,bob=0;const run=K.ShiftLeft||K.ShiftRight;
@@ -508,17 +515,18 @@ function anim(dt,t){
  for(const s of SPR){const u=s.userData,dx=u.x-cp.x,dz=u.z-cp.z,sx=(dx-dz)*.7071,sy=-(dx+dz)*.4082;
   const v=!u.hide&&Math.abs(sx)<hw+u.w*.6&&sy>-hh-4&&sy-u.c*u.h<hh+1;s.visible=v;if(!v)continue;
   const fu=u.mat.userData.fu;if(fu){const tg=(u.x+u.z>pD+.4&&Math.abs(sx+(.5-u.ax)*u.w-pSx)<u.w*.36&&pSy>sy+.1&&pSy<sy+u.h*.95)?.26:1;u.f+=(tg-u.f)*Math.min(1,dt*9);fu.value=s.userData.f;}
-  let r=AMB[0]*wam[0]+fl,g=AMB[1]*wam[1]+fl,b=AMB[2]*wam[2]+fl;
+  let r=AM[0]*wam[0]+fl,g=AM[1]*wam[1]+fl,b=AM[2]*wam[2]+fl;
   for(const L of (u.flat?[]:LT)){const d=Math.hypot(u.x-L.x,u.z-L.z),R=L.R;if(d<R){const f=1-d/R,k=f*f*L.I*(L.dyn?L.cur:(L.fm||1))*.6;r+=L.cc[0]*k;g+=L.cc[1]*k;b+=L.cc[2]*k}}
-  const dep=sm(-30,24,-(dx+dz)*.5)*0+0;u.mat.color.setRGB(Math.min(1.5,r),Math.min(1.5,g),Math.min(1.5,b))}
- for(const q of SHAFT)q.s.material.opacity=q.b*(.65+.35*Math.sin(t*.5+q.ph))*WX.shaft;ff.material.opacity=1-Math.min(1,WX.rain*1.6);
+  u.mat.color.setRGB(Math.min(1.5,r),Math.min(1.5,g),Math.min(1.5,b))}
+ for(const q of SHAFT){const m=q.s.material;m.opacity=q.b*(.65+.35*Math.sin(t*.5+q.ph))*WX.shaft*(q.m?DK.shaftMul:1);if(q.m){m.color.copy(DK.shaftC);m.rotation=DK.shaftRot}}
+ ff.material.color.copy(DK.moteC);ff.material.opacity=(1-Math.min(1,WX.rain*1.6))*(1-.3*DK.cur);
  // fireflies, mist
  for(let i=0;i<FFN;i++){const s=ffS[i];ffP[i*3]=cp.x+((s[3]+t*.4*s[2])%52)-26+Math.sin(t*s[2]+s[0])*2;ffP[i*3+1]=.8+Math.abs(Math.sin(t*s[2]*1.3+s[1]))*1.8+(i%5)*.25;ffP[i*3+2]=cp.z+((s[4]-t*.3*s[2]+520)%52)-26+Math.cos(t*s[2]+s[1])*2}
  ffG.attributes.position.needsUpdate=true;
  for(const m of MIST){m.x+=m.v*dt;let rx=((m.x-cp.x)%80+120)%80-40,rz=((m.z-cp.z)%80+120)%80-40;m.s.position.set(cp.x+rx,m.y,cp.z+rz);m.s.material.opacity=m.o*WX.mist}}
 function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;if(st==1)upd(dt);anim(dt,now/1000);ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);ren.render(pS,pC)}
 if(DEBUG){const h=location.hash.slice(1).split(',').map(Number);if(h.length==2&&!isNaN(h[0])){P.x=h[0];P.z=h[1];cp.x=P.x;cp.z=P.z}}
-window.__W={get CITY(){return CITY},NAV,CRIT,WX,LGT,P,start,travel,get FST(){return FST},get MAP(){return MAP},tp:(x,z)=>{P.x=x;P.z=z;cp.x=x-BIAS;cp.z=z-BIAS},BLD,SPR,get n(){return SPR.length},grass:GRASS.count,calls:()=>{ren.info.autoReset=false;ren.info.reset();ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);const c=ren.info.render.calls;ren.info.autoReset=true;return c},ground:()=>GB.cv.toDataURL('image/png'),cull:()=>SPR.filter(s=>s.visible).length};
+window.__W={DK,get CITY(){return CITY},NAV,CRIT,WX,LGT,P,start,travel,get FST(){return FST},get MAP(){return MAP},tp:(x,z)=>{P.x=x;P.z=z;cp.x=x-BIAS;cp.z=z-BIAS},BLD,SPR,get n(){return SPR.length},grass:GRASS.count,calls:()=>{ren.info.autoReset=false;ren.info.reset();ren.setRenderTarget(rt);ren.render(sc,cam);ren.setRenderTarget(null);const c=ren.info.render.calls;ren.info.autoReset=true;return c},ground:()=>GB.cv.toDataURL('image/png'),cull:()=>SPR.filter(s=>s.visible).length};
 requestAnimationFrame(loop);
 }
 
