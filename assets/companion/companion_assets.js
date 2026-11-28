@@ -47,7 +47,8 @@ function makeFrame(T, source) {
   g.imageSmoothingEnabled = false;
   g.drawImage(source, 0, 0);
   const tex = new T.CanvasTexture(cv);
-  // Preserve the crisp pixel-art edges of the supplied sprites.\n  tex.magFilter = tex.minFilter = T.NearestFilter;
+  // Preserve the crisp pixel-art edges of the supplied sprites.
+  tex.magFilter = tex.minFilter = T.NearestFilter;
   tex.generateMipmaps = false;
   // Each pose has slightly different transparent margins. Anchor to its actual
   // opaque feet line and silhouette centre rather than a fixed canvas coordinate.
