@@ -1,3 +1,4 @@
 legacy/
 *.zip
 .git
+!assets/companion/SHU_BIMO_8D_animation_asset_pack.zip
