@@ -32,8 +32,8 @@ const RADIUS = 0.28;      // collision radius
 const FOLLOW_GAP = 1.5;   // she aims to stop about this far from you
 const START_GAP = 2.9;    // you are this far away and standing still: she comes over
 const TRAIL_GAP = 2.2;    // you are walking and she is this far behind: she follows
-const MAX_SPEED = 7.2;    // never outrun the player's maximum run speed
-const RUN_ON = 5.7, RUN_OFF = 4.9; // speed thresholds for the run cycle (hysteresis)
+const MAX_SPEED = 6.2;    // keep the companion just behind the player's run pace
+const RUN_ON = 4.9, RUN_OFF = 4.2; // switch to a faster gait while catching up
 
 const SIT_ROWS = [4, 1, 7, 8, 2];            // the sitting variants
 const ROW_FACES_RIGHT = { 3: true, 5: false, 6: true, 9: true }; // which way the stand-alone rows look
@@ -212,7 +212,7 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
 
       if (sp > 0.4) { hx += (ux - hx) * Math.min(1, dt * 10); hz += (uz - hz) * Math.min(1, dt * 10); dir = dirOf(hx, hz); }
       if (!running && sp > RUN_ON) running = true; else if (running && sp < RUN_OFF) running = false;
-      phase += dt * (running ? 12 : 8.5); // steady gait cadence: 12 fps run, 8.5 fps walk
+      phase += dt * (running ? 16 : 11); // faster, more readable 8-frame strides
       pick = { f: (running ? frames.run : frames.walk)[dir][Math.floor(phase) % 8], mirror: false };
 
       if (!pMoving && d < TRAIL_GAP + 0.1 && sp < 0.5) { viewDir = dir; turnAcc = 0; setAct('sit'); actDur = 3 + rnd() * 2; }
@@ -279,6 +279,12 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
     if (curFrame !== f) { curFrame = f; mat.map = f.tex; }
     if (pmat) { mat.emissive.copy(pmat.emissive); mat.emissiveIntensity = pmat.emissiveIntensity; mat.color.copy(pmat.color); }
     const K = (ctx.scale || 1) * (0.55 + 0.45 * (1 - Math.pow(1 - appear, 3)));
+    const walking = mode === 'move' && sp > 0.4;
+    // The source front/back gaits have subtle paw separation. A restrained body
+    // bounce makes each contact/lift phase readable without changing Shu's silhouette.
+    const gaitBob = walking
+      ? Math.abs(Math.sin(phase * Math.PI / 4)) * (running ? 0.065 : 0.032)
+      : 0;
     const w = f.w / PPU * K, h = f.h / PPU * K * breathe;
     mesh.scale.set(pick.mirror ? -w : w, h, 1);
     mesh.quaternion.copy(ctx.quat);
@@ -286,7 +292,7 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
     const bx = pick.mirror ? f.w - f.bx : f.bx;
     const off = (f.w / 2 - bx) / PPU * K;
     const EL = ctx.elev ? ctx.elev(c.x, c.z) : 0;
-    mesh.position.set(c.x + right.x * off, (f.by - f.h / 2) / PPU * K * breathe + EL + hop * K, c.z + right.z * off);
+    mesh.position.set(c.x + right.x * off, (f.by - f.h / 2) / PPU * K * breathe + EL + (hop + gaitBob) * K, c.z + right.z * off);
     const sleeping = act === 'sleep' || act === 'wake';
     sh.position.set(c.x, 0.035 + EL, c.z);
     sh.scale.set((sleeping ? 1.5 : 1.15) * K, 0.62 * K, 1);
