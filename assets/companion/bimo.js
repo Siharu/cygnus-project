@@ -301,12 +301,12 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
           else if (act === 'down') {
             actT += dt;
             const down = frames.row[8];
-            pick = { f: down[1 + (Math.floor(actT * 1.4) % 4)], mirror: false, unit: rowUnit };
+            pick = { f: down[1 + (Math.floor(actT * 1.4) % 4)], mirror: dir === 5 || dir === 6 || dir === 7, unit: rowUnit };
             breathe = 1 + 0.012 * Math.sin(actT * 2.1);
           } else if (act === 'settle') {
             actT += dt;
             const R = frames.row[5];
-            pick = { f: R[Math.min(R.length - 1, Math.floor(actT / actDur * R.length))], mirror: false, unit: rowUnit };
+            pick = { f: R[Math.min(R.length - 1, Math.floor(actT / actDur * R.length))], mirror: dir === 5 || dir === 6 || dir === 7, unit: rowUnit };
           }
         } else if (act === 'wake') {
           actT += dt;
@@ -326,17 +326,17 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
         } else if (act === 'sniff') {
           actT += dt;
           const R = frames.row[6];
-          pick = { f: R[Math.min(R.length - 1, Math.floor(actT * 2.1))], mirror: false, unit: rowUnit };
+          pick = { f: R[Math.min(R.length - 1, Math.floor(actT * 2.1))], mirror: dir === 5 || dir === 6 || dir === 7, unit: rowUnit };
           if (actT > actDur) nextIdle(ctx);
         } else if (act === 'sit') {
           actT += dt;
           const R = frames.row[7];
-          pick = { f: R[Math.floor(actT * 1.5) % R.length], mirror: false, unit: rowUnit };
+          pick = { f: R[Math.floor(actT * 1.5) % R.length], mirror: dir === 5 || dir === 6 || dir === 7, unit: rowUnit };
           if (actT > actDur) nextIdle(ctx);
         } else if (act === 'trot') {
           actT += dt;
           const R = frames.row[2].slice(0, 5);
-          pick = { f: R[Math.floor(actT * 4.5) % R.length], mirror: false, unit: rowUnit };
+          pick = { f: R[Math.floor(actT * 4.5) % R.length], mirror: dir === 5 || dir === 6 || dir === 7, unit: rowUnit };
           if (actT > actDur) nextIdle(ctx);
         }
       }
