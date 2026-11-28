@@ -9,7 +9,7 @@ Notable changes to the **Drifter's Tale** field build, newest first.
 - **Shu**, a black-and-white tuxedo cat, now follows the Drifter through the station, Silvan, the ??? city and every interior (`assets/companion/companion.js`, `assets/companion/companion_assets.js`).
 - She uses the 8-direction walk and run cycles, sitting poses, grooming, stretching, crouch-and-pounce, sleeping, and startled animation rows.
 - She runs when the player runs or when she falls behind, sidesteps scenery, and rejoins the player after map or interior changes.
-- The pack loads from loose PNGs when available, otherwise from `assets/companion/SHU_BIMO_8D_animation_asset_pack.zip` using JSZip in the browser.
+- The full 359-file pack is extracted under `assets/companion/SHU_BIMO_sprite_pack/`, preserving both `shu/` and `bimo/`, previous atlases, previews, manifests, and README. Shu loads loose PNG frames directly; no runtime ZIP download or JSZip CDN is needed.
 
 ---
 
