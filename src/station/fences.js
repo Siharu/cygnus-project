@@ -1,6 +1,6 @@
-// ===== DRIFTER — STATION FENCES =====
-// Chain-link round the whole map. Uses the city's two chain-link sprites, but each piece is fitted to the ground
-// line it is given: the post feet land exactly on both ends and the posts stay upright, so a run can follow any angle.
+// ===== DRIFTER — STATION BASE FENCES =====
+// Chain-link encloses the station compound only. The south entrance stays open at the checkpoint;
+// the main road, Silvan trail, and unmarked city road remain outside the fenced base.
 //
 // API:  await createStationFences({ T, sc, SPR, circ, SH, FP })    call after the scatter has been planted
 //   fencePieces() is the pure layout maths (no DOM, no THREE).
@@ -8,30 +8,21 @@
 import { CAT } from './city_catalog.js';
 import { retouch, straighten } from './city_shade.js';
 
-// [x0, z0, x1, z1]. main.js walk limit (BOUND) is 36, so the fence stands just outside it and wraps the whole map,
-// every building included. The main road is already sealed at both ends by rubble (x +-34), so the fence crosses it.
-const E = 36.8;
-export const PERIMETER = [
-  [-E, -E, E, -E],               // north
-  [E, -E, E, E],                 // east
-  [-E, -E, -E, E],               // west
-  // south, with two openings left for the exits to the other sections
-  [-E, E, -23.2, E],             //   west of the Silvan trail (trail is x -22.6..-19.4)
-  [-17.8, E, 28.6, E],           //   between the trail and the unmarked city road (road is x 28.6..35.4)
+// Fence line runs in world coordinates [x0, z0, x1, z1].
+// The west / north / east sides wrap the buildings and service yard. The south edge is split
+// around the checkpoint opening; the two short angled returns guide the entrance without
+// continuing a fence across the road or around the rest of the map.
+export const BASE_FENCE_RUNS = [
+  [-40.5, -35.5,  40.0, -35.5],  // north / rear boundary
+  [ 40.0, -35.5,  40.0,   8.9],  // east boundary
+  [-40.5, -35.5, -40.5,  11.8],  // west boundary
+  [-40.5,  11.8, -14.2,  11.8],  // checkpoint's west approach
+  [ -0.1,   8.9,  40.0,   8.9],  // checkpoint's east approach
+  [-13.4,   9.6, -14.2,  11.8], // short west return beside the booth
+  [ -2.55,  9.35, -3.35, 13.15]  // short east return beside the barrier
 ];
 
-// the old inner compound + checkpoint approach, kept in case a second fence inside the outer one is wanted
-const COMPOUND = [
-  [-13.4, 9.6, -14.2, 11.8], [-14.2, 11.8, -40.5, 11.8],
-  [-.1, 8.9, 40, 8.9],
-  [40, 8.9, 40, -35.5], [40, -35.5, -40.5, -35.5], [-40.5, -35.5, -40.5, 11.8],
-  [-2.55, 9.35, -3.35, 13.15],
-];
-const KEEP_COMPOUND = false;
-
-export const RUNS = KEEP_COMPOUND ? [...PERIMETER, ...COMPOUND] : PERIMETER;
-// nobody squeezes between the booth and the barrier post (only used with the inner compound)
-export const PLUG = { x: -9.25, z: 9.35, r: .45 };
+export const RUNS = BASE_FENCE_RUNS;
 
 const TALL = 3;                       // world height of the sprite as drawn (the city uses 3.8)
 const ISO = Math.tan(Math.PI / 6);
@@ -90,7 +81,6 @@ export async function createStationFences({ T, sc, SPR, circ, SH, FP }) {
     for (const list of [circ, SH]) { const j = list.findIndex(c => c.x === u.x && c.z === u.z); if (j >= 0) list.splice(j, 1); }
   }
 
-  if (KEEP_COMPOUND) circ.push({ ...PLUG });
   for (const { k, corners, a, b, w, h } of fencePieces()) {
     const x = (a[0] + b[0]) / 2, z = (a[1] + b[1]) / 2;
     const g = new T.BufferGeometry();
