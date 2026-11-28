@@ -20,6 +20,9 @@ const SCOUT_LEAD = 2.0;
 const IDLE_GAP = 1.55;
 const MAX_SPEED = 7.8;
 const RUN_ON = 5.0, RUN_OFF = 4.2;
+// Pose changes are sampled against the 30 Hz game presentation at natural gait rates.
+const WALK_FRAME_RATE = 15;
+const RUN_FRAME_RATE = 24;
 
 const dirOf = (dx, dz) => {
   const sx = dx - dz, sy = -(dx + dz) * 0.577;
@@ -279,16 +282,17 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
       }
       if (!running && (ctx.playerRun || speed > RUN_ON)) running = true;
       else if (running && !ctx.playerRun && speed < RUN_OFF) running = false;
-      phase += dt * (running ? 14 : 10);
-
       // All eight direction folders are used for both gaits, including left/right.
-      // The original profile atlas rows are preserved for their separate trot/burst behaviours.
+      // Step the 8-frame cycle at 15 pose changes/s walking and 24 pose changes/s running.
+      // The original profile atlas rows remain dedicated to the separate trot/burst behaviours.
       const set = running ? frames.run : frames.walk;
-      const f = set[dir][Math.floor(phase) % 8];
+      const sequence = set[dir];
+      phase = (phase + dt * (running ? RUN_FRAME_RATE : WALK_FRAME_RATE)) % Math.max(1, sequence.length);
+      const f = sequence[Math.floor(phase)];
       // Per-frame alpha height normalization keeps Bimo's visible body size stable
       // across directions and between the walk and run sheets.
       pick = { f, mirror: false, unit: BODY_HEIGHT / Math.max(1, f.boxH) };
-      hop = Math.abs(Math.sin(phase * Math.PI / 4)) * (running ? 0.035 : 0.018);
+      hop = Math.abs(Math.sin(phase * Math.PI / 4)) * (running ? 0.055 : 0.024);
     } else {
       mode = 'idle';
       speed = 0;
