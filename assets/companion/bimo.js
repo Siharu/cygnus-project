@@ -352,7 +352,7 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
     if (act === 'alert' && !pick) {
       actT += dt;
       const R = frames.row[4];
-      pick = { f: R[Math.min(R.length - 1, Math.floor(actT / actDur * R.length))], mirror: false, unit: rowUnit };
+      pick = { f: R[Math.min(R.length - 1, Math.floor(actT / actDur * R.length))], mirror: sideMirror, unit: rowUnit };
       if (actT > actDur) nextIdle(ctx);
     }
 
