@@ -83,7 +83,7 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
   let blockedT = 0, stuckT = 0, detour = null, detourSign = 1;
   let swingSeen = false, lastAct = 'look', currentFrame = null;
   let idleClock = 0;
-  let targetX = 0, targetZ = 0;
+  let targetX = 0, targetZ = 0, burstX = 1, burstZ = -1;
 
   function setAct(next, duration) {
     mode = 'idle';
@@ -96,7 +96,9 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
     else if (next === 'down') actDur = 1e9;
     else if (next === 'settle' || next === 'wake') actDur = 0.9;
     else if (next === 'alert') actDur = 0.72;
-    else if (next === 'trot') actDur = 1.3 + rnd() * 0.7;
+    else if (next === 'trot') actDur = 1.35 + rnd() * 0.45;
+    else if (next === 'burst') actDur = 1.25;
+    if (next === 'burst') { const sign = rnd() < .5 ? -1 : 1; burstX = sign; burstZ = -sign; dir = sign > 0 ? 2 : 6; }
     if (next !== 'look') lastAct = next;
   }
 
@@ -180,7 +182,7 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
   function nextIdle(ctx) {
     idleClock = 0;
     const r = rnd();
-    let next = r < 0.42 ? 'sniff' : r < 0.67 ? 'look' : r < 0.86 ? 'sit' : 'trot';
+    let next = r < 0.34 ? 'sniff' : r < 0.55 ? 'look' : r < 0.73 ? 'sit' : r < 0.9 ? 'trot' : 'burst';
     if (next === lastAct && next !== 'look') next = 'look';
     setAct(next);
   }
@@ -245,7 +247,7 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
       : d > IDLE_GAP;
 
     let hop = 0, breathe = 1, pick = null;
-    if (wantsMove && (!ctx.resting) && act !== 'alert' && act !== 'wake' && act !== 'settle') {
+    if (wantsMove && (!ctx.resting) && act !== 'alert' && act !== 'wake' && act !== 'settle' && act !== 'burst') {
       mode = 'move';
       idleClock = 0;
       const ux0 = d > 1e-4 ? dx / d : 0;
@@ -283,16 +285,10 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
       else if (running && !ctx.playerRun && speed < RUN_OFF) running = false;
       phase += dt * (running ? 14 : 10);
 
-      const profile = dir === 2 || dir === 6;
-      if (profile) {
-        // Original high-detail profile gait rows; the final front-facing pose is not
-        // part of the loop, so cycle only the first five true stepping frames.
-        const gait = frames.row[running ? 3 : 2].slice(0, 5);
-        pick = { f: gait[Math.floor(phase) % gait.length], mirror: dir === 6, unit: rowUnit };
-      } else {
-        const set = running ? frames.run : frames.walk;
-        pick = { f: set[dir][Math.floor(phase) % 8], mirror: false, unit: moveUnits[dir] };
-      }
+      // All eight direction folders are used for both gaits, including left/right.
+      // The original profile atlas rows are preserved for their separate trot/burst behaviours.
+      const set = running ? frames.run : frames.walk;
+      pick = { f: set[dir][Math.floor(phase) % 8], mirror: false, unit: moveUnits[dir] };
       hop = Math.abs(Math.sin(phase * Math.PI / 4)) * (running ? 0.035 : 0.018);
     } else {
       mode = 'idle';
@@ -337,8 +333,21 @@ export function createBimoActor({ T, sc, pmat, frames, rnd = Math.random }) {
           if (actT > actDur) nextIdle(ctx);
         } else if (act === 'trot') {
           actT += dt;
-          const R = frames.row[2].slice(0, 5);
-          pick = { f: R[Math.floor(actT * 4.5) % R.length], mirror: dir === 5 || dir === 6 || dir === 7, unit: rowUnit };
+          // Use all six original side-walk poses, including the final front-facing check-in.
+          const R = frames.row[2];
+          const i = Math.min(R.length - 1, Math.floor(actT / actDur * R.length));
+          pick = { f: R[i], mirror: sideMirror, unit: rowUnit };
+          if (actT > actDur) nextIdle(ctx);
+        } else if (act === 'burst') {
+          actT += dt;
+          // Short playful scout dash using all six original profile-run poses.
+          speed = 2.1 * Math.max(0, 1 - actT / actDur);
+          dir = burstX > 0 ? 2 : 6;
+          step(ctx, burstX, burstZ, dt);
+          const R = frames.row[3];
+          const i = Math.min(R.length - 1, Math.floor(actT / actDur * R.length));
+          pick = { f: R[i], mirror: burstX < 0, unit: rowUnit };
+          hop = Math.sin(Math.min(1, actT / actDur) * Math.PI) * .055;
           if (actT > actDur) nextIdle(ctx);
         }
       }

@@ -35,8 +35,9 @@ const TRAIL_GAP = 2.2;    // you are walking and she is this far behind: she fol
 const MAX_SPEED = 6.2;    // keep the companion just behind the player's run pace
 const RUN_ON = 4.9, RUN_OFF = 4.2; // switch to a faster gait while catching up
 
-const SIT_ROWS = [4, 1, 7, 8, 2];            // the sitting variants
-const ROW_FACES_RIGHT = { 3: true, 5: false, 6: true, 9: true }; // which way the stand-alone rows look
+const SIT_ROWS = [4, 7, 8];                  // the three actual sitting-pose rows
+const LOOK_ROWS = [1, 2];                     // two complete stand/turn/look sequences
+const ROW_FACES_RIGHT = { 1: true, 2: true, 3: true, 5: false, 6: true, 9: true };
 // direction -> [frame index in a sitting row (-1 = last frame, facing us), mirrored]
 const SIT_VIEW = [[0, 0], [1, 0], [2, 0], [3, 0], [-1, 0], [3, 1], [2, 1], [1, 1]];
 
@@ -67,7 +68,7 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
   const tmp = { x: 0, z: 0 };
   const right = new T.Vector3();
   let mode = 'act', act = 'sit', actT = 0, actDur = 3, lastAct = 'sit';
-  let variant = SIT_ROWS[0], dir = 4, viewDir = 4, turnAcc = 0;
+  let variant = SIT_ROWS[0], lookRow = LOOK_ROWS[0], lookRowIndex = 0, dir = 4, viewDir = 4, turnAcc = 0;
   let sp = 0, running = false, phase = 0, hx = 0, hz = 1;
   let idleT = 0, placed = false, zone = null, appear = 0;
   let blockedT = 0, stuckT = 0, detour = null, detourSign = 1;
@@ -96,6 +97,7 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
   function setAct(a) {
     mode = 'act'; act = a; actT = 0;
     if (a === 'sit') { variant = pickVariant(); actDur = 2.6 + rnd() * 4; }
+    else if (a === 'look') { lookRow = LOOK_ROWS[lookRowIndex++ % LOOK_ROWS.length]; actDur = 1.9 + rnd() * .5; }
     else if (a === 'groom') actDur = 3.4 + rnd() * 2;
     else if (a === 'stretch') actDur = 1.9;
     else if (a === 'crouch') actDur = 0.9 + rnd() * 0.7;
@@ -116,7 +118,7 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
   function nextIdle(ctx) {
     if (idleT > 24 || (ctx.resting && idleT > 5)) return setAct('sleep');
     const r = rnd();
-    let a = r < 0.3 ? 'groom' : r < 0.52 ? 'stretch' : r < 0.7 ? 'crouch' : 'sit';
+    let a = r < 0.24 ? 'groom' : r < 0.43 ? 'stretch' : r < 0.64 ? 'look' : r < 0.79 ? 'crouch' : 'sit';
     if (a === lastAct && a !== 'sit') a = 'sit';
     faceRight = playerRight(ctx.P);
     setAct(a);
@@ -229,6 +231,12 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
         const R = row(variant), v = SIT_VIEW[viewDir];
         pick = { f: R[v[0] < 0 ? R.length - 1 : Math.min(v[0], R.length - 1)], mirror: !!v[1] };
         if (actT > actDur) nextIdle(ctx);
+      } else if (act === 'look') {
+        // Rows 1 and 2 are full six-frame standing turn/look sequences, not sitting poses.
+        const R = row(lookRow);
+        const i = Math.min(R.length - 1, Math.floor(actT / actDur * R.length));
+        pick = { f: R[i], mirror: lookingRight !== ROW_FACES_RIGHT[lookRow] };
+        if (actT > actDur) { viewDir = dirOf(dx, dz); setAct('sit'); }
       } else if (act === 'groom') {
         const R = row(5), i = actT < 0.35 ? 0 : 1 + (Math.floor((actT - 0.35) * 5) % 4);
         pick = { f: R[i], mirror: lookingRight !== ROW_FACES_RIGHT[5] };
@@ -238,7 +246,8 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
         pick = { f: R[i], mirror: lookingRight !== ROW_FACES_RIGHT[3] };
         if (actT > actDur) { viewDir = dirOf(dx, dz); setAct('sit'); }
       } else if (act === 'crouch') {
-        const R = row(9), i = 3 + (Math.floor(actT * 6) % 2);
+        // The first three source poses build the crouch before the full pounce.
+        const R = row(9), i = Math.min(2, Math.floor(actT / actDur * 3));
         pick = { f: R[i], mirror: lookingRight !== ROW_FACES_RIGHT[9] };
         if (actT > actDur) { // pick where to pounce: somewhere near the player, never straight into them
           const a = rnd() * Math.PI * 2; pounceX = Math.cos(a); pounceZ = Math.sin(a);
@@ -249,7 +258,8 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
         const k = Math.max(0, 1 - actT / actDur);
         step(ctx, pounceX, pounceZ, 9 * k, dt);
         hop = Math.sin(Math.min(1, actT / actDur) * Math.PI) * 0.18;
-        pick = { f: frames.run[dir][Math.floor(actT * 22) % 8], mirror: false };
+        const R = row(9), i = Math.min(R.length - 1, Math.floor(actT / actDur * R.length));
+        pick = { f: R[i], mirror: lookingRight !== ROW_FACES_RIGHT[9] };
         if (actT > actDur) { viewDir = dir; setAct('sit'); actDur = 2.5 + rnd() * 2; }
       } else if (act === 'startle') {
         const R = row(9), k = Math.exp(-5 * actT);
