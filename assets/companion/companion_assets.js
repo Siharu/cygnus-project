@@ -3,8 +3,8 @@
 // The complete source pack is preserved at assets/companion/SHU_BIMO_sprite_pack/.
 // Runtime frames are loaded directly from its shu/ folder; no ZIP fetch or JSZip CDN.
 //
-//   walk/<dir>/frame_00..07.png   8-direction walk cycle   (144x160 canvas, feet on y=152)
-//   run/<dir>/frame_00..07.png    8-direction run cycle    (same canvas)
+//   walk/<dir>/frame_00..07.png   8-direction walk cycle   (144x160 canvas, per-frame foot anchor)
+//   run/<dir>/frame_00..07.png    8-direction run cycle    (same canvas, per-frame foot anchor)
 //   previous_atlas/frames/row_01..09/frame_01..N.png   hand-drawn poses, cropped individually
 //
 // Returns  { walk[dir][0..7], run[dir][0..7], row[1..9][0..n-1] } where each frame is
@@ -12,7 +12,6 @@
 
 export const DIRS = ['up', 'up_right', 'right', 'down_right', 'down', 'down_left', 'left', 'up_left'];
 export const ROW_COUNTS = [6, 6, 6, 5, 5, 5, 5, 5, 5]; // frames in previous_atlas rows 1..9
-const FOOT_Y = 152;
 
 const u = p => new URL('../../assets/companion/' + p, import.meta.url).href;
 const SHU_ROOT = u('SHU_BIMO_sprite_pack/shu/');
@@ -41,20 +40,20 @@ function opaqueBox(cv) {
   return x1 < 0 ? { cx: w / 2, by: h } : { cx: (x0 + x1 + 1) / 2, by: y1 + 1 };
 }
 
-function makeFrame(T, source, fitFeet) {
+function makeFrame(T, source) {
   const w = source.width, h = source.height, cv = document.createElement('canvas');
   cv.width = w; cv.height = h;
   const g = cv.getContext('2d');
   g.imageSmoothingEnabled = false;
   g.drawImage(source, 0, 0);
   const tex = new T.CanvasTexture(cv);
-  tex.magFilter = tex.minFilter = T.LinearFilter;
+  // Preserve the crisp pixel-art edges of the supplied sprites.
+  tex.magFilter = tex.minFilter = T.NearestFilter;
   tex.generateMipmaps = false;
-  if (fitFeet) {
-    const b = opaqueBox(cv);
-    return { tex, w, h, bx: b.cx, by: b.by };
-  }
-  return { tex, w, h, bx: w / 2, by: FOOT_Y };
+  // Each pose has slightly different transparent margins. Anchor to its actual
+  // opaque feet line and silhouette centre rather than a fixed canvas coordinate.
+  const b = opaqueBox(cv);
+  return { tex, w, h, bx: b.cx, by: b.by };
 }
 
 export async function loadShuFrames(T, onProgress = () => {}) {
@@ -75,7 +74,7 @@ export async function loadShuFrames(T, onProgress = () => {}) {
   onProgress(0, 'Shu: loading extracted frames…');
   for (let k = 0; k < jobs.length; k += CHUNK) {
     await Promise.all(jobs.slice(k, k + CHUNK).map(async j => {
-      const f = makeFrame(T, await getSource(j.path), j.kind === 'row');
+      const f = makeFrame(T, await getSource(j.path));
       if (j.kind === 'row') out.row[j.a][j.i] = f;
       else out[j.kind][j.a][j.i] = f;
       done++;
