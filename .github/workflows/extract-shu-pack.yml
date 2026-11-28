@@ -1,0 +1,32 @@
+name: Extract Shu and Bimo companion sprite pack
+
+on:
+  push:
+    branches:
+      - feature/extract-shu-bimo-assets
+    paths:
+      - ".github/workflows/extract-shu-pack.yml"
+      - "scripts/extract_shu_pack.py"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract the full source pack
+        run: python3 scripts/extract_shu_pack.py
+      - name: Commit the individual assets
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add assets/companion/SHU_BIMO_sprite_pack/
+          if git diff --cached --quiet; then
+            echo "The extracted pack is already current."
+            exit 0
+          fi
+          git commit -m "Extract Shu and Bimo companion sprite assets"
+          git push origin HEAD

@@ -1,0 +1,36 @@
+{
+  "characters": {
+    "shu": {
+      "source_frame_count": 48,
+      "source_rows": 9,
+      "walk_frames": 64,
+      "run_frames": 64,
+      "canvas": [
+        144,
+        160
+      ]
+    },
+    "bimo": {
+      "source_frame_count": 42,
+      "source_rows": 8,
+      "walk_frames": 64,
+      "run_frames": 64,
+      "canvas": [
+        224,
+        176
+      ]
+    }
+  },
+  "directions": [
+    "up",
+    "up_right",
+    "right",
+    "down_right",
+    "down",
+    "down_left",
+    "left",
+    "up_left"
+  ],
+  "frames_per_direction": 8,
+  "notes": "See README.md for fidelity notes; missing non-profile cycles are provisional."
+}
