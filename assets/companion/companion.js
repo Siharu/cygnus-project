@@ -32,11 +32,12 @@ const RADIUS = 0.28;      // collision radius
 const FOLLOW_GAP = 1.5;   // she aims to stop about this far from you
 const START_GAP = 2.9;    // you are this far away and standing still: she comes over
 const TRAIL_GAP = 2.2;    // you are walking and she is this far behind: she follows
-const MAX_SPEED = 8.2;    // a touch faster than the player's run (7.2) so she can catch up
-const RUN_ON = 5.7, RUN_OFF = 4.9; // speed thresholds for the run cycle (hysteresis)
+const MAX_SPEED = 6.2;    // keep the companion just behind the player's run pace
+const RUN_ON = 4.9, RUN_OFF = 4.2; // switch to a faster gait while catching up
 
-const SIT_ROWS = [4, 1, 7, 8, 2];            // the sitting variants
-const ROW_FACES_RIGHT = { 3: true, 5: false, 6: true, 9: true }; // which way the stand-alone rows look
+const SIT_ROWS = [4, 7, 8];                  // the three actual sitting-pose rows
+const LOOK_ROWS = [1, 2];                     // two complete stand/turn/look sequences
+const ROW_FACES_RIGHT = { 1: true, 2: true, 3: true, 5: false, 6: true, 9: true };
 // direction -> [frame index in a sitting row (-1 = last frame, facing us), mirrored]
 const SIT_VIEW = [[0, 0], [1, 0], [2, 0], [3, 0], [-1, 0], [3, 1], [2, 1], [1, 1]];
 
@@ -67,7 +68,7 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
   const tmp = { x: 0, z: 0 };
   const right = new T.Vector3();
   let mode = 'act', act = 'sit', actT = 0, actDur = 3, lastAct = 'sit';
-  let variant = SIT_ROWS[0], dir = 4, viewDir = 4, turnAcc = 0;
+  let variant = SIT_ROWS[0], lookRow = LOOK_ROWS[0], lookRowIndex = 0, dir = 4, viewDir = 4, turnAcc = 0;
   let sp = 0, running = false, phase = 0, hx = 0, hz = 1;
   let idleT = 0, placed = false, zone = null, appear = 0;
   let blockedT = 0, stuckT = 0, detour = null, detourSign = 1;
@@ -96,6 +97,7 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
   function setAct(a) {
     mode = 'act'; act = a; actT = 0;
     if (a === 'sit') { variant = pickVariant(); actDur = 2.6 + rnd() * 4; }
+    else if (a === 'look') { lookRow = LOOK_ROWS[lookRowIndex++ % LOOK_ROWS.length]; actDur = 1.9 + rnd() * .5; }
     else if (a === 'groom') actDur = 3.4 + rnd() * 2;
     else if (a === 'stretch') actDur = 1.9;
     else if (a === 'crouch') actDur = 0.9 + rnd() * 0.7;
@@ -116,7 +118,7 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
   function nextIdle(ctx) {
     if (idleT > 24 || (ctx.resting && idleT > 5)) return setAct('sleep');
     const r = rnd();
-    let a = r < 0.3 ? 'groom' : r < 0.52 ? 'stretch' : r < 0.7 ? 'crouch' : 'sit';
+    let a = r < 0.24 ? 'groom' : r < 0.43 ? 'stretch' : r < 0.64 ? 'look' : r < 0.79 ? 'crouch' : 'sit';
     if (a === lastAct && a !== 'sit') a = 'sit';
     faceRight = playerRight(ctx.P);
     setAct(a);
@@ -127,6 +129,24 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
     startleX = dx / d; startleZ = dz / d;
     faceRight = playerRight(ctx.P);
     setAct('startle');
+  }
+
+  // Called when the player presses E beside Shu. She stops, turns toward them and settles.
+  // This uses the existing sitting poses; there is no separate petting animation in the source pack.
+  function pet(P) {
+    const dx = P.x - c.x, dz = P.z - c.z;
+    if (Math.hypot(dx, dz) > 2.15) return false;
+    faceRight = playerRight(P);
+    viewDir = dir = dirOf(dx, dz);
+    turnAcc = 0;
+    detour = null;
+    blockedT = stuckT = 0;
+    sp = 0;
+    running = false;
+    setAct('sit');
+    actDur = 3.8;
+    idleT = 0;
+    return true;
   }
 
   // one collision-aware step; returns how far we actually got along (ux,uz)
@@ -194,7 +214,7 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
 
       if (sp > 0.4) { hx += (ux - hx) * Math.min(1, dt * 10); hz += (uz - hz) * Math.min(1, dt * 10); dir = dirOf(hx, hz); }
       if (!running && sp > RUN_ON) running = true; else if (running && sp < RUN_OFF) running = false;
-      phase += dt * (2.6 + sp * 1.35);
+      phase += dt * (running ? 16 : 11); // faster, more readable 8-frame strides
       pick = { f: (running ? frames.run : frames.walk)[dir][Math.floor(phase) % 8], mirror: false };
 
       if (!pMoving && d < TRAIL_GAP + 0.1 && sp < 0.5) { viewDir = dir; turnAcc = 0; setAct('sit'); actDur = 3 + rnd() * 2; }
@@ -211,6 +231,12 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
         const R = row(variant), v = SIT_VIEW[viewDir];
         pick = { f: R[v[0] < 0 ? R.length - 1 : Math.min(v[0], R.length - 1)], mirror: !!v[1] };
         if (actT > actDur) nextIdle(ctx);
+      } else if (act === 'look') {
+        // Rows 1 and 2 are full six-frame standing turn/look sequences, not sitting poses.
+        const R = row(lookRow);
+        const i = Math.min(R.length - 1, Math.floor(actT / actDur * R.length));
+        pick = { f: R[i], mirror: lookingRight !== ROW_FACES_RIGHT[lookRow] };
+        if (actT > actDur) { viewDir = dirOf(dx, dz); setAct('sit'); }
       } else if (act === 'groom') {
         const R = row(5), i = actT < 0.35 ? 0 : 1 + (Math.floor((actT - 0.35) * 5) % 4);
         pick = { f: R[i], mirror: lookingRight !== ROW_FACES_RIGHT[5] };
@@ -220,7 +246,8 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
         pick = { f: R[i], mirror: lookingRight !== ROW_FACES_RIGHT[3] };
         if (actT > actDur) { viewDir = dirOf(dx, dz); setAct('sit'); }
       } else if (act === 'crouch') {
-        const R = row(9), i = 3 + (Math.floor(actT * 6) % 2);
+        // The first three source poses build the crouch before the full pounce.
+        const R = row(9), i = Math.min(2, Math.floor(actT / actDur * 3));
         pick = { f: R[i], mirror: lookingRight !== ROW_FACES_RIGHT[9] };
         if (actT > actDur) { // pick where to pounce: somewhere near the player, never straight into them
           const a = rnd() * Math.PI * 2; pounceX = Math.cos(a); pounceZ = Math.sin(a);
@@ -231,7 +258,8 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
         const k = Math.max(0, 1 - actT / actDur);
         step(ctx, pounceX, pounceZ, 9 * k, dt);
         hop = Math.sin(Math.min(1, actT / actDur) * Math.PI) * 0.18;
-        pick = { f: frames.run[dir][Math.floor(actT * 22) % 8], mirror: false };
+        const R = row(9), i = Math.min(R.length - 1, Math.floor(actT / actDur * R.length));
+        pick = { f: R[i], mirror: lookingRight !== ROW_FACES_RIGHT[9] };
         if (actT > actDur) { viewDir = dir; setAct('sit'); actDur = 2.5 + rnd() * 2; }
       } else if (act === 'startle') {
         const R = row(9), k = Math.exp(-5 * actT);
@@ -261,6 +289,12 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
     if (curFrame !== f) { curFrame = f; mat.map = f.tex; }
     if (pmat) { mat.emissive.copy(pmat.emissive); mat.emissiveIntensity = pmat.emissiveIntensity; mat.color.copy(pmat.color); }
     const K = (ctx.scale || 1) * (0.55 + 0.45 * (1 - Math.pow(1 - appear, 3)));
+    const walking = mode === 'move' && sp > 0.4;
+    // The source front/back gaits have subtle paw separation. A restrained body
+    // bounce makes each contact/lift phase readable without changing Shu's silhouette.
+    const gaitBob = walking
+      ? Math.abs(Math.sin(phase * Math.PI / 4)) * (running ? 0.065 : 0.032)
+      : 0;
     const w = f.w / PPU * K, h = f.h / PPU * K * breathe;
     mesh.scale.set(pick.mirror ? -w : w, h, 1);
     mesh.quaternion.copy(ctx.quat);
@@ -268,7 +302,7 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
     const bx = pick.mirror ? f.w - f.bx : f.bx;
     const off = (f.w / 2 - bx) / PPU * K;
     const EL = ctx.elev ? ctx.elev(c.x, c.z) : 0;
-    mesh.position.set(c.x + right.x * off, (f.by - f.h / 2) / PPU * K * breathe + EL + hop * K, c.z + right.z * off);
+    mesh.position.set(c.x + right.x * off, (f.by - f.h / 2) / PPU * K * breathe + EL + (hop + gaitBob) * K, c.z + right.z * off);
     const sleeping = act === 'sleep' || act === 'wake';
     sh.position.set(c.x, 0.035 + EL, c.z);
     sh.scale.set((sleeping ? 1.5 : 1.15) * K, 0.62 * K, 1);
@@ -278,6 +312,7 @@ export function createShu({ T, sc, pmat, frames, rnd = Math.random }) {
   return {
     update,
     mesh,
+    pet,
     get state() { return { mode, act, x: c.x, z: c.z, dir, running, sp }; },
   };
 }

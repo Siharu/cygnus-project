@@ -21,7 +21,9 @@ export function createLighting({ T, sc, SH, LT, glowTex, beaconPos, dl }) {
   const g = cv.getContext('2d');
   const tex = new T.CanvasTexture(cv); tex.minFilter = tex.magFilter = T.LinearFilter; tex.generateMipmaps = false;
   const shMesh = new T.Mesh(new T.PlaneGeometry(WORLD, WORLD).rotateX(-Math.PI / 2), new T.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, fog: false }));
-  shMesh.position.y = .02; shMesh.renderOrder = -99; sc.add(shMesh);
+  shMesh.position.y = -.025; // ground-only layer; billboard sprites render afterwards
+  shMesh.renderOrder = -99;
+  sc.add(shMesh);
   const px = v => (v + HALF) * U;
   let baked = 9;
   function blob(x, z, along, across, ang, a0, a1) {   // soft ellipse: a0 at the centre, a1 at the rim
@@ -35,14 +37,18 @@ export function createLighting({ T, sc, SH, LT, glowTex, beaconPos, dl }) {
     const dx = Math.cos(a), dz = Math.sin(a);
     for (const s of SH) {
       const ht = s.ht || 3;
-      if (s.rect) {                                    // building: footprint swept along the shadow direction
+      if (s.rect) {                                    // building: cast shadow starts at the footprint edge
         const len = Math.min(11, ht * .34), steps = 9;
+        // Move the first shadow stamp to the far edge of the building footprint.
+        // Starting at the centre paints the billboard's lower facade as well as the ground.
+        const edge = Math.abs(dx) * s.rx + Math.abs(dz) * s.rz;
         for (let i = 0; i <= steps; i++) {
           const f = i / steps, taper = 1 - .35 * f, al = s.a * .15 * (1 - f * .8);
+          const travel = edge + len * f;
           for (const kk of [1.18, 1, .82]) {
             g.fillStyle = `rgba(${SHADOW},${al / 2})`;
             const hx = s.rx * taper * kk, hz = s.rz * taper * kk;
-            g.fillRect(px(s.x + dx * len * f - hx), px(s.z + dz * len * f - hz), hx * 2 * U, hz * 2 * U);
+            g.fillRect(px(s.x + dx * travel - hx), px(s.z + dz * travel - hz), hx * 2 * U, hz * 2 * U);
           }
         }
       } else {                                         // tree / bush / rock: stretched blob + contact shadow
